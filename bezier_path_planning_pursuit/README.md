@@ -99,7 +99,7 @@ float32 omega
 
   pose, imu, odom以外の文字列を入れると強制終了するようにしている。
 
-  
+
 
 ### Advanced settings
 
@@ -170,4 +170,8 @@ x,y,theta
 ```shell
 rosrun actionlib_tools axclient.py /bezier_path_planning_pursuit
 ```
+
+## intellisenceが効かない
+
+パッケージの中に入っているパッケージをコンパイルしたものをincludeしているのでそこまで見に行かなければならない
 
