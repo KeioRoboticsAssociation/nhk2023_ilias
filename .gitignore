@@ -28,6 +28,7 @@ devel_isolated/
 # eclipse stuff
 .project
 .cproject
+.vscode
 
 # qcreator stuff
 CMakeLists.txt.user
