@@ -4,7 +4,7 @@
 **_Lets aim for CAMBODIA_**
 
 
-[![ROS: Noetic](https://img.shields.io/badge/ROS-Noetic-brightgreen)](http://wiki.ros.org/noetic)  [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![KRA: ilias](https://img.shields.io/badge/KRA-ilias-blue.svg)](https://keiorogiken.wordpress.com/)
+[![ROS: Noetic](https://img.shields.io/badge/ROS-Humble-brightgreen)](http://wiki.ros.org/humble)  [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![KRA: ilias](https://img.shields.io/badge/KRA-ilias-blue.svg)](https://keiorogiken.wordpress.com/)
 
 # nhk2023_ilias
 
@@ -16,8 +16,8 @@ Before run `install.sh`, please install Nodejs
 Clone this repository and just run `install.sh`
 
 ```shell
-cd ~/catkin_ws/src
-git clone https://github.com/KeioRoboticsAssociation/nhk2023_ilias.git
+cd ~/rogi_ws/src
+git clone git@github.com:KeioRoboticsAssociation/nhk2023_ilias.git
 cd nhk2023_ilias
 source install.sh
 ```
@@ -26,7 +26,7 @@ source install.sh
 
 ### issues
 
-We are using https link in while doing `git clone` from .rosinstall files and this is not recommended.
+We are using https link while doing `git clone` from .rosinstall files and this is not recommended.
 
 
 
