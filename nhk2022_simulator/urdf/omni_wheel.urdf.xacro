@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+<robot name="wheel" xmlns:xacro="http://ros.org/wiki/xacro" >
+
+<xacro:property name="PI" value="3.1415926535897931"/>
+<xacro:property name="wheel_radius" value="0.127"/>
+<xacro:property name="wheel_height" value="0.02"/>
+<xacro:property name="wheel_mass" value="0.10"/>
+
+
+<xacro:macro name="wheel" params="rl parent">
+
+<link name="wheel_${rl}">
+  <visual>
+    <geometry>
+      <cylinder length="${wheel_height}" radius="${wheel_radius}" />
+    </geometry>
+  </visual>
+  <collision>
+    <geometry>
+      <cylinder radius="${wheel_radius}" length="${wheel_height}" />
+    </geometry> 
+  </collision>
+  <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="${wheel_mass}" />
+      <inertia ixx="${wheel_mass*(3*wheel_radius*wheel_radius+wheel_height*wheel_height)/12}" 
+        ixy="0"  ixz="0"
+        iyx="0"  iyy="${wheel_mass*(3*wheel_radius*wheel_radius+wheel_height*wheel_height)/12}" 
+        iyz="0"
+        izx="0"  izy="0"  izz="${wheel_mass*(wheel_radius*wheel_radius)/2}" />
+  </inertial>
+</link>
+
+<joint name="wheel_${rl}_joint" type="continuous">
+  <parent link="${parent}" />
+  <child link="wheel_${rl}" />
+  <xacro:if value="${rl == 'rf'}">
+    <origin xyz="${b_w}/2 -${b_w}/2 0.085" rpy="${PI/4} 0 0" /><!--z: position from base_link - position from body-->
+  </xacro:if>
+  <xacro:if value="${rl == 'lf'}">
+     <origin xyz="${b_w}/2 ${b_w}/2 0.085" rpy="-${PI/4} 0 0" />
+  </xacro:if>
+  <xacro:if value="${rl == 'rb'}">
+    <origin xyz="-${b_w}/2 -${b_w}/2 0.085" rpy="${PI/4} 0 0" /><!--z: position from base_link - position from body-->
+  </xacro:if>
+  <xacro:if value="${rl == 'lb'}">
+     <origin xyz="-${b_w}/2 ${b_w}/2 0.085" rpy="-${PI/4} 0 0" />
+  </xacro:if>
+  <axis xyz="0 1 0" />
+  <limit effort="6.0" velocity="12.0" /><!-- maximum torqe(<8.82), maximum velocity-->
+  <dynamics damping="0.1"/>
+</joint>
+
+<gazebo reference="wheel_${rl}">
+    <material>Gazebo/Black</material>
+    <mu1 value="3.0" /><!--friction-->
+    <mu2 value="3.0" />
+</gazebo>
+
+    <transmission name="wheel_${rl}_trans" type="SimpleTransmission">
+      <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="wheel_${rl}_motor">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+          <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+      <joint name="wheel_${rl}_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+    </transmission>
+
+    <transmission name="wheel_${rl}_angular_trans" type="SimpleTransmission">
+      <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="wheel_${rl}_angular_motor">
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+          <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+      <joint name="wheel_${rl}_angular_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+    </transmission>
+
+
+</xacro:macro>
+</robot>

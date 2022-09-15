@@ -67,7 +67,7 @@ float32 omega
 
   trueにするのは、amclなどの自己位置推定ノードによってtfが補正されている場合
 
-- **data_path** : csvファイルの格納されているディレクトリ (default : "`$(find nhk2022_launcher)/config/waypoints/TR`")
+- **data_path** : csvファイルの格納されているディレクトリ (default : "`$(find nhk2023_launcher)/config/waypoints/TR`")
 
 - **acc_lim_xy** : maximum value of xy accelaration (default : 2.5 [m/s^2])
 

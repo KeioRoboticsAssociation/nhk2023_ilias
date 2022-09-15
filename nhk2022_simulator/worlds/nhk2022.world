@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="default">
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <include>
+      <uri>model://field_assem_v1</uri>
+      <pose>0 0 0 0 0 -1.57079632</pose>
+    </include>
+        <gui>
+      <camera name='user_camera'>
+        <pose frame=''>5.60 5.83 16.93 0 1.57 1.57</pose>
+      </camera>
+    </gui>
+  </world>
+</sdf>
+

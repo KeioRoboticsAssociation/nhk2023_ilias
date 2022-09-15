@@ -41,15 +41,15 @@ We are using https link while doing `git clone` from .rosinstall files and this 
 
   Joyコンで速度指令値を送れるパッケージ
 
-- [nhk2022_launcher](https://github.com/KeioRoboticsAssociation/nhk2023_ilias/blob/main/nhk2023_launcher/README.md)
+- [nhk2023_launcher](https://github.com/KeioRoboticsAssociation/nhk2023_ilias/blob/main/nhk2023_launcher/README.md)
 
   ロボットを起動するlaunchファイルが入っているパッケージ
 
-- [nhk2022_simulator](https://github.com/KeioRoboticsAssociation/nhk2023_ilias/blob/main/nhk2023_simulator/README.md)
+- [nhk2023_simulator](https://github.com/KeioRoboticsAssociation/nhk2023_ilias/blob/main/nhk2023_simulator/README.md)
 
   Gazeboによるシミュレーターを構築するためのファイルが入っているパッケージ
 
-- [nhk2022_webgui](https://github.com/KeioRoboticsAssociation/nhk2023_ilias/blob/main/nhk2023_webgui/README.md)
+- [nhk2023_webgui](https://github.com/KeioRoboticsAssociation/nhk2023_ilias/blob/main/nhk2023_webgui/README.md)
 
   WebGUIを起動するためのファイルが入っているパッケージ
 
