@@ -26,7 +26,7 @@ class Odom_tf_publisher : public rclcpp::Node {
 
     rclcpp::WallRate loop_rate(this->loop_rate);
 
-    while (rclcpp::ok) {
+    while (rclcpp::ok()) {
       robot_odom_handler();
       loop_rate.sleep();
     }
@@ -65,7 +65,7 @@ class Odom_tf_publisher : public rclcpp::Node {
 
 int main(int argc, char** argv) {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<Odom_tf_publisher>(argv));
+  rclcpp::spin(std::make_shared<Odom_tf_publisher>());
   rclcpp::shutdown();
 
   return 0;
