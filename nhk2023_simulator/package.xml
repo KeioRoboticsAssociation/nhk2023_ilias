@@ -12,6 +12,8 @@
     <depend>nav_msgs</depend>
     <depend>tf2_ros</depend>
 
+    <exec_depend>ros2launch</exec_depend>
+
     <!-- <export>
         <gazebo_ros gazebo_media_path="${prefix}/worlds" />
         <gazebo_ros gazebo_model_path="${prefix}/models" />
