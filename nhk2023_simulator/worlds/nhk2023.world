@@ -52,10 +52,7 @@
         </model>
 
         <include>
-            <uri>file://models/lidar.sdf</uri>
-        </include>
-        <include>
-            <uri>file://models/imu.sdf</uri>
+            <uri>file://models/simple_odom_robot.sdf</uri>
         </include>
 
     </world>
