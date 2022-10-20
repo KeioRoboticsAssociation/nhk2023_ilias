@@ -2,46 +2,33 @@
 ## これは何
 
 nhk2023の環境をgazeboで再現するパッケージ。
-今年度はメカナムなので特に物理シミュレーションをする意味が無いのでロジック確認のためのみ。
 
 ### 注記
 
-物理シミュレーションを行わないので[こちら](http://cir-kit.github.io/blog/2015/02/19/gazebo-gazebo-plugins-in-ros/)に書かれたPlanar Move Pluginを用いて`/cmd_vel`を与えて直接モデルを動かしている。適切な慣性にしないとバランスを崩してしまうので低重心高重量にしてあります。
+物理シミュレーションを行わないので[こちら](https://github.com/gazebosim/gz-sim)に書かれた`ignition::gazebo::systems::VelocityControl`を用いて`/cmd_vel`を与えて直接モデルを動かしています。現状ではこのプラグインを使うと恐らく重力が働いていない？ので要改善。
 
 ## ロボットモデル
 
-現在は以下の2つに対応
-
-- 簡易的な差動2輪モデル
-- 簡易的な4輪オムニモデル (推奨)
+- ERの簡易シミュレーション
 
 
 
 ## Launch
 
-- フィールド+簡易的な4輪オムニモデル
+- フィールド+簡易的なERモデル
 
   - R2のシミュレーターを起動
     ```
-    roslaunch nhk2023_simulator simulation_R2.launch
+    ros2 launch nhk2023_simulator simulation_ER.py
     ```
 
 
+    上記launchを実行後
 
-- フィールド+簡易的な差動2輪モデル
+  - ER
 
-  ```shell
-  roslaunch nhk2023_simulator diff_drive_simulation.launch
-  ```
+    ```shell
+    ros2 launch nhk2023_launcher control_ER.launch
+    ```
 
-
-
-上記launchを実行後
-
-- R2
-
-```shell
-roslaunch nhk2023_launcher control_R2.launch
-```
-
-のロボット起動launchをたたくとロボットのシミュレーションが可能
+    のロボット起動launchをたたくとロボットのシミュレーションが可能

@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <package format="3">
+
     <name>nhk2023_simulator</name>
     <version>0.0.0</version>
     <description>The nhk2023_simulator package</description>
@@ -14,11 +15,8 @@
 
     <exec_depend>ros2launch</exec_depend>
 
-    <!-- <export>
-        <gazebo_ros gazebo_media_path="${prefix}/worlds" />
-        <gazebo_ros gazebo_model_path="${prefix}/models" />
-    </export> -->
     <export>
         <build_type>ament_cmake</build_type>
     </export>
+
 </package>
