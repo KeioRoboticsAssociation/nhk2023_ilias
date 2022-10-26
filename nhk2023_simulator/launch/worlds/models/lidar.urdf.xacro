@@ -23,11 +23,11 @@
         </link>
         <gazebo reference="${prefix}_link">
             <material>Gazebo/Red</material>
-            <sensor type="ray" name="${prefix}">
+            <sensor type="gpu_lidar" name="${prefix}">
                 <pose>0 0 0 0 0 0</pose>
                 <visualize>false</visualize>
                 <update_rate>10</update_rate>
-                <ray>
+                <lidar>
                     <scan>
                         <horizontal>
                             <samples>400</samples>
@@ -46,12 +46,10 @@
                         <mean>0.0</mean>
                         <stddev>0.01</stddev>
                     </noise>
-                </ray>
-                <plugin name="gazebo_ros_lidar_controller" filename="libgazebo_ros_laser.so">
-                    <topicName>/scan</topicName>
-                    <frameName>${prefix}_link</frameName>
-                </plugin>
+                </lidar>
             </sensor>
+            <plugin filename="libignition-gazebo-imu-system.so" name="ignition::gazebo::systems::Imu">
+            </plugin>
         </gazebo>
     </xacro:macro>
 </robot>

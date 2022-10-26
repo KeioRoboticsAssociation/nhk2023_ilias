@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <robot name="odm_robot"
     xmlns:xacro="http://ros.org/wiki/xacro">
-    <xacro:include filename="$(find nhk2023_simulator)/urdf/lidar.urdf.xacro" />
-    <xacro:include filename="$(find nhk2023_simulator)/urdf/imu.urdf.xacro" />
+    <xacro:include filename="$(cwd)/lidar.urdf.xacro" />
+    <xacro:include filename="$(cwd)/imu.urdf.xacro" />
 
     <xacro:property name="PI" value="3.1415926535897931"/>
     <xacro:property name="b_m" value="20.0"/>
@@ -11,7 +11,6 @@
     <xacro:property name="b_w" value="0.60"/>
     <xacro:property name="b_h" value="0.1"/>
     <xacro:property name="b_d" value="0.60"/>
-    <xacro:property name="lidar_w" value="0.64"/>
 
     <material name="red">
         <color rgba="0.2 0 0 1"/>
@@ -65,8 +64,8 @@
     <material>Gazebo/Red</material>
   </gazebo> -->
 
-    <xacro:laser_macro prefix="lidar1" parent="base_link" xyz="${lidar_w/2} -${lidar_w/2} 0.04" rpy="0 0 -${PI/4}" />
-    <xacro:laser_macro prefix="lidar2" parent="base_link" xyz="-${lidar_w/2} ${lidar_w/2} 0.04" rpy="0 0 ${3*PI/4}" />
+    <xacro:laser_macro prefix="lidar" parent="base_link" xyz="0 ${b_w/2} 0.04" rpy="0 0 0" />
+    <!-- <xacro:laser_macro prefix="lidar2" parent="base_link" xyz="-${lidar_w/2} ${lidar_w/2} 0.04" rpy="0 0 ${3*PI/4}" /> -->
 
     <xacro:imu_macro prefix="imu" parent="base_link" xyz="0.0 0 0.10" />
 

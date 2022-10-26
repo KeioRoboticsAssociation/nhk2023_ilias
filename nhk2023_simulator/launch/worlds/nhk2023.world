@@ -13,7 +13,9 @@
         <plugin filename="libignition-gazebo-scene-broadcaster-system.so" name="ignition::gazebo::systems::SceneBroadcaster">
         </plugin>
         <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors">
-            <render_engine>ogre</render_engine>
+            <render_engine>ogre2</render_engine>
+        </plugin>
+        <plugin filename="libignition-gazebo-imu-system.so" name="ignition::gazebo::systems::Imu">
         </plugin>
 
         <light type="directional" name="sun">
@@ -52,7 +54,8 @@
         </model>
 
         <include>
-            <uri>file://worlds/models/simple_odom_robot.urdf.xacro</uri>
+            <uri>file://worlds/models/simple_odom_robot.sdf</uri>
+            <pose>5 0 0 0 0 0</pose>
         </include>
 
     </world>
