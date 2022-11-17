@@ -13,12 +13,12 @@ find_package(rclcpp REQUIRED)
 # find_package(tf2_ros REQUIRED)
 # find_package(nav_msgs REQUIRED)
 
-add_executable(odom_tf_publisher src/odom_tf_publisher.cpp)
-ament_target_dependencies(odom_tf_publisher
-  rclcpp
-#   nav_msgs
-#   tf2_ros
-)
+# add_executable(odom_tf_publisher src/odom_tf_publisher.cpp)
+# ament_target_dependencies(odom_tf_publisher
+#   rclcpp
+# #   nav_msgs
+# #   tf2_ros
+# )
 
 
 install(TARGETS
