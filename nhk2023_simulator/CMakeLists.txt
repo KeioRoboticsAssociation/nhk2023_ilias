@@ -12,6 +12,9 @@ endif()
 find_package(rclcpp REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+
 
 add_executable(odom_tf_publisher src/odom_tf_publisher.cpp)
 ament_target_dependencies(odom_tf_publisher
@@ -20,9 +23,19 @@ ament_target_dependencies(odom_tf_publisher
   tf2_ros
 )
 
+add_executable(er_odom_publisher src/er_odom_publisher.cpp)
+ament_target_dependencies(er_odom_publisher
+  rclcpp
+  nav_msgs
+  tf2_ros
+  std_msgs
+  geometry_msgs
+)
+
 
 install(TARGETS
   odom_tf_publisher
+  er_odom_publisher
   DESTINATION lib/${PROJECT_NAME}
 )
 

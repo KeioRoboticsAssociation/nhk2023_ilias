@@ -38,14 +38,14 @@ def generate_launch_description():
         arguments=[
             '/world/nhk2023_field/model/odm_robot/link/base_link/sensor/lidar/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan', #Lidar
             '/imu@sensor_msgs/msg/Imu[gz.msgs.IMU', #IMU
-            '/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist', #cmd_vel
+            '/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist', #cmd_vel
             '/model/odm_robot/pose@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V' #odm_robotの位置情報
             #ここに追加すると、rosとignitionの間でデータをやり取りできるようになる
             ],
         output='screen',
         remappings=[
-                ('/world/nhk2023_field/model/odm_robot/link/base_link/sensor/lidar/scan', 'lidar/scan'),
-                ('/model/odm_robot/pose', '/tf'),
+                ('/world/nhk2023_field/model/odm_robot/link/base_link/sensor/lidar/scan', '/er/lidar/scan'),
+                ('/model/odm_robot/pose', '/er/pose'),
                 #ここでremappingすると、rosのトピック名を変えられる
             ],
     )
