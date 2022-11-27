@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<robot name="wheel"
+<model name="wheel"
     xmlns:xacro="http://ros.org/wiki/xacro">
 
     <xacro:property name="PI" value="3.1415926535897931"/>
@@ -8,7 +8,6 @@
     <xacro:property name="wheel_mass" value="0.50"/>
 
     <xacro:macro name="wheel" params="rl parent">
-
 
         <xacro:property name="b_m" value="0.1"/>
         <xacro:property name="b_m2" value="${b_m/12}"/>
@@ -45,6 +44,17 @@
                 <geometry>
                     <cylinder radius="${wheel_radius}" length="${wheel_height}" />
                 </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>1</mu>
+                            <mu2>1</mu2>
+                            <slip1>0.035</slip1>
+                            <slip2>0</slip2>
+                            <fdir1>0 0 1</fdir1>
+                        </ode>
+                    </friction>
+                </surface>
             </collision>
             <inertial>
                 <origin xyz="0 0 0" rpy="0 0 0" />
@@ -87,35 +97,10 @@
             <dynamics damping="0.1"/>
         </joint>
 
-        <gazebo reference="wheel_${rl}">
-            <material>Gazebo/Black</material>
-            <mu1 value="3.0" />
-            <!--friction-->
-            <mu2 value="3.0" />
-        </gazebo>
-
-        <transmission name="wheel_${rl}_trans" type="SimpleTransmission">
-            <type>transmission_interface/SimpleTransmission</type>
-            <actuator name="wheel_${rl}_motor">
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                <mechanicalReduction>1</mechanicalReduction>
-            </actuator>
-            <joint name="wheel_${rl}_joint">
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            </joint>
-        </transmission>
-
-        <transmission name="wheel_${rl}_angular_trans" type="SimpleTransmission">
-            <type>transmission_interface/SimpleTransmission</type>
-            <actuator name="wheel_${rl}_angular_motor">
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                <mechanicalReduction>1</mechanicalReduction>
-            </actuator>
-            <joint name="wheel_${rl}_angular_joint">
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-            </joint>
-        </transmission>
-
+        <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+            <joint_name>wheel_${rl}_angular_joint</joint_name>
+            <initial_velocity>5.0</initial_velocity>
+        </plugin>
 
     </xacro:macro>
-</robot>
+</model>

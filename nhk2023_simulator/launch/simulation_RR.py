@@ -40,7 +40,6 @@ def generate_launch_description():
             '/imu@sensor_msgs/msg/Imu[gz.msgs.IMU', #IMU
             # '/world/nhk2023_field/model/er/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist', #cmd_vel
             '/model/er/pose@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V' #odm_robotの位置情報
-            '/'
             #ここに追加すると、rosとignitionの間でデータをやり取りできるようになる
             ],
         output='screen',
