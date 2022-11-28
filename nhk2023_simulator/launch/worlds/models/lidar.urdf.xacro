@@ -12,7 +12,6 @@
                 <geometry>
                     <cylinder radius="0.02" length="0.06" />
                 </geometry>
-                <material name="red" />
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -20,32 +19,33 @@
                     <cylinder radius="0.02" length="0.06" />
                 </geometry>
             </collision>
+            <sensor type="gpu_lidar" name="${prefix}">
+                <pose>0 0 0 0 0 0</pose>
+                <visualize>false</visualize>
+                <update_rate>10</update_rate>
+                <lidar>
+                    <scan>
+                        <horizontal>
+                            <samples>400</samples>
+                            <resolution>1</resolution>
+                            <min_angle>${radians(-180)}</min_angle>
+                            <max_angle>${radians(180)}</max_angle>
+                        </horizontal>
+                    </scan>
+                    <range>
+                        <min>0.10</min>
+                        <max>20.0</max>
+                        <resolution>0.01</resolution>
+                    </range>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0.0</mean>
+                        <stddev>0.01</stddev>
+                    </noise>
+                </lidar>
+            </sensor>
         </link>
-        <sensor type="gpu_lidar" name="${prefix}">
-            <pose>0 0 0 0 0 0</pose>
-            <visualize>false</visualize>
-            <update_rate>10</update_rate>
-            <lidar>
-                <scan>
-                    <horizontal>
-                        <samples>400</samples>
-                        <resolution>1</resolution>
-                        <min_angle>${radians(-180)}</min_angle>
-                        <max_angle>${radians(180)}</max_angle>
-                    </horizontal>
-                </scan>
-                <range>
-                    <min>0.10</min>
-                    <max>20.0</max>
-                    <resolution>0.01</resolution>
-                </range>
-                <noise>
-                    <type>gaussian</type>
-                    <mean>0.0</mean>
-                    <stddev>0.01</stddev>
-                </noise>
-            </lidar>
-        </sensor>
+
         <plugin filename="libignition-gazebo-imu-system.so" name="ignition::gazebo::systems::Imu">
         </plugin>
     </xacro:macro>
