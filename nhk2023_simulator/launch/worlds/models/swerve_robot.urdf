@@ -18,14 +18,15 @@
     </collision>
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
-      <mass value="5.58"/>
-      <inertia ixx="0.127317" ixy="0" ixz="0" iyx="0" iyy="0.127317" iyz="0" izx="0" izy="0" izz="0.127317"/>
+      <mass value="10"/>
+      <inertia ixx="0.22816666666666666" ixy="0" ixz="0" iyx="0" iyy="0.22816666666666666" iyz="0" izx="0" izy="0" izz="0.22816666666666666"/>
     </inertial>
   </link>
   <joint name="base_body_joint" type="fixed">
     <parent link="base_link"/>
     <child link="body"/>
     <origin rpy="0 0 0" xyz="0 0 0.195"/>
+    <!-- <limit lower="0" upper="0" effort="0" velocity="0" /> -->
   </joint>
   <link name="wheel_rf_round_table">
     <visual>
@@ -92,10 +93,12 @@
     <!-- maximum torqe(<8.82), maximum velocity-->
     <dynamics damping="0.1"/>
   </joint>
-  <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
-    <joint_name>wheel_rf_angular_joint</joint_name>
-    <initial_velocity>5.0</initial_velocity>
-  </plugin>
+  <gazebo>
+    <plugin filename="ignition-gazebo-joint-controller-system" name="ignition::gazebo::systems::JointController">
+      <joint_name>wheel_rf_joint</joint_name>
+      <joint_name>wheel_rf_angular_joint</joint_name>
+    </plugin>
+  </gazebo>
   <link name="wheel_lf_round_table">
     <visual>
       <geometry>
@@ -160,10 +163,12 @@
     <!-- maximum torqe(<8.82), maximum velocity-->
     <dynamics damping="0.1"/>
   </joint>
-  <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
-    <joint_name>wheel_lf_angular_joint</joint_name>
-    <initial_velocity>5.0</initial_velocity>
-  </plugin>
+  <gazebo>
+    <plugin filename="ignition-gazebo-joint-controller-system" name="ignition::gazebo::systems::JointController">
+      <joint_name>wheel_lf_joint</joint_name>
+      <joint_name>wheel_lf_angular_joint</joint_name>
+    </plugin>
+  </gazebo>
   <link name="wheel_rb_round_table">
     <visual>
       <geometry>
@@ -229,10 +234,12 @@
     <!-- maximum torqe(<8.82), maximum velocity-->
     <dynamics damping="0.1"/>
   </joint>
-  <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
-    <joint_name>wheel_rb_angular_joint</joint_name>
-    <initial_velocity>5.0</initial_velocity>
-  </plugin>
+  <gazebo>
+    <plugin filename="ignition-gazebo-joint-controller-system" name="ignition::gazebo::systems::JointController">
+      <joint_name>wheel_rb_joint</joint_name>
+      <joint_name>wheel_rb_angular_joint</joint_name>
+    </plugin>
+  </gazebo>
   <link name="wheel_lb_round_table">
     <visual>
       <geometry>
@@ -297,16 +304,20 @@
     <!-- maximum torqe(<8.82), maximum velocity-->
     <dynamics damping="0.1"/>
   </joint>
-  <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
-    <joint_name>wheel_lb_angular_joint</joint_name>
-    <initial_velocity>5.0</initial_velocity>
-  </plugin>
-  <joint name="rplidar_joint" type="fixed">
+  <gazebo>
+    <plugin filename="ignition-gazebo-joint-controller-system" name="ignition::gazebo::systems::JointController">
+      <joint_name>wheel_lb_joint</joint_name>
+      <joint_name>wheel_lb_angular_joint</joint_name>
+    </plugin>
+  </gazebo>
+  <!-- <xacro:property name="radians" value="0.017453292519943295"/> -->
+  <joint name="lidar_joint" type="revolute">
     <parent link="base_link"/>
-    <child link="rplidar_link"/>
+    <child link="lidar_link"/>
     <origin rpy="0 0 0" xyz="0.205 0 0.04"/>
+    <limit effort="0" lower="0" upper="0" velocity="0"/>
   </joint>
-  <link name="rplidar_link">
+  <link name="lidar_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
@@ -319,7 +330,12 @@
         <cylinder length="0.06" radius="0.02"/>
       </geometry>
     </collision>
-    <sensor name="rplidar" type="gpu_lidar">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.2"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyx="0" iyy="0.0001" iyz="0" izx="0" izy="0" izz="0.0001"/>
+    </inertial>
+    <sensor name="lidar" type="gpu_lidar">
       <pose>0 0 0 0 0 0</pose>
       <visualize>false</visualize>
       <update_rate>10</update_rate>
@@ -328,8 +344,8 @@
           <horizontal>
             <samples>400</samples>
             <resolution>1</resolution>
-            <min_angle>-3.141592653589793</min_angle>
-            <max_angle>3.141592653589793</max_angle>
+            <min_angle>-3.05433</min_angle>
+            <max_angle>3.05433</max_angle>
           </horizontal>
         </scan>
         <range>
@@ -345,12 +361,14 @@
       </lidar>
     </sensor>
   </link>
-  <plugin filename="libignition-gazebo-imu-system.so" name="ignition::gazebo::systems::Imu">
-        </plugin>
-  <joint name="imu_joint" type="fixed">
+  <gazebo>
+
+        </gazebo>
+  <joint name="imu_joint" type="revolute">
     <parent link="base_link"/>
     <child link="imu_link"/>
     <origin rpy="0 0 0" xyz="0.0 0 0.10"/>
+    <limit effort="0" lower="0" upper="0" velocity="0"/>
   </joint>
   <link name="imu_link">
     <visual>
@@ -368,6 +386,8 @@
       <mass value="0.1"/>
       <inertia ixx="0.0001" ixy="0" ixz="0" iyx="0" iyy="0.0001" iyz="0" izx="0" izy="0" izz="0.0001"/>
     </inertial>
+  </link>
+  <gazebo>
     <sensor name="imu_sensor" type="imu">
       <always_on>true</always_on>
       <update_rate>100</update_rate>
@@ -375,5 +395,115 @@
       <topic>imu</topic>
       <pose>0 0 0 0 0 0</pose>
     </sensor>
-  </link>
+    <plugin filename="ignition-gazebo-imu-system" name="ignition::gazebo::systems::Imu">
+      <imu_name>imu_sensor</imu_name>
+      <topic>imu</topic>
+      <frame_name>imu_link</frame_name>
+      <linear_acceleration>
+        <x>
+          <noise type="gaussian">
+            <mean>0</mean>
+            <stddev>0.0001</stddev>
+            <bias_mean>0.0001</bias_mean>
+            <bias_stddev>0.0001</bias_stddev>
+            <dynamic_bias_stddev>0.0001</dynamic_bias_stddev>
+            <dynamic_bias_correlation_time>1000.0</dynamic_bias_correlation_time>
+            <precision>0.0001</precision>
+          </noise>
+        </x>
+        <y>
+          <noise type="gaussian">
+            <mean>0</mean>
+            <stddev>0.0001</stddev>
+            <bias_mean>0.0001</bias_mean>
+            <bias_stddev>0.0001</bias_stddev>
+            <dynamic_bias_stddev>0.0001</dynamic_bias_stddev>
+            <dynamic_bias_correlation_time>1000.0</dynamic_bias_correlation_time>
+            <precision>0.0001</precision>
+          </noise>
+        </y>
+        <z>
+          <noise type="gaussian">
+            <mean>0</mean>
+            <stddev>0.0001</stddev>
+            <bias_mean>0.0001</bias_mean>
+            <bias_stddev>0.0001</bias_stddev>
+            <dynamic_bias_stddev>0.0001</dynamic_bias_stddev>
+            <dynamic_bias_correlation_time>1000.0</dynamic_bias_correlation_time>
+            <precision>0.0001</precision>
+          </noise>
+        </z>
+      </linear_acceleration>
+      <angular_velocity>
+        <x>
+          <noise type="gaussian">
+            <mean>0</mean>
+            <stddev>0.0001</stddev>
+            <bias_mean>0.0001</bias_mean>
+            <bias_stddev>0.0001</bias_stddev>
+            <dynamic_bias_stddev>0.0001</dynamic_bias_stddev>
+            <dynamic_bias_correlation_time>1000.0</dynamic_bias_correlation_time>
+            <precision>0.0001</precision>
+          </noise>
+        </x>
+        <y>
+          <noise type="gaussian">
+            <mean>0</mean>
+            <stddev>0.0001</stddev>
+            <bias_mean>0.0001</bias_mean>
+            <bias_stddev>0.0001</bias_stddev>
+            <dynamic_bias_stddev>0.0001</dynamic_bias_stddev>
+            <dynamic_bias_correlation_time>1000.0</dynamic_bias_correlation_time>
+            <precision>0.0001</precision>
+          </noise>
+        </y>
+        <z>
+          <noise type="gaussian">
+            <mean>0</mean>
+            <stddev>0.0001</stddev>
+            <bias_mean>0.0001</bias_mean>
+            <bias_stddev>0.0001</bias_stddev>
+            <dynamic_bias_stddev>0.0001</dynamic_bias_stddev>
+            <dynamic_bias_correlation_time>1000.0</dynamic_bias_correlation_time>
+            <precision>0.0001</precision>
+          </noise>
+        </z>
+      </angular_velocity>
+      <orientation>
+        <x>
+          <noise type="gaussian">
+            <mean>0</mean>
+            <stddev>0.0001</stddev>
+            <bias_mean>0.0001</bias_mean>
+            <bias_stddev>0.0001</bias_stddev>
+            <dynamic_bias_stddev>0.0001</dynamic_bias_stddev>
+            <dynamic_bias_correlation_time>1000.0</dynamic_bias_correlation_time>
+            <precision>0.0001</precision>
+          </noise>
+        </x>
+        <y>
+          <noise type="gaussian">
+            <mean>0</mean>
+            <stddev>0.0001</stddev>
+            <bias_mean>0.0001</bias_mean>
+            <bias_stddev>0.0001</bias_stddev>
+            <dynamic_bias_stddev>0.0001</dynamic_bias_stddev>
+            <dynamic_bias_correlation_time>1000.0</dynamic_bias_correlation_time>
+            <precision>0.0001</precision>
+          </noise>
+        </y>
+        <z>
+          <noise type="gaussian">
+            <mean>0</mean>
+            <stddev>0.0001</stddev>
+            <bias_mean>0.0001</bias_mean>
+            <bias_stddev>0.0001</bias_stddev>
+            <dynamic_bias_stddev>0.0001</dynamic_bias_stddev>
+            <dynamic_bias_correlation_time>1000.0</dynamic_bias_correlation_time>
+            <precision>0.0001</precision>
+          </noise>
+        </z>
+      </orientation>
+    </plugin>
+  </gazebo>
 </robot>

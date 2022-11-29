@@ -1,484 +1,605 @@
-<sdf version='1.7'>
-  <model name='rr_swerve'>
-    <link name='base_link'>
-      <inertial>
-        <pose>0 0 0.193327 0 -0 0</pose>
-        <mass>5.68</mass>
-        <inertia>
-          <ixx>0.128304</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>0.128304</iyy>
-          <iyz>0</iyz>
-          <izz>0.127417</izz>
-        </inertia>
-      </inertial>
-      <collision name='base_link_fixed_joint_lump__body_collision'>
-        <pose>0 0 0.195 0 -0 0</pose>
-        <geometry>
-          <box>
-            <size>0.3515 0.3515 0.3515</size>
-          </box>
-        </geometry>
-      </collision>
-      <collision name='base_link_fixed_joint_lump__imu_link_collision_1'>
-        <pose>0 0 0.1 0 -0 0</pose>
-        <geometry>
-          <box>
-            <size>0.1 0.1 0.1</size>
-          </box>
-        </geometry>
-      </collision>
-      <collision name='base_link_fixed_joint_lump__rplidar_link_collision_2'>
-        <pose>0.205 0 0.04 0 -0 0</pose>
-        <geometry>
-          <cylinder>
-            <length>0.06</length>
-            <radius>0.02</radius>
-          </cylinder>
-        </geometry>
-      </collision>
-      <visual name='base_link_fixed_joint_lump__body_visual'>
-        <pose>0 0 0.195 0 -0 0</pose>
-        <geometry>
-          <box>
-            <size>0.37 0.37 0.37</size>
-          </box>
-        </geometry>
-      </visual>
-      <visual name='base_link_fixed_joint_lump__imu_link_visual_1'>
-        <pose>0 0 0.1 0 -0 0</pose>
-        <geometry>
-          <box>
-            <size>0.1 0.1 0.1</size>
-          </box>
-        </geometry>
-      </visual>
-      <visual name='base_link_fixed_joint_lump__rplidar_link_visual_2'>
-        <pose>0.205 0 0.04 0 -0 0</pose>
-        <geometry>
-          <cylinder>
-            <length>0.06</length>
-            <radius>0.02</radius>
-          </cylinder>
-        </geometry>
-      </visual>
-    </link>
-    <joint name='wheel_lb_angular_joint' type='revolute'>
-      <pose relative_to='base_link'>-0.22 0.22 0.085 1.5708 -0 0</pose>
-      <parent>base_link</parent>
-      <child>wheel_lb_round_table</child>
-      <axis>
-        <xyz>0 1 0</xyz>
-        <limit>
-          <effort>6</effort>
-          <velocity>12</velocity>
-          <lower>-1e+16</lower>
-          <upper>1e+16</upper>
-        </limit>
-        <dynamics>
-          <damping>0.1</damping>
-          <friction>0</friction>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
-        </dynamics>
-      </axis>
-    </joint>
-    <link name='wheel_lb_round_table'>
-      <pose relative_to='wheel_lb_angular_joint'>0 0 0 0 -0 0</pose>
-      <inertial>
-        <pose>0 0 0 0 -0 0</pose>
-        <mass>0.1</mass>
-        <inertia>
-          <ixx>2.16667e-05</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>4.16667e-05</iyy>
-          <iyz>0</iyz>
-          <izz>2.16667e-05</izz>
-        </inertia>
-      </inertial>
-      <collision name='wheel_lb_round_table_collision'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <box>
-            <size>0.0475 0.0095 0.0475</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name='wheel_lb_round_table_visual'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <box>
-            <size>0.05 0.01 0.05</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-    <joint name='wheel_lb_joint' type='revolute'>
-      <pose relative_to='wheel_lb_round_table'>0 -0.05 0 0 1.5708 0</pose>
-      <parent>wheel_lb_round_table</parent>
-      <child>wheel_lb</child>
-      <axis>
-        <xyz>0 0 -1</xyz>
-        <limit>
-          <effort>6</effort>
-          <velocity>60</velocity>
-          <lower>-1e+16</lower>
-          <upper>1e+16</upper>
-        </limit>
-        <dynamics>
-          <damping>0.1</damping>
-          <friction>0</friction>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
-        </dynamics>
-      </axis>
-    </joint>
-    <link name='wheel_lb'>
-      <pose relative_to='wheel_lb_joint'>0 0 0 0 -0 0</pose>
-      <inertial>
-        <pose>0 0 0 0 -0 0</pose>
-        <mass>0.5</mass>
-        <inertia>
-          <ixx>0.000257292</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>0.000257292</iyy>
-          <iyz>0</iyz>
-          <izz>0.00030625</izz>
-        </inertia>
-      </inertial>
-      <collision name='wheel_lb_collision'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <cylinder>
-            <length>0.05</length>
-            <radius>0.035</radius>
-          </cylinder>
-        </geometry>
-      </collision>
-      <visual name='wheel_lb_visual'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <cylinder>
-            <length>0.05</length>
-            <radius>0.035</radius>
-          </cylinder>
-        </geometry>
-      </visual>
-    </link>
-    <joint name='wheel_lf_angular_joint' type='revolute'>
-      <pose relative_to='base_link'>0.22 0.22 0.085 1.5708 -0 0</pose>
-      <parent>base_link</parent>
-      <child>wheel_lf_round_table</child>
-      <axis>
-        <xyz>0 1 0</xyz>
-        <limit>
-          <effort>6</effort>
-          <velocity>12</velocity>
-          <lower>-1e+16</lower>
-          <upper>1e+16</upper>
-        </limit>
-        <dynamics>
-          <damping>0.1</damping>
-          <friction>0</friction>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
-        </dynamics>
-      </axis>
-    </joint>
-    <link name='wheel_lf_round_table'>
-      <pose relative_to='wheel_lf_angular_joint'>0 0 0 0 -0 0</pose>
-      <inertial>
-        <pose>0 0 0 0 -0 0</pose>
-        <mass>0.1</mass>
-        <inertia>
-          <ixx>2.16667e-05</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>4.16667e-05</iyy>
-          <iyz>0</iyz>
-          <izz>2.16667e-05</izz>
-        </inertia>
-      </inertial>
-      <collision name='wheel_lf_round_table_collision'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <box>
-            <size>0.0475 0.0095 0.0475</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name='wheel_lf_round_table_visual'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <box>
-            <size>0.05 0.01 0.05</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-    <joint name='wheel_lf_joint' type='revolute'>
-      <pose relative_to='wheel_lf_round_table'>0 -0.05 0 0 1.5708 0</pose>
-      <parent>wheel_lf_round_table</parent>
-      <child>wheel_lf</child>
-      <axis>
-        <xyz>0 0 -1</xyz>
-        <limit>
-          <effort>6</effort>
-          <velocity>60</velocity>
-          <lower>-1e+16</lower>
-          <upper>1e+16</upper>
-        </limit>
-        <dynamics>
-          <damping>0.1</damping>
-          <friction>0</friction>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
-        </dynamics>
-      </axis>
-    </joint>
-    <link name='wheel_lf'>
-      <pose relative_to='wheel_lf_joint'>0 0 0 0 -0 0</pose>
-      <inertial>
-        <pose>0 0 0 0 -0 0</pose>
-        <mass>0.5</mass>
-        <inertia>
-          <ixx>0.000257292</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>0.000257292</iyy>
-          <iyz>0</iyz>
-          <izz>0.00030625</izz>
-        </inertia>
-      </inertial>
-      <collision name='wheel_lf_collision'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <cylinder>
-            <length>0.05</length>
-            <radius>0.035</radius>
-          </cylinder>
-        </geometry>
-      </collision>
-      <visual name='wheel_lf_visual'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <cylinder>
-            <length>0.05</length>
-            <radius>0.035</radius>
-          </cylinder>
-        </geometry>
-      </visual>
-    </link>
-    <joint name='wheel_rb_angular_joint' type='revolute'>
-      <pose relative_to='base_link'>-0.22 -0.22 0.085 1.5708 -0 0</pose>
-      <parent>base_link</parent>
-      <child>wheel_rb_round_table</child>
-      <axis>
-        <xyz>0 1 0</xyz>
-        <limit>
-          <effort>6</effort>
-          <velocity>12</velocity>
-          <lower>-1e+16</lower>
-          <upper>1e+16</upper>
-        </limit>
-        <dynamics>
-          <damping>0.1</damping>
-          <friction>0</friction>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
-        </dynamics>
-      </axis>
-    </joint>
-    <link name='wheel_rb_round_table'>
-      <pose relative_to='wheel_rb_angular_joint'>0 0 0 0 -0 0</pose>
-      <inertial>
-        <pose>0 0 0 0 -0 0</pose>
-        <mass>0.1</mass>
-        <inertia>
-          <ixx>2.16667e-05</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>4.16667e-05</iyy>
-          <iyz>0</iyz>
-          <izz>2.16667e-05</izz>
-        </inertia>
-      </inertial>
-      <collision name='wheel_rb_round_table_collision'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <box>
-            <size>0.0475 0.0095 0.0475</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name='wheel_rb_round_table_visual'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <box>
-            <size>0.05 0.01 0.05</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-    <joint name='wheel_rb_joint' type='revolute'>
-      <pose relative_to='wheel_rb_round_table'>0 -0.05 0 0 1.5708 0</pose>
-      <parent>wheel_rb_round_table</parent>
-      <child>wheel_rb</child>
-      <axis>
-        <xyz>0 0 -1</xyz>
-        <limit>
-          <effort>6</effort>
-          <velocity>60</velocity>
-          <lower>-1e+16</lower>
-          <upper>1e+16</upper>
-        </limit>
-        <dynamics>
-          <damping>0.1</damping>
-          <friction>0</friction>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
-        </dynamics>
-      </axis>
-    </joint>
-    <link name='wheel_rb'>
-      <pose relative_to='wheel_rb_joint'>0 0 0 0 -0 0</pose>
-      <inertial>
-        <pose>0 0 0 0 -0 0</pose>
-        <mass>0.5</mass>
-        <inertia>
-          <ixx>0.000257292</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>0.000257292</iyy>
-          <iyz>0</iyz>
-          <izz>0.00030625</izz>
-        </inertia>
-      </inertial>
-      <collision name='wheel_rb_collision'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <cylinder>
-            <length>0.05</length>
-            <radius>0.035</radius>
-          </cylinder>
-        </geometry>
-      </collision>
-      <visual name='wheel_rb_visual'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <cylinder>
-            <length>0.05</length>
-            <radius>0.035</radius>
-          </cylinder>
-        </geometry>
-      </visual>
-    </link>
-    <joint name='wheel_rf_angular_joint' type='revolute'>
-      <pose relative_to='base_link'>0.22 -0.22 0.085 1.5708 -0 0</pose>
-      <parent>base_link</parent>
-      <child>wheel_rf_round_table</child>
-      <axis>
-        <xyz>0 1 0</xyz>
-        <limit>
-          <effort>6</effort>
-          <velocity>12</velocity>
-          <lower>-1e+16</lower>
-          <upper>1e+16</upper>
-        </limit>
-        <dynamics>
-          <damping>0.1</damping>
-          <friction>0</friction>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
-        </dynamics>
-      </axis>
-    </joint>
-    <link name='wheel_rf_round_table'>
-      <pose relative_to='wheel_rf_angular_joint'>0 0 0 0 -0 0</pose>
-      <inertial>
-        <pose>0 0 0 0 -0 0</pose>
-        <mass>0.1</mass>
-        <inertia>
-          <ixx>2.16667e-05</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>4.16667e-05</iyy>
-          <iyz>0</iyz>
-          <izz>2.16667e-05</izz>
-        </inertia>
-      </inertial>
-      <collision name='wheel_rf_round_table_collision'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <box>
-            <size>0.0475 0.0095 0.0475</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name='wheel_rf_round_table_visual'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <box>
-            <size>0.05 0.01 0.05</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-    <joint name='wheel_rf_joint' type='revolute'>
-      <pose relative_to='wheel_rf_round_table'>0 -0.05 0 0 1.5708 0</pose>
-      <parent>wheel_rf_round_table</parent>
-      <child>wheel_rf</child>
-      <axis>
-        <xyz>0 0 -1</xyz>
-        <limit>
-          <effort>6</effort>
-          <velocity>60</velocity>
-          <lower>-1e+16</lower>
-          <upper>1e+16</upper>
-        </limit>
-        <dynamics>
-          <damping>0.1</damping>
-          <friction>0</friction>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
-        </dynamics>
-      </axis>
-    </joint>
-    <link name='wheel_rf'>
-      <pose relative_to='wheel_rf_joint'>0 0 0 0 -0 0</pose>
-      <inertial>
-        <pose>0 0 0 0 -0 0</pose>
-        <mass>0.5</mass>
-        <inertia>
-          <ixx>0.000257292</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>0.000257292</iyy>
-          <iyz>0</iyz>
-          <izz>0.00030625</izz>
-        </inertia>
-      </inertial>
-      <collision name='wheel_rf_collision'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <cylinder>
-            <length>0.05</length>
-            <radius>0.035</radius>
-          </cylinder>
-        </geometry>
-      </collision>
-      <visual name='wheel_rf_visual'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <cylinder>
-            <length>0.05</length>
-            <radius>0.035</radius>
-          </cylinder>
-        </geometry>
-      </visual>
-    </link>
-  </model>
+<?xml version="1.0" ?>
+<sdf version="1.6">
+    <model name='rr_swerve'>
+        <link name='base_link'>
+            <inertial>
+                <pose>0 0 0.195 0 -0 0</pose>
+                <mass>10</mass>
+                <inertia>
+                    <ixx>0.228167</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>0.228167</iyy>
+                    <iyz>0</iyz>
+                    <izz>0.228167</izz>
+                </inertia>
+            </inertial>
+            <collision name='base_link_fixed_joint_lump__body_collision'>
+                <pose>0 0 0.195 0 -0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.3515 0.3515 0.3515</size>
+                    </box>
+                </geometry>
+            </collision>
+            <visual name='base_link_fixed_joint_lump__body_visual'>
+                <pose>0 0 0.195 0 -0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.37 0.37 0.37</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+        <joint name='imu_joint' type='revolute'>
+            <pose relative_to='base_link'>0 0 0.1 0 -0 0</pose>
+            <parent>base_link</parent>
+            <child>imu_link</child>
+            <axis>
+                <xyz>1 0 0</xyz>
+                <limit>
+                    <lower>0</lower>
+                    <upper>0</upper>
+                    <effort>0</effort>
+                    <velocity>0</velocity>
+                </limit>
+                <dynamics>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                </dynamics>
+            </axis>
+        </joint>
+        <link name='imu_link'>
+            <pose relative_to='imu_joint'>0 0 0 0 -0 0</pose>
+            <inertial>
+                <pose>0 0 0 0 -0 0</pose>
+                <mass>0.1</mass>
+                <inertia>
+                    <ixx>0.0001</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>0.0001</iyy>
+                    <iyz>0</iyz>
+                    <izz>0.0001</izz>
+                </inertia>
+            </inertial>
+            <collision name='imu_link_collision'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.1 0.1 0.1</size>
+                    </box>
+                </geometry>
+            </collision>
+            <visual name='imu_link_visual'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.1 0.1 0.1</size>
+                    </box>
+                </geometry>
+            </visual>
+            <sensor name="imu_sensor" type="imu">
+                <always_on>1</always_on>
+                <update_rate>1</update_rate>
+                <visualize>true</visualize>
+                <topic>imu</topic>
+            </sensor>
+        </link>
+        <joint name='lidar_joint' type='revolute'>
+            <pose relative_to='base_link'>0.205 0 0.04 0 -0 0</pose>
+            <parent>base_link</parent>
+            <child>lidar_link</child>
+            <axis>
+                <xyz>1 0 0</xyz>
+                <limit>
+                    <lower>0</lower>
+                    <upper>0</upper>
+                    <effort>0</effort>
+                    <velocity>0</velocity>
+                </limit>
+                <dynamics>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                </dynamics>
+            </axis>
+        </joint>
+        <link name='lidar_link'>
+            <pose relative_to='lidar_joint'>0 0 0 0 -0 0</pose>
+            <inertial>
+                <pose>0 0 0 0 -0 0</pose>
+                <mass>0.2</mass>
+                <inertia>
+                    <ixx>0.0001</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>0.0001</iyy>
+                    <iyz>0</iyz>
+                    <izz>0.0001</izz>
+                </inertia>
+            </inertial>
+            <collision name='lidar_link_collision'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <cylinder>
+                        <length>0.06</length>
+                        <radius>0.02</radius>
+                    </cylinder>
+                </geometry>
+            </collision>
+            <visual name='lidar_link_visual'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <cylinder>
+                        <length>0.06</length>
+                        <radius>0.02</radius>
+                    </cylinder>
+                </geometry>
+            </visual>
+            <sensor type="gpu_lidar" name="lidar">
+                <topic>lidar</topic>
+                <pose>0 0 0 0 0 0</pose>
+                <visualize>false</visualize>
+                <update_rate>10</update_rate>
+                <lidar>
+                    <scan>
+                        <horizontal>
+                            <samples>400</samples>
+                            <resolution>1</resolution>
+                            <min_angle>-3.05433</min_angle>
+                            <max_angle>3.05433</max_angle>
+                        </horizontal>
+                    </scan>
+                    <range>
+                        <min>0.10</min>
+                        <max>20.0</max>
+                        <resolution>0.01</resolution>
+                    </range>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0.0</mean>
+                        <stddev>0.01</stddev>
+                    </noise>
+                </lidar>
+                <always_on>1</always_on>
+                <visualize>true</visualize>
+            </sensor>
+        </link>
+        <joint name='wheel_lb_angular_joint' type='revolute'>
+            <pose relative_to='base_link'>-0.22 0.22 0.085 1.5708 -0 0</pose>
+            <parent>base_link</parent>
+            <child>wheel_lb_round_table</child>
+            <axis>
+                <xyz>0 1 0</xyz>
+                <limit>
+                    <effort>6</effort>
+                    <velocity>12</velocity>
+                    <lower>-1e+16</lower>
+                    <upper>1e+16</upper>
+                </limit>
+                <dynamics>
+                    <damping>0.1</damping>
+                    <friction>0</friction>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                </dynamics>
+            </axis>
+        </joint>
+        <link name='wheel_lb_round_table'>
+            <pose relative_to='wheel_lb_angular_joint'>0 0 0 0 -0 0</pose>
+            <inertial>
+                <pose>0 0 0 0 -0 0</pose>
+                <mass>0.1</mass>
+                <inertia>
+                    <ixx>2.16667e-05</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>4.16667e-05</iyy>
+                    <iyz>0</iyz>
+                    <izz>2.16667e-05</izz>
+                </inertia>
+            </inertial>
+            <collision name='wheel_lb_round_table_collision'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.0475 0.0095 0.0475</size>
+                    </box>
+                </geometry>
+            </collision>
+            <visual name='wheel_lb_round_table_visual'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.05 0.01 0.05</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+        <joint name='wheel_lb_joint' type='revolute'>
+            <pose relative_to='wheel_lb_round_table'>0 -0.05 0 0 1.5708 0</pose>
+            <parent>wheel_lb_round_table</parent>
+            <child>wheel_lb</child>
+            <axis>
+                <xyz>0 0 -1</xyz>
+                <limit>
+                    <effort>6</effort>
+                    <velocity>60</velocity>
+                    <lower>-1e+16</lower>
+                    <upper>1e+16</upper>
+                </limit>
+                <dynamics>
+                    <damping>0.1</damping>
+                    <friction>0</friction>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                </dynamics>
+            </axis>
+        </joint>
+        <link name='wheel_lb'>
+            <pose relative_to='wheel_lb_joint'>0 0 0 0 -0 0</pose>
+            <inertial>
+                <pose>0 0 0 0 -0 0</pose>
+                <mass>0.5</mass>
+                <inertia>
+                    <ixx>0.000257292</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>0.000257292</iyy>
+                    <iyz>0</iyz>
+                    <izz>0.00030625</izz>
+                </inertia>
+            </inertial>
+            <collision name='wheel_lb_collision'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <cylinder>
+                        <length>0.05</length>
+                        <radius>0.035</radius>
+                    </cylinder>
+                </geometry>
+            </collision>
+            <visual name='wheel_lb_visual'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <cylinder>
+                        <length>0.05</length>
+                        <radius>0.035</radius>
+                    </cylinder>
+                </geometry>
+            </visual>
+        </link>
+        <joint name='wheel_lf_angular_joint' type='revolute'>
+            <pose relative_to='base_link'>0.22 0.22 0.085 1.5708 -0 0</pose>
+            <parent>base_link</parent>
+            <child>wheel_lf_round_table</child>
+            <axis>
+                <xyz>0 1 0</xyz>
+                <limit>
+                    <effort>6</effort>
+                    <velocity>12</velocity>
+                    <lower>-1e+16</lower>
+                    <upper>1e+16</upper>
+                </limit>
+                <dynamics>
+                    <damping>0.1</damping>
+                    <friction>0</friction>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                </dynamics>
+            </axis>
+        </joint>
+        <link name='wheel_lf_round_table'>
+            <pose relative_to='wheel_lf_angular_joint'>0 0 0 0 -0 0</pose>
+            <inertial>
+                <pose>0 0 0 0 -0 0</pose>
+                <mass>0.1</mass>
+                <inertia>
+                    <ixx>2.16667e-05</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>4.16667e-05</iyy>
+                    <iyz>0</iyz>
+                    <izz>2.16667e-05</izz>
+                </inertia>
+            </inertial>
+            <collision name='wheel_lf_round_table_collision'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.0475 0.0095 0.0475</size>
+                    </box>
+                </geometry>
+            </collision>
+            <visual name='wheel_lf_round_table_visual'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.05 0.01 0.05</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+        <joint name='wheel_lf_joint' type='revolute'>
+            <pose relative_to='wheel_lf_round_table'>0 -0.05 0 0 1.5708 0</pose>
+            <parent>wheel_lf_round_table</parent>
+            <child>wheel_lf</child>
+            <axis>
+                <xyz>0 0 -1</xyz>
+                <limit>
+                    <effort>6</effort>
+                    <velocity>60</velocity>
+                    <lower>-1e+16</lower>
+                    <upper>1e+16</upper>
+                </limit>
+                <dynamics>
+                    <damping>0.1</damping>
+                    <friction>0</friction>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                </dynamics>
+            </axis>
+        </joint>
+        <link name='wheel_lf'>
+            <pose relative_to='wheel_lf_joint'>0 0 0 0 -0 0</pose>
+            <inertial>
+                <pose>0 0 0 0 -0 0</pose>
+                <mass>0.5</mass>
+                <inertia>
+                    <ixx>0.000257292</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>0.000257292</iyy>
+                    <iyz>0</iyz>
+                    <izz>0.00030625</izz>
+                </inertia>
+            </inertial>
+            <collision name='wheel_lf_collision'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <cylinder>
+                        <length>0.05</length>
+                        <radius>0.035</radius>
+                    </cylinder>
+                </geometry>
+            </collision>
+            <visual name='wheel_lf_visual'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <cylinder>
+                        <length>0.05</length>
+                        <radius>0.035</radius>
+                    </cylinder>
+                </geometry>
+            </visual>
+        </link>
+        <joint name='wheel_rb_angular_joint' type='revolute'>
+            <pose relative_to='base_link'>-0.22 -0.22 0.085 1.5708 -0 0</pose>
+            <parent>base_link</parent>
+            <child>wheel_rb_round_table</child>
+            <axis>
+                <xyz>0 1 0</xyz>
+                <limit>
+                    <effort>6</effort>
+                    <velocity>12</velocity>
+                    <lower>-1e+16</lower>
+                    <upper>1e+16</upper>
+                </limit>
+                <dynamics>
+                    <damping>0.1</damping>
+                    <friction>0</friction>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                </dynamics>
+            </axis>
+        </joint>
+        <link name='wheel_rb_round_table'>
+            <pose relative_to='wheel_rb_angular_joint'>0 0 0 0 -0 0</pose>
+            <inertial>
+                <pose>0 0 0 0 -0 0</pose>
+                <mass>0.1</mass>
+                <inertia>
+                    <ixx>2.16667e-05</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>4.16667e-05</iyy>
+                    <iyz>0</iyz>
+                    <izz>2.16667e-05</izz>
+                </inertia>
+            </inertial>
+            <collision name='wheel_rb_round_table_collision'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.0475 0.0095 0.0475</size>
+                    </box>
+                </geometry>
+            </collision>
+            <visual name='wheel_rb_round_table_visual'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.05 0.01 0.05</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+        <joint name='wheel_rb_joint' type='revolute'>
+            <pose relative_to='wheel_rb_round_table'>0 -0.05 0 0 1.5708 0</pose>
+            <parent>wheel_rb_round_table</parent>
+            <child>wheel_rb</child>
+            <axis>
+                <xyz>0 0 -1</xyz>
+                <limit>
+                    <effort>6</effort>
+                    <velocity>60</velocity>
+                    <lower>-1e+16</lower>
+                    <upper>1e+16</upper>
+                </limit>
+                <dynamics>
+                    <damping>0.1</damping>
+                    <friction>0</friction>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                </dynamics>
+            </axis>
+        </joint>
+        <link name='wheel_rb'>
+            <pose relative_to='wheel_rb_joint'>0 0 0 0 -0 0</pose>
+            <inertial>
+                <pose>0 0 0 0 -0 0</pose>
+                <mass>0.5</mass>
+                <inertia>
+                    <ixx>0.000257292</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>0.000257292</iyy>
+                    <iyz>0</iyz>
+                    <izz>0.00030625</izz>
+                </inertia>
+            </inertial>
+            <collision name='wheel_rb_collision'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <cylinder>
+                        <length>0.05</length>
+                        <radius>0.035</radius>
+                    </cylinder>
+                </geometry>
+            </collision>
+            <visual name='wheel_rb_visual'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <cylinder>
+                        <length>0.05</length>
+                        <radius>0.035</radius>
+                    </cylinder>
+                </geometry>
+            </visual>
+        </link>
+        <joint name='wheel_rf_angular_joint' type='revolute'>
+            <pose relative_to='base_link'>0.22 -0.22 0.085 1.5708 -0 0</pose>
+            <parent>base_link</parent>
+            <child>wheel_rf_round_table</child>
+            <axis>
+                <xyz>0 1 0</xyz>
+                <limit>
+                    <effort>6</effort>
+                    <velocity>12</velocity>
+                    <lower>-1e+16</lower>
+                    <upper>1e+16</upper>
+                </limit>
+                <dynamics>
+                    <damping>0.1</damping>
+                    <friction>0</friction>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                </dynamics>
+            </axis>
+        </joint>
+        <link name='wheel_rf_round_table'>
+            <pose relative_to='wheel_rf_angular_joint'>0 0 0 0 -0 0</pose>
+            <inertial>
+                <pose>0 0 0 0 -0 0</pose>
+                <mass>0.1</mass>
+                <inertia>
+                    <ixx>2.16667e-05</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>4.16667e-05</iyy>
+                    <iyz>0</iyz>
+                    <izz>2.16667e-05</izz>
+                </inertia>
+            </inertial>
+            <collision name='wheel_rf_round_table_collision'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.0475 0.0095 0.0475</size>
+                    </box>
+                </geometry>
+            </collision>
+            <visual name='wheel_rf_round_table_visual'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.05 0.01 0.05</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+        <joint name='wheel_rf_joint' type='revolute'>
+            <pose relative_to='wheel_rf_round_table'>0 -0.05 0 0 1.5708 0</pose>
+            <parent>wheel_rf_round_table</parent>
+            <child>wheel_rf</child>
+            <axis>
+                <xyz>0 0 -1</xyz>
+                <limit>
+                    <effort>6</effort>
+                    <velocity>60</velocity>
+                    <lower>-1e+16</lower>
+                    <upper>1e+16</upper>
+                </limit>
+                <dynamics>
+                    <damping>0.1</damping>
+                    <friction>0</friction>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                </dynamics>
+            </axis>
+        </joint>
+        <link name='wheel_rf'>
+            <pose relative_to='wheel_rf_joint'>0 0 0 0 -0 0</pose>
+            <inertial>
+                <pose>0 0 0 0 -0 0</pose>
+                <mass>0.5</mass>
+                <inertia>
+                    <ixx>0.000257292</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>0.000257292</iyy>
+                    <iyz>0</iyz>
+                    <izz>0.00030625</izz>
+                </inertia>
+            </inertial>
+            <collision name='wheel_rf_collision'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <cylinder>
+                        <length>0.05</length>
+                        <radius>0.035</radius>
+                    </cylinder>
+                </geometry>
+            </collision>
+            <visual name='wheel_rf_visual'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <cylinder>
+                        <length>0.05</length>
+                        <radius>0.035</radius>
+                    </cylinder>
+                </geometry>
+            </visual>
+        </link>
+        <plugin name='ignition::gazebo::systems::JointController' filename='ignition-gazebo-joint-controller-system'>
+            <joint_name>wheel_rf_joint</joint_name>
+            <joint_name>wheel_rf_angular_joint</joint_name>
+        </plugin>
+        <plugin name='ignition::gazebo::systems::JointController' filename='ignition-gazebo-joint-controller-system'>
+            <joint_name>wheel_lf_joint</joint_name>
+            <joint_name>wheel_lf_angular_joint</joint_name>
+        </plugin>
+        <plugin name='ignition::gazebo::systems::JointController' filename='ignition-gazebo-joint-controller-system'>
+            <joint_name>wheel_rb_joint</joint_name>
+            <joint_name>wheel_rb_angular_joint</joint_name>
+        </plugin>
+        <plugin name='ignition::gazebo::systems::JointController' filename='ignition-gazebo-joint-controller-system'>
+            <joint_name>wheel_lb_joint</joint_name>
+            <joint_name>wheel_lb_angular_joint</joint_name>
+        </plugin>
+        <static>0</static>
+        <plugin filename="ignition-gazebo-velocity-control-system" name="ignition::gazebo::systems::VelocityControl">
+        </plugin>
+    </model>
 </sdf>
+

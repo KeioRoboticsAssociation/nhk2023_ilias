@@ -97,10 +97,12 @@
             <dynamics damping="0.1"/>
         </joint>
 
-        <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
-            <joint_name>wheel_${rl}_angular_joint</joint_name>
-            <initial_velocity>5.0</initial_velocity>
-        </plugin>
+        <gazebo>
+            <plugin filename="ignition-gazebo-joint-controller-system" name="ignition::gazebo::systems::JointController">
+                <joint_name>wheel_${rl}_joint</joint_name>
+                <joint_name>wheel_${rl}_angular_joint</joint_name>
+            </plugin>
+        </gazebo>
 
     </xacro:macro>
 </robot>

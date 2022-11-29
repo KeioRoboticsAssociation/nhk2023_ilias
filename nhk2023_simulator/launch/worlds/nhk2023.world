@@ -13,7 +13,7 @@
         <plugin filename="libignition-gazebo-scene-broadcaster-system.so" name="ignition::gazebo::systems::SceneBroadcaster">
         </plugin>
         <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors">
-            <render_engine>ogre2</render_engine>
+            <render_engine>ogre</render_engine>
         </plugin>
         <plugin filename="libignition-gazebo-imu-system.so" name="ignition::gazebo::systems::Imu">
         </plugin>
@@ -54,7 +54,7 @@
         </model>
 
         <include>
-            <uri>file://worlds/models/swerve_robot.urdf</uri>
+            <uri>file://worlds/models/RR.sdf</uri>
             <pose>5 0 0 0 0 0</pose>
         </include>
 

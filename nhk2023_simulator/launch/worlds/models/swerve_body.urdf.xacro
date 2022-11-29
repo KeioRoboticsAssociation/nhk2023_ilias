@@ -2,9 +2,10 @@
 <robot name="body"
     xmlns:xacro="http://ros.org/wiki/xacro">
 
-    <link name="base_link" />
+    <link name="base_link"/>
 
-    <xacro:property name="b_m" value="5.58"/>
+
+    <xacro:property name="b_m" value="10"/>
     <xacro:property name="b_m2" value="${b_m/12}"/>
     <!--for calculation of inertia-->
     <xacro:property name="b_w" value="0.37"/>
@@ -33,7 +34,7 @@
         <parent link="base_link" />
         <child link="body" />
         <origin xyz="0 0 0.195" rpy="0 0 0" />
+        <!-- <limit lower="0" upper="0" effort="0" velocity="0" /> -->
     </joint>
-
 </robot>
 

@@ -14,6 +14,6 @@
     <xacro:wheel rl="rb" parent="base_link" />
     <xacro:wheel rl="lb" parent="base_link" />
 
-    <xacro:laser_macro prefix="rplidar" parent="base_link" xyz="0.205 0 0.04" rpy="0 0 0"/>
+    <xacro:laser_macro prefix="lidar" parent="base_link" xyz="0.205 0 0.04" rpy="0 0 0"/>
     <xacro:imu_macro prefix="imu" parent="base_link" xyz="0.0 0 0.10" />
 </robot>

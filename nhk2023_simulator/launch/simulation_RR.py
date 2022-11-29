@@ -36,7 +36,7 @@ def generate_launch_description():
         package='ros_gz_bridge',
         executable='parameter_bridge',
         arguments=[
-            '/world/nhk2023_field/model/er/link/base_link/sensor/lidar/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan', #Lidar
+            '/lidar@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan', #Lidar
             '/imu@sensor_msgs/msg/Imu[gz.msgs.IMU', #IMU
             # '/world/nhk2023_field/model/er/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist', #cmd_vel
             '/model/er/pose@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V' #odm_robotの位置情報
@@ -46,7 +46,7 @@ def generate_launch_description():
         remappings=[
                 ('/world/nhk2023_field/model/er/link/base_link/sensor/lidar/scan', '/er/lidar/scan'),
                 ('/model/er/pose', '/er/pose'),
-                ('/world/nhk2023_field/model/er/cmd_vel','/er/cmd_vel')
+                # ('/world/nhk2023_field/model/er/cmd_vel','/er/cmd_vel')
                 #ここでremappingすると、rosのトピック名を変えられる
             ],
     )
