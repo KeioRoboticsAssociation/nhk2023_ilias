@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(nhk2023_simulator)
+project(robot_ctrl)
 
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
