@@ -54,7 +54,7 @@
         </model>
 
         <include>
-            <uri>file://worlds/models/RR.sdf</uri>
+            <uri>file://worlds/models/swerve_robot.sdf</uri>
             <pose>5 0 0 0 0 0</pose>
         </include>
 
