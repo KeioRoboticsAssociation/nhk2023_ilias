@@ -9,33 +9,24 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(tf2_ros REQUIRED)
-find_package(nav_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 
-add_executable(odom_tf_publisher src/odom_tf_publisher.cpp)
-ament_target_dependencies(odom_tf_publisher
+add_executable(robot_ctrl src/robot_ctrl.cpp src/joy_commander.cpp)
+ament_target_dependencies(robot_ctrl
   rclcpp
-  nav_msgs
-  tf2_ros
-)
-
-add_executable(er_odom_publisher src/er_odom_publisher.cpp)
-ament_target_dependencies(er_odom_publisher
-  rclcpp
-  nav_msgs
-  tf2_ros
-  std_msgs
   geometry_msgs
+  std_msgs
+  sensor_msgs
 )
 
 
 install(TARGETS
-  odom_tf_publisher
-  er_odom_publisher
+  robot_ctrl
   DESTINATION lib/${PROJECT_NAME}
 )
 
