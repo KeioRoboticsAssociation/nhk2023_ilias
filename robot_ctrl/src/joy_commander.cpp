@@ -8,7 +8,7 @@
 class JoyCommander {
  public:
   JoyCommander(){};
-  static geometry_msgs::msg::Twist joy_cmd_vel;
+  geometry_msgs::msg::Twist joy_cmd_vel;
 
   enum class button {
     A = 0,
@@ -34,11 +34,9 @@ class JoyCommander {
     DPAD_Y = 7,
   };
 
-  void joy_callback(const sensor_msgs::msg::Joy::SharedPtr &msg);
+  void joy_callback(const sensor_msgs::msg::Joy &msg) {
+    joy_cmd_vel.linear.x = msg.axes[static_cast<int>(axis::LY)];
+    joy_cmd_vel.linear.y = msg.axes[static_cast<int>(axis::LX)];
+    joy_cmd_vel.angular.z = msg.axes[static_cast<int>(axis::RX)];
+  }
 };
-
-void JoyCommander::joy_callback(const sensor_msgs::msg::Joy::SharedPtr &msg) {
-  joy_cmd_vel.linear.x = msg->axes[static_cast<int>(JoyCommander::axis::LY)];
-  joy_cmd_vel.linear.y = msg->axes[static_cast<int>(JoyCommander::axis::LX)];
-  joy_cmd_vel.angular.z = msg->axes[static_cast<int>(JoyCommander::axis::RX)];
-}

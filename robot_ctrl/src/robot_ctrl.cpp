@@ -8,7 +8,7 @@
 
 using namespace std::chrono_literals;
 
-class robot_ctrl : public rclcpp::Node {
+class robot_ctrl : public rclcpp::Node, public JoyCommander {
  private:
   enum class Mode {
     MANUAL,
@@ -33,7 +33,6 @@ class robot_ctrl : public rclcpp::Node {
 
 robot_ctrl::robot_ctrl() : Node("robot_ctrl") {
   RCLCPP_INFO(this->get_logger(), "robot_ctrl node is started");
-  JoyCommander joy_commander;
   // loop node at 10Hz
   auto timer = this->create_wall_timer(
       100ms, std::bind(&robot_ctrl::timer_callback, this));
@@ -42,8 +41,7 @@ robot_ctrl::robot_ctrl() : Node("robot_ctrl") {
   // subscribe joy topic
   joy_sub_ = this->create_subscription<sensor_msgs::msg::Joy>(
       "joy", 10,
-      std::bind(&JoyCommander::joy_callback, &joy_commander,
-                std::placeholders::_1));
+      std::bind(&robot_ctrl::joy_callback, this, std::placeholders::_1));
   // publish cmd_vel topic
   cmd_vel_pub_ =
       this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
