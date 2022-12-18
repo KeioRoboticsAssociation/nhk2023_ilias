@@ -1,0 +1,11 @@
+map_server1:
+    ros__parameters:
+        yaml_filename: "side_area_map.yaml"
+
+map_server2:
+    ros__parameters:
+        yaml_filename: "angkorwat_area_map.yaml"
+
+map_server3:
+    ros__parameters:
+        yaml_filename: "angkorcenter_area_map.yaml"
