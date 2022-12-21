@@ -1,6 +1,7 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
-
+# include
+from launch.actions import IncludeLaunchDescription
 import os
 from ament_index_python.packages import get_package_share_directory
 
@@ -46,9 +47,20 @@ def generate_launch_description():
         output='screen'
     )
 
+    # include launch file from wheelctrl_ros
+    wheelctrl_ros2_launch_file = os.path.join(
+        get_package_share_directory('wheelctrl_ros2'),
+        'launch',
+        'wheelctrl_ros2_launch.py')
+
+    wheelctrl_ros_launch = IncludeLaunchDescription(
+        launch_description_source=wheelctrl_ros2_launch_file
+    )
+
     return LaunchDescription([
         joint_state_publisher_node,
         robot_state_publisher_node,
         map_server_node,
-        static_map_odom_tf_broadcaster_node
+        static_map_odom_tf_broadcaster_node,
+        wheelctrl_ros_launch
     ])
