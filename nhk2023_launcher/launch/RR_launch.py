@@ -57,10 +57,21 @@ def generate_launch_description():
         launch_description_source=wheelctrl_ros2_launch_file
     )
 
+    robot_ctrl_launch_file = os.path.join(
+        get_package_share_directory('robot_ctrl'),
+        'launch',
+        'robot_ctrl_launch.py')
+
+    robot_ctrl_launch = IncludeLaunchDescription(
+        launch_description_source=robot_ctrl_launch_file
+    )
+
+
     return LaunchDescription([
         joint_state_publisher_node,
         robot_state_publisher_node,
         map_server_node,
         static_map_odom_tf_broadcaster_node,
-        wheelctrl_ros_launch
+        wheelctrl_ros_launch,
+        robot_ctrl_launch
     ])
