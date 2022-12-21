@@ -26,6 +26,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'static_odom_map_broadcaster = nhk2023_launcher.static_odom_map_broadcaster:main',
         ],
     },
 )

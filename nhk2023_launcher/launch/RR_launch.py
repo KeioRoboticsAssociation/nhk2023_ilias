@@ -30,7 +30,25 @@ def generate_launch_description():
         parameters=[{'robot_description': robot_description}, {'rate': 100}]
     )
 
+    map_server_node = Node(
+        package='nav2_map_server',
+        executable='map_server',
+        name='map_server',
+        output='screen',
+        emulate_tty=True, # https://github.com/ros2/launch/issues/188
+        arguments=['config/map/combined_params.yaml']
+    )
+
+    static_map_odom_tf_broadcaster_node = Node(
+        package='nhk2023_launcher',
+        executable='static_odom_map_broadcaster',
+        name='static_odom_map_broadcaster',
+        output='screen'
+    )
+
     return LaunchDescription([
         joint_state_publisher_node,
-        robot_state_publisher_node
+        robot_state_publisher_node,
+        map_server_node,
+        static_map_odom_tf_broadcaster_node
     ])
