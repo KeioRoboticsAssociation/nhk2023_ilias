@@ -1,6 +1,7 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
-
+# include
+from launch.actions import IncludeLaunchDescription
 import os
 from ament_index_python.packages import get_package_share_directory
 
@@ -30,7 +31,36 @@ def generate_launch_description():
         parameters=[{'robot_description': robot_description}, {'rate': 100}]
     )
 
+    map_server_node = Node(
+        package='nav2_map_server',
+        executable='map_server',
+        name='map_server',
+        output='screen',
+        emulate_tty=True, # https://github.com/ros2/launch/issues/188
+        arguments=['config/map/combined_params.yaml']
+    )
+
+    static_map_odom_tf_broadcaster_node = Node(
+        package='nhk2023_launcher',
+        executable='static_odom_map_broadcaster',
+        name='static_odom_map_broadcaster',
+        output='screen'
+    )
+
+    # include launch file from wheelctrl_ros
+    wheelctrl_ros2_launch_file = os.path.join(
+        get_package_share_directory('wheelctrl_ros2'),
+        'launch',
+        'wheelctrl_ros2_launch.py')
+
+    wheelctrl_ros_launch = IncludeLaunchDescription(
+        launch_description_source=wheelctrl_ros2_launch_file
+    )
+
     return LaunchDescription([
         joint_state_publisher_node,
-        robot_state_publisher_node
+        robot_state_publisher_node,
+        map_server_node,
+        static_map_odom_tf_broadcaster_node,
+        wheelctrl_ros_launch
     ])
