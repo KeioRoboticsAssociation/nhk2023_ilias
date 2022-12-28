@@ -14,7 +14,7 @@ import xacro
 def generate_launch_description():
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='True')
-    world_file_name = 'nhk2023.world'
+    world_file_name = 'nhk2023.sdf'
     pkg_dir = get_package_share_directory('nhk2023_simulator')
 
     os.environ["GAZEBO_MODEL_PATH"] = os.path.join(pkg_dir, 'models')

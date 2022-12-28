@@ -6,16 +6,9 @@
       <real_time_factor>1.0</real_time_factor>
     </physics>
 
-    <plugin filename="libignition-gazebo-physics-system.so" name="ignition::gazebo::systems::Physics">
+    <plugin filename="libgazebo_ros_factory.so" name="gazebo_ros_factory">
     </plugin>
-    <plugin filename="libignition-gazebo-user-commands-system.so" name="ignition::gazebo::systems::UserCommands">
-    </plugin>
-    <plugin filename="libignition-gazebo-scene-broadcaster-system.so" name="ignition::gazebo::systems::SceneBroadcaster">
-    </plugin>
-    <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors">
-      <render_engine>ogre</render_engine>
-    </plugin>
-    <plugin filename="libignition-gazebo-imu-system.so" name="ignition::gazebo::systems::Imu">
+    <plugin filename="libgazebo_ros_init.so" name="gazebo_ros_init">
     </plugin>
 
     <light type="directional" name="sun">
@@ -54,7 +47,7 @@
     </model>
 
     <include>
-      <uri>file://worlds/models/swerve_robot.sdf</uri>
+      <uri>model://models/rr.xacro</uri>
       <pose>5 0 0.2 0 0 0</pose>
     </include>
 
