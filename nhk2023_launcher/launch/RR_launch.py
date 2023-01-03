@@ -47,20 +47,33 @@ def generate_launch_description():
         output='screen'
     )
 
-    # include launch file from wheelctrl_ros
-    wheelctrl_ros2_launch_file = os.path.join(
-        get_package_share_directory('wheelctrl_ros2'),
-        'launch',
-        'wheelctrl_ros2_launch.py')
+    wheel_ctrl = Node(
+        package='wheelctrl_ros2',
+        executable = 'wheelctrl_ros2',
+        name='wheelctrl_ros2',
+        output='screen',
+        emulate_tty = True,
+        parameters=[os.path.join(
+            get_package_share_directory('wheelctrl_ros2'),
+            'config','rr.yaml')]
+    )
 
-    wheelctrl_ros_launch = IncludeLaunchDescription(
-        launch_description_source=wheelctrl_ros2_launch_file
+    rogi_link_2 = Node(
+        package='rogilink2',
+        executable = 'rogilink2',
+        name='rogilink2',
+        output='screen',
+        emulate_tty = True,
+        arguments=['-p', os.path.join(
+            get_package_share_directory('rogilink2'),
+            'config','config.yaml')]
     )
 
     return LaunchDescription([
-        joint_state_publisher_node,
-        robot_state_publisher_node,
-        map_server_node,
-        static_map_odom_tf_broadcaster_node,
-        wheelctrl_ros_launch
+        # joint_state_publisher_node,
+        # robot_state_publisher_node,
+        # map_server_node,
+        # static_map_odom_tf_broadcaster_node,
+        wheel_ctrl,
+        rogi_link_2
     ])
