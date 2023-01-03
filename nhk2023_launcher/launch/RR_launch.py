@@ -66,7 +66,7 @@ def generate_launch_description():
         emulate_tty = True,
         arguments=['-p', os.path.join(
             get_package_share_directory('rogilink2'),
-            'config','config.yaml')]
+            'config','RRconfig.yaml')]
     )
 
     return LaunchDescription([
