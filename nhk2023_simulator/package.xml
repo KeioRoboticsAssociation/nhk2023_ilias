@@ -15,13 +15,11 @@
   <depend>geometry_msgs</depend>
   <depend>std_msgs</depend>
 
+  <exec_depend>gazebo_ros</exec_depend>
   <export>
     <build_type>ament_cmake</build_type>
+    <!-- <gazebo_ros gazebo_media_path="${prefix}/worlds:${prefix}/models" />
+    <gazebo_ros gazebo_model_path="${prefix}/models" /> -->
+
   </export>
-
-  <!-- <export>
-    <gazebo_ros gazebo_media_path="${prefix}/worlds:${prefix}/models" />
-    <gazebo_ros gazebo_model_path="${prefix}/models" />
-  </export> -->
-
 </package>

@@ -2,11 +2,11 @@
 <robot name="rr_swerve"
   xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:include filename="$(find nhk2023_simulator)/launch/models/swerve_body.urdf.xacro" />
-  <xacro:include filename="$(find nhk2023_simulator)/launch/worlds/models/swerve_wheel.urdf.xacro" />
+  <xacro:include filename="$(find nhk2023_simulator)/models/swerve_body.urdf.xacro" />
+  <xacro:include filename="$(find nhk2023_simulator)/models/swerve_wheel.urdf.xacro" />
 
-  <xacro:include filename="$(find nhk2023_simulator)/launch/worlds/models/lidar.urdf.xacro" />
-  <xacro:include filename="$(find nhk2023_simulator)/launch/worlds/models/imu.urdf.xacro" />
+  <xacro:include filename="$(find nhk2023_simulator)/models/lidar.urdf.xacro" />
+  <xacro:include filename="$(find nhk2023_simulator)/models/imu.urdf.xacro" />
 
 
   <xacro:wheel rl="rf" parent="base_link" />

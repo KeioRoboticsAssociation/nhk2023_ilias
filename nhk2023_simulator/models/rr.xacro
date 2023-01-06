@@ -1,19 +1,19 @@
 <?xml version="1.0" ?>
 <robot name="rr_swerve"
-    xmlns:xacro="http://ros.org/wiki/xacro">
+  xmlns:xacro="http://ros.org/wiki/xacro">
 
-    <xacro:include filename="$(find nhk2023_simulator)/launch/worlds/models/swerve_body.urdf.xacro" />
-    <xacro:include filename="$(find nhk2023_simulator)/launch/worlds/models/swerve_wheel.urdf.xacro" />
+  <xacro:include filename="$(find nhk2023_simulator)/models/swerve_body.urdf.xacro" />
+  <xacro:include filename="$(find nhk2023_simulator)/models/swerve_wheel.urdf.xacro" />
 
-    <xacro:include filename="$(find nhk2023_simulator)/launch/worlds/models/lidar.urdf.xacro" />
-    <xacro:include filename="$(find nhk2023_simulator)/launch/worlds/models/imu.urdf.xacro" />
+  <xacro:include filename="$(find nhk2023_simulator)/models/lidar.urdf.xacro" />
+  <xacro:include filename="$(find nhk2023_simulator)/models/imu.urdf.xacro" />
 
 
-    <xacro:wheel rl="rf" parent="base_link" />
-    <xacro:wheel rl="lf" parent="base_link" />
-    <xacro:wheel rl="rb" parent="base_link" />
-    <xacro:wheel rl="lb" parent="base_link" />
+  <xacro:wheel rl="rf" parent="base_link" />
+  <xacro:wheel rl="lf" parent="base_link" />
+  <xacro:wheel rl="rb" parent="base_link" />
+  <xacro:wheel rl="lb" parent="base_link" />
 
-    <xacro:laser_macro prefix="lidar" parent="base_link" xyz="0.205 0 0.04" rpy="0 0 0"/>
-    <xacro:imu_macro prefix="imu" parent="base_link" xyz="0.0 0 0.10" />
+  <xacro:laser_macro prefix="lidar" parent="base_link" xyz="0.205 0 0.04" rpy="0 0 0"/>
+  <xacro:imu_macro prefix="imu" parent="base_link" xyz="0.0 0 0.10" />
 </robot>
