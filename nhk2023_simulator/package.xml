@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="3">
+
+  <name>nhk2023_simulator</name>
+  <version>0.0.0</version>
+  <description>The nhk2023_simulator package</description>
+  <maintainer email="curious.ks.jp@gmail.com">curious</maintainer>
+  <license>GPLv3</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>nav_msgs</depend>
+  <depend>tf2_ros</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
+
+  <exec_depend>gazebo_ros</exec_depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+    <!-- <gazebo_ros gazebo_media_path="${prefix}/worlds:${prefix}/models" />
+    <gazebo_ros gazebo_model_path="${prefix}/models" /> -->
+
+  </export>
+</package>
