@@ -15,6 +15,7 @@ class robot_ctrl : public rclcpp::Node, public JoyCommander {
     AUTO,
     CLIMB,
     PRECISION,
+    WALL,
   };
 
   Mode mode_, prev_mode_ = Mode::MANUAL;  // 初期モードはMANUAL
@@ -59,6 +60,7 @@ void robot_ctrl::timer_callback() {
       break;
 
     case Mode::AUTO:
+
       msg.data = "AUTO";
       break;
 
@@ -68,6 +70,10 @@ void robot_ctrl::timer_callback() {
 
     case Mode::PRECISION:
       msg.data = "PRECISION";
+      break;
+
+    case Mode::WALL:
+      msg.data = "WALL";
       break;
 
     default:
