@@ -9,7 +9,7 @@
   Try listening to TF:
     ros2 run tf2_ros tf2_echo odom_demo link
 -->
-<sdf version="1.6">
+<sdf version="1.7">
   <model name="nhk2023">
     <static>true</static>
     <link name="link">
@@ -25,18 +25,17 @@
         </inertia>
       </inertial>
       <visual name="visual">
-        <!-- include mesh -->
         <geometry>
           <mesh>
-            <uri>file://meshes/field_NHK.dae</uri>
-            <scale>1 1 1</scale>
+            <uri>model://field2023/meshes/field_NHK.dae</uri>
+            <scale>1.001 1.001 1.001</scale>
           </mesh>
         </geometry>
       </visual>
       <collision name="collision">
         <geometry>
           <mesh>
-            <uri>file://meshes/field_NHK.dae</uri>
+            <uri>model://field2023/meshes/field_NHK.dae</uri>
             <scale>1 1 1</scale>
           </mesh>
         </geometry>

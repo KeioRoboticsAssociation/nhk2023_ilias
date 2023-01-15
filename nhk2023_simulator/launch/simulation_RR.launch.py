@@ -28,10 +28,22 @@ def generate_launch_description():
 
     # os.environ['GAZEBO_MODEL_PATH'] = os.path.join(pkg_dir, 'models') + ":" + os.path.join(pkg_dir, 'worlds')
 
+
+
     xacro_file = os.path.join(pkg_dir, 'models','rr', 'rr.xacro')
     doc = xacro.parse(open(xacro_file))
     xacro.process_doc(doc)
     params = {'robot_description': doc.toxml()}
+
+        # include launch file from gazebo_ros package
+    gazebo = ExecuteProcess(
+            cmd=['gazebo', '--verbose', world, '-s', 'libgazebo_ros_init.so',
+            '-s', 'libgazebo_ros_factory.so'],
+            output='screen')
+    # gazebo = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([get_package_share_directory('gazebo_ros'), '/launch', '/gazebo.launch.py']),
+    #     launch_arguments={'verbose': 'true', 'debug': 'true', 'gui': 'true', 'paused': 'false', 'use_sim_time': use_sim_time}.items(),
+    # )
 
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
@@ -40,20 +52,10 @@ def generate_launch_description():
         parameters=[params]
     )
 
-    # include launch file from gazebo_ros package
-    # gazebo = ExecuteProcess(
-    #         cmd=['gazebo', '--verbose', world, '-s', 'libgazebo_ros_init.so',
-    #         '-s', 'libgazebo_ros_factory.so'],
-    #         output='screen')
-    gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([get_package_share_directory('gazebo_ros'), '/launch', '/gazebo.launch.py']),
-        launch_arguments={'world': world, 'verbose': 'true', 'debug': 'true', 'gui': 'true', 'paused': 'false', 'use_sim_time': use_sim_time}.items(),
-    )
-
-
-
     spawn_entity = Node(package='gazebo_ros', executable='spawn_entity.py',
-                        arguments=['-entity', 'rr', '-topic', 'robot_description', '-x', '0', '-y', '0', '-z', '0.1'],
+                        arguments=['-file', xacro_file,
+                                   '-entity', 'rr',
+                                   '-x', '5.0', '-y', '0.0', '-z', '3.0'],
                         output='screen')
 
 
@@ -64,6 +66,6 @@ def generate_launch_description():
         #     cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_factory.so'],
         #     output='screen'),
         gazebo,
-        # spawn_entity,
         node_robot_state_publisher,
+        spawn_entity,
     ])

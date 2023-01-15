@@ -11,6 +11,10 @@
 -->
 <sdf version="1.6">
   <world name="default">
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
     <model name="nhk2023">
       <static>true</static>
       <link name="link">
@@ -30,7 +34,7 @@
           <geometry>
             <mesh>
               <uri>model://field2023/meshes/field_NHK.dae</uri>
-              <scale>1 1 1</scale>
+              <scale>1.001 1.001 1.001</scale>
             </mesh>
           </geometry>
         </visual>
