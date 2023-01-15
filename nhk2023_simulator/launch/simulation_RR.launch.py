@@ -31,6 +31,7 @@ def generate_launch_description():
 
 
     xacro_file = os.path.join(pkg_dir, 'models','rr', 'rr.xacro')
+    urdf_file = os.path.join(pkg_dir , 'models','rr', 'rr.urdf')
     doc = xacro.parse(open(xacro_file))
     xacro.process_doc(doc)
     params = {'robot_description': doc.toxml()}
@@ -53,12 +54,10 @@ def generate_launch_description():
     )
 
     spawn_entity = Node(package='gazebo_ros', executable='spawn_entity.py',
-                        arguments=['-file', xacro_file,
+                        arguments=['-file', urdf_file,
                                    '-entity', 'rr',
                                    '-x', '5.0', '-y', '0.0', '-z', '3.0'],
                         output='screen')
-
-
 
     return LaunchDescription([
         # SetEnvironmentVariable(name='GAZEBO_MODEL_PATH', value = model_path),

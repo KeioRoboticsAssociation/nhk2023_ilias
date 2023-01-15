@@ -21,7 +21,7 @@
   </link>
 
 
-  <xacro:property name="b_m" value="10"/>
+  <xacro:property name="b_m" value="300"/>
   <xacro:property name="b_m2" value="${b_m/12}"/>
   <!--for calculation of inertia-->
   <xacro:property name="b_w" value="0.37"/>
