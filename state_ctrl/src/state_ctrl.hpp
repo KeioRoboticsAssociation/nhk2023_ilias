@@ -14,6 +14,8 @@ class Joy;
 class Start;
 
 class StateMachine : public tinyfsm::Fsm<StateMachine> {
+  StateMachine();
+
  public:
   void react(tinyfsm::Event const &){};
 
@@ -25,6 +27,11 @@ class StateMachine : public tinyfsm::Fsm<StateMachine> {
   virtual void entry(void){};
   virtual void exit(void){};
 };
+
+StateMachine::StateMachine() {
+  RCLCPP_INFO(robot_state_ctrl->get_logger(), "StateMachine constructor");
+  transit<Idle>();
+}
 
 class Idle : public StateMachine {
  public:
