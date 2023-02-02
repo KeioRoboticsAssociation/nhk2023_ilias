@@ -29,12 +29,14 @@ class robot_ctrl : public rclcpp::Node, public JoyCommander {
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
   // publish cmd_vel topic
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
+  // timer ptr
+  rclcpp::TimerBase::SharedPtr timer_;
 };
 
 robot_ctrl::robot_ctrl() : Node("robot_ctrl") {
   RCLCPP_INFO(this->get_logger(), "robot_ctrl node is started");
   // loop node at 10Hz
-  auto timer = this->create_wall_timer(
+  timer_ = this->create_wall_timer(
       100ms, std::bind(&robot_ctrl::timer_callback, this));
   // publish mode as topic
   mode_pub_ = this->create_publisher<std_msgs::msg::String>("mode", 10);
@@ -50,6 +52,7 @@ robot_ctrl::robot_ctrl() : Node("robot_ctrl") {
 void robot_ctrl::timer_callback() {
   // publish mode as topic
   auto msg = std_msgs::msg::String();
+  RCLCPP_INFO(this->get_logger(), "timer callback");
 
   switch (mode_) {
     case Mode::MANUAL:
@@ -74,7 +77,7 @@ void robot_ctrl::timer_callback() {
       msg.data = "UNKNOWN";
       break;
   }
-
+  mode_pub_->publish(msg);
   // publish mode as topic only when mode is changed
   if (mode_ != prev_mode_) {
     mode_pub_->publish(msg);
