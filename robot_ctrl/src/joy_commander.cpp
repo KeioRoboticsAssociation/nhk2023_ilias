@@ -10,6 +10,9 @@ class JoyCommander {
   JoyCommander(){};
   geometry_msgs::msg::Twist joy_cmd_vel;
 
+  int max_linear_vel = 3;
+  int max_angular_vel = 1;
+
   enum class button {
     A = 0,
     B = 1,
@@ -27,16 +30,19 @@ class JoyCommander {
     LX = 0,
     LY = 1,
     LT = 2,
-    RX = 3,
-    RY = 4,
+    RY = 3,
+    RX = 4,
     RT = 5,
     DPAD_X = 6,
     DPAD_Y = 7,
   };
 
   void joy_callback(const sensor_msgs::msg::Joy &msg) {
-    joy_cmd_vel.linear.x = msg.axes[static_cast<int>(axis::LY)];
-    joy_cmd_vel.linear.y = msg.axes[static_cast<int>(axis::LX)];
-    joy_cmd_vel.angular.z = msg.axes[static_cast<int>(axis::RX)];
+    joy_cmd_vel.linear.x =
+        msg.axes[static_cast<int>(axis::LY)] * max_linear_vel;
+    joy_cmd_vel.linear.y =
+        msg.axes[static_cast<int>(axis::LX)] * max_linear_vel;
+    joy_cmd_vel.angular.z =
+        msg.axes[static_cast<int>(axis::RX)] * max_angular_vel;
   }
 };
