@@ -15,6 +15,7 @@ class robot_ctrl : public rclcpp::Node, public JoyCommander {
     AUTO,
     CLIMB,
     PRECISION,
+    IDLE,
   };
 
   Mode mode_, prev_mode_ = Mode::MANUAL;  // 初期モードはMANUAL
@@ -53,6 +54,7 @@ robot_ctrl::robot_ctrl() : Node("robot_ctrl") {
   joy_sub_ = this->create_subscription<sensor_msgs::msg::Joy>(
       "joy", 10,
       std::bind(&robot_ctrl::joy_callback, this, std::placeholders::_1));
+  // subscribe mode topic
   mode_sub_ = this->create_subscription<std_msgs::msg::String>(
       "mode", 10,
       std::bind(&robot_ctrl::mode_callback, this, std::placeholders::_1));
@@ -92,6 +94,11 @@ void robot_ctrl::timer_callback() {
       RCLCPP_INFO(this->get_logger(), "current mode precision");
       break;
 
+    case Mode::IDLE:
+      msg.data = "IDLE";
+      RCLCPP_INFO(this->get_logger(), "current mode idle");
+      break;
+
     default:
       msg.data = "UNKNOWN";
       RCLCPP_INFO(this->get_logger(), "current mode unknown");
@@ -102,10 +109,10 @@ void robot_ctrl::timer_callback() {
   mode_pub_->publish(msg);
 
   // publish mode as topic only when mode is changed
-  if (mode_ != prev_mode_) {
-    mode_pub_->publish(msg);
-    prev_mode_ = mode_;
-  }
+  // if (mode_ != prev_mode_) {
+  //   mode_pub_->publish(msg);
+  //   prev_mode_ = mode_;
+  // }
 }
 
 void robot_ctrl::mode_callback(const std_msgs::msg::String::SharedPtr msg) {
@@ -118,6 +125,8 @@ void robot_ctrl::mode_callback(const std_msgs::msg::String::SharedPtr msg) {
     mode_ = Mode::CLIMB;
   } else if (msg->data == "PRECISION") {
     mode_ = Mode::PRECISION;
+  } else if (msg->data == "IDLE") {
+    mode_ = Mode::IDLE;
   } else {
     mode_ = Mode::MANUAL;
   }
