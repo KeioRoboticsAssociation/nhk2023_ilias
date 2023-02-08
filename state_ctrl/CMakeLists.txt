@@ -7,17 +7,36 @@ endif()
 
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+
 ament_auto_find_build_dependencies()
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
-ament_auto_add_library(state_ctrl SHARED
+# ament_auto_add_library(state_ctrl SHARED
+#   src/main.cpp
+#   src/idle.cpp
+#   src/joy.cpp
+#   src/start.cpp
+#   src/main.hpp
+#   src/state_ctrl.hpp
+#   include/tinyfsm/include/tinyfsm.hpp
+# )
+
+add_executable(state_ctrl
   src/main.cpp
   src/idle.cpp
   src/joy.cpp
   src/start.cpp
-  include/tinyfsm/include/tinyfsm.hpp
+  src/robot_state_ctrl.cpp
+  src/state_ctrl.cpp
+)
+
+ament_target_dependencies(state_ctrl
+  rclcpp
+  std_msgs
 )
 
 # ament_target_dependencies(md_lib rclcpp std_msgs rogilink2_interfaces)
@@ -50,5 +69,16 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+install(TARGETS
+  state_ctrl
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# Install launch files.
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
 
 ament_auto_package()

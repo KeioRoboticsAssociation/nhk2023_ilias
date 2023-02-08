@@ -1,37 +1,42 @@
 #ifndef _STATE_CTRL_CPP_
 #define _STATE_CTRL_CPP_
 
+#include <string>
+
 #include "../include/tinyfsm/include/tinyfsm.hpp"
-#include "main.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 struct Joy_Flag : tinyfsm::Event {};
 struct Idle_Flag : tinyfsm::Event {};
-struct Foward_Flag : tinyfsm::Event {};
+struct Forward_Flag : tinyfsm::Event {};
+struct GOD_Flag : tinyfsm::Event {};
 
 class Idle;
 class Joy;
 class Start;
 
 class StateMachine : public tinyfsm::Fsm<StateMachine> {
-  StateMachine();
-
  public:
+  StateMachine();
   void react(tinyfsm::Event const &){};
 
-  void react(Joy_Flag const &) { transit<Joy>(); }
-  void react(Idle_Flag const &) { transit<Idle>(); }
+  void react(Joy_Flag const &) { transit<Joy>(); };
+  void react(Idle_Flag const &) { transit<Idle>(); };
+  void react(GOD_Flag const &, std::string destination) {
+    if (destination == "start") {
+      transit<Start>();
+    } else if (destination == "idle") {
+      transit<Idle>();
+    } else if (destination == "joy") {
+      transit<Joy>();
+    }
+  };
 
-  virtual void react(Foward_Flag const &){};
+  virtual void react(Forward_Flag const &){};
 
   virtual void entry(void){};
   virtual void exit(void){};
 };
-
-StateMachine::StateMachine() {
-  RCLCPP_INFO(robot_state_ctrl->get_logger(), "StateMachine constructor");
-  transit<Idle>();
-}
 
 class Idle : public StateMachine {
  public:
@@ -47,5 +52,7 @@ class Start : public StateMachine {
  public:
   void entry(void) override;
 };
+
+using state_machine = StateMachine;
 
 #endif  // _STATE_CTRL_CPP_
