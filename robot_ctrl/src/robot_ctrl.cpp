@@ -5,10 +5,11 @@
 #include <std_msgs/msg/string.hpp>
 
 #include "joy_commander.cpp"
+#include "precision.cpp"
 
 using namespace std::chrono_literals;
 
-class robot_ctrl : public rclcpp::Node, public JoyCommander {
+class robot_ctrl : public rclcpp::Node {
  private:
   enum class Mode {
     MANUAL,
@@ -17,6 +18,9 @@ class robot_ctrl : public rclcpp::Node, public JoyCommander {
     PRECISION,
     IDLE,
   };
+
+  JoyCommander joy_commander;
+  Precision precision;
 
   Mode mode_, prev_mode_ = Mode::MANUAL;  // 初期モードはMANUAL
   void timer_callback();
@@ -37,7 +41,7 @@ class robot_ctrl : public rclcpp::Node, public JoyCommander {
   rclcpp::TimerBase::SharedPtr timer_;
 };
 
-robot_ctrl::robot_ctrl() : Node("robot_ctrl") {
+robot_ctrl::robot_ctrl() : Node("robot_ctrl"),precision(this){
   RCLCPP_INFO(this->get_logger(), "robot_ctrl node is started");
 
   // set parameters
@@ -46,14 +50,15 @@ robot_ctrl::robot_ctrl() : Node("robot_ctrl") {
   this->declare_parameter("max_linear_vel", 3);
   this->declare_parameter("max_angular_vel", 1);
 
-  // loop node at 10Hz
+  // loop node at 100Hz
   timer_ = this->create_wall_timer(
-      100ms, std::bind(&robot_ctrl::timer_callback, this));
+      10ms, std::bind(&robot_ctrl::timer_callback, this));
 
   // subscribe joy topic
   joy_sub_ = this->create_subscription<sensor_msgs::msg::Joy>(
       "joy", 10,
-      std::bind(&robot_ctrl::joy_callback, this, std::placeholders::_1));
+      std::bind(&JoyCommander::joy_callback, &joy_commander,
+                std::placeholders::_1));
   // subscribe mode topic
   mode_sub_ = this->create_subscription<std_msgs::msg::String>(
       "mode", 10,
@@ -74,7 +79,7 @@ void robot_ctrl::timer_callback() {
   switch (mode_) {
     case Mode::MANUAL:
       // publish cmd_vel topic
-      cmd_vel_pub_->publish(JoyCommander::joy_cmd_vel);
+      cmd_vel_pub_->publish(joy_commander.joy_cmd_vel);
       msg.data = "MANUAL";
       RCLCPP_INFO(this->get_logger(), "current mode manual");
       break;
@@ -90,6 +95,8 @@ void robot_ctrl::timer_callback() {
       break;
 
     case Mode::PRECISION:
+      precision.precision_vel_generator();
+      cmd_vel_pub_->publish(precision.prc_cmd_vel);
       msg.data = "PRECISION";
       RCLCPP_INFO(this->get_logger(), "current mode precision");
       break;
