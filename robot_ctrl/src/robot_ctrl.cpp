@@ -1,3 +1,5 @@
+#include <std_msgs/msg/int16.h>
+
 #include <chrono>
 #include <geometry_msgs/msg/twist.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -41,7 +43,7 @@ class robot_ctrl : public rclcpp::Node {
   rclcpp::TimerBase::SharedPtr timer_;
 };
 
-robot_ctrl::robot_ctrl() : Node("robot_ctrl"),precision(this){
+robot_ctrl::robot_ctrl() : Node("robot_ctrl"), precision(this) {
   RCLCPP_INFO(this->get_logger(), "robot_ctrl node is started");
 
   // set parameters
@@ -96,6 +98,7 @@ void robot_ctrl::timer_callback() {
 
     case Mode::PRECISION:
       precision.precision_vel_generator();
+      RCLCPP_INFO(this->get_logger(), "sensor: %d", precision.sensor_val[3]);
       cmd_vel_pub_->publish(precision.prc_cmd_vel);
       msg.data = "PRECISION";
       RCLCPP_INFO(this->get_logger(), "current mode precision");
