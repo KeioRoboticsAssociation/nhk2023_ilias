@@ -9,9 +9,14 @@ class JoyCommander {
  public:
   JoyCommander(){};
   geometry_msgs::msg::Twist joy_cmd_vel;
+  geometry_msgs::msg::Twist prev_cmd_vel;
 
-  int max_linear_vel = 3;
+  int max_linear_vel = 5;
   int max_angular_vel = 1;
+  int max_linear_acc = 1;
+  int max_angular_acc = 1;
+
+  int node_rate = 100;
 
   enum class button {
     A = 0,
@@ -38,11 +43,46 @@ class JoyCommander {
   };
 
   void joy_callback(const sensor_msgs::msg::Joy &msg) {
-    joy_cmd_vel.linear.x =
-        msg.axes[static_cast<int>(axis::LY)] * max_linear_vel;
-    joy_cmd_vel.linear.y =
-        msg.axes[static_cast<int>(axis::LX)] * max_linear_vel;
-    joy_cmd_vel.angular.z =
-        msg.axes[static_cast<int>(axis::RX)] * max_angular_vel;
+    // giving acceleration limit to joy_cmd_vel
+    if (msg.axes[static_cast<int>(axis::LY)] * max_linear_vel -
+            prev_cmd_vel.linear.x >
+        max_linear_acc / node_rate) {
+      joy_cmd_vel.linear.x = prev_cmd_vel.linear.x + max_linear_acc / node_rate;
+    } else if (msg.axes[static_cast<int>(axis::LY)] * max_linear_vel -
+                   prev_cmd_vel.linear.x <
+               -max_linear_acc / node_rate) {
+      joy_cmd_vel.linear.x = prev_cmd_vel.linear.x - max_linear_acc / node_rate;
+    } else {
+      joy_cmd_vel.linear.x =
+          msg.axes[static_cast<int>(axis::LY)] * max_linear_vel;
+    }
+
+    if (msg.axes[static_cast<int>(axis::LX)] * max_linear_vel -
+            prev_cmd_vel.linear.y >
+        max_linear_acc / node_rate) {
+      joy_cmd_vel.linear.y = prev_cmd_vel.linear.y + max_linear_acc / node_rate;
+    } else if (msg.axes[static_cast<int>(axis::LX)] * max_linear_vel -
+                   prev_cmd_vel.linear.y <
+               -max_linear_acc / node_rate) {
+      joy_cmd_vel.linear.y = prev_cmd_vel.linear.y - max_linear_acc / node_rate;
+    } else {
+      joy_cmd_vel.linear.y =
+          msg.axes[static_cast<int>(axis::LX)] * max_linear_vel;
+    }
+
+    if (msg.axes[static_cast<int>(axis::RX)] * max_angular_vel -
+            prev_cmd_vel.angular.z >
+        max_angular_acc / node_rate) {
+      joy_cmd_vel.angular.z =
+          prev_cmd_vel.angular.z + max_angular_acc / node_rate;
+    } else if (msg.axes[static_cast<int>(axis::RX)] * max_angular_vel -
+                   prev_cmd_vel.angular.z <
+               -max_angular_acc / node_rate) {
+      joy_cmd_vel.angular.z =
+          prev_cmd_vel.angular.z - max_angular_acc / node_rate;
+    } else {
+      joy_cmd_vel.angular.z =
+          msg.axes[static_cast<int>(axis::RX)] * max_angular_vel;
+    }
   }
 };
