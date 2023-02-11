@@ -1,3 +1,5 @@
+#include <std_msgs/msg/int16.h>
+
 #include <chrono>
 #include <geometry_msgs/msg/twist.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -41,14 +43,22 @@ class robot_ctrl : public rclcpp::Node {
   rclcpp::TimerBase::SharedPtr timer_;
 };
 
-robot_ctrl::robot_ctrl() : Node("robot_ctrl"),precision(this){
+robot_ctrl::robot_ctrl() : Node("robot_ctrl"), precision(this) {
   RCLCPP_INFO(this->get_logger(), "robot_ctrl node is started");
 
   // set parameters
-  auto max_linear_vel = rcl_interfaces::msg::ParameterDescriptor();
-  auto max_angular_vel = rcl_interfaces::msg::ParameterDescriptor();
   this->declare_parameter("max_linear_vel", 3);
   this->declare_parameter("max_angular_vel", 1);
+  this->declare_parameter("max_linear_acc", 1);
+  this->declare_parameter("max_angular_acc", 1);
+
+  // assign parameters
+  joy_commander.max_linear_vel = this->get_parameter("max_linear_vel").as_int();
+  joy_commander.max_angular_vel =
+      this->get_parameter("max_angular_vel").as_int();
+  joy_commander.max_linear_acc = this->get_parameter("max_linear_acc").as_int();
+  joy_commander.max_angular_acc =
+      this->get_parameter("max_angular_acc").as_int();
 
   // loop node at 100Hz
   timer_ = this->create_wall_timer(
@@ -96,6 +106,7 @@ void robot_ctrl::timer_callback() {
 
     case Mode::PRECISION:
       precision.precision_vel_generator();
+      RCLCPP_INFO(this->get_logger(), "sensor: %d", precision.sensor_val[3]);
       cmd_vel_pub_->publish(precision.prc_cmd_vel);
       msg.data = "PRECISION";
       RCLCPP_INFO(this->get_logger(), "current mode precision");
