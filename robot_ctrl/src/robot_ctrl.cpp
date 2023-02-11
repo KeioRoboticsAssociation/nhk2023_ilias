@@ -47,10 +47,18 @@ robot_ctrl::robot_ctrl() : Node("robot_ctrl"), precision(this) {
   RCLCPP_INFO(this->get_logger(), "robot_ctrl node is started");
 
   // set parameters
-  auto max_linear_vel = rcl_interfaces::msg::ParameterDescriptor();
-  auto max_angular_vel = rcl_interfaces::msg::ParameterDescriptor();
   this->declare_parameter("max_linear_vel", 3);
   this->declare_parameter("max_angular_vel", 1);
+  this->declare_parameter("max_linear_acc", 1);
+  this->declare_parameter("max_angular_acc", 1);
+
+  // assign parameters
+  joy_commander.max_linear_vel = this->get_parameter("max_linear_vel").as_int();
+  joy_commander.max_angular_vel =
+      this->get_parameter("max_angular_vel").as_int();
+  joy_commander.max_linear_acc = this->get_parameter("max_linear_acc").as_int();
+  joy_commander.max_angular_acc =
+      this->get_parameter("max_angular_acc").as_int();
 
   // loop node at 100Hz
   timer_ = this->create_wall_timer(
