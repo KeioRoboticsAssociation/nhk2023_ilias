@@ -7,16 +7,32 @@
 
 class JoyCommander {
  public:
-  JoyCommander(){};
+  JoyCommander(rclcpp::Node *ptr) : ros_ptr(ptr) {
+    joy_cmd_vel.linear.x = 0;
+    joy_cmd_vel.linear.y = 0;
+    joy_cmd_vel.linear.z = 0;
+    joy_cmd_vel.angular.x = 0;
+    joy_cmd_vel.angular.y = 0;
+    joy_cmd_vel.angular.z = 0;
+
+    prev_cmd_vel.linear.x = 0;
+    prev_cmd_vel.linear.y = 0;
+    prev_cmd_vel.linear.z = 0;
+    prev_cmd_vel.angular.x = 0;
+    prev_cmd_vel.angular.y = 0;
+    prev_cmd_vel.angular.z = 0;
+  };
   geometry_msgs::msg::Twist joy_cmd_vel;
   geometry_msgs::msg::Twist prev_cmd_vel;
+  sensor_msgs::msg::Joy current_joy;
 
-  int max_linear_vel = 12;
-  int max_angular_vel = 1;
-  int max_linear_acc = 1;
-  int max_angular_acc = 1;
+  double max_linear_vel = 12;
+  double max_angular_vel = 1;
+  double max_linear_acc = 1;
+  double max_angular_acc = 1;
 
   int node_rate = 100;
+  rclcpp::Node *ros_ptr;
 
   enum class button {
     A = 0,
@@ -27,77 +43,75 @@ class JoyCommander {
     RB = 5,
     BACK = 6,
     START = 7,
-    L3 = 8,
-    R3 = 9,
+    HOME = 8,
+    L3 = 9,
+    R3 = 10,
   };
 
   enum class axis {
     LX = 0,
     LY = 1,
     LT = 2,
-    RY = 3,
-    RX = 4,
+    RX = 3,
+    RY = 4,
     RT = 5,
     DPAD_X = 6,
     DPAD_Y = 7,
   };
 
-  void joy_callback(const sensor_msgs::msg::Joy &msg) {
+  void joy_callback(const sensor_msgs::msg::Joy &msg) { current_joy = msg; }
+
+  void gen_cmd_vel() {
     // giving acceleration limit to joy_cmd_vel
-    // if (msg.axes[static_cast<int>(axis::LY)] * max_linear_vel -
-    //         prev_cmd_vel.linear.x >
-    //     max_linear_acc / node_rate) {
-    //   joy_cmd_vel.linear.x = prev_cmd_vel.linear.x + max_linear_acc /
-    //   node_rate;
-    // } else if (msg.axes[static_cast<int>(axis::LY)] * max_linear_vel -
-    //                prev_cmd_vel.linear.x <
-    //            -max_linear_acc / node_rate) {
-    //   joy_cmd_vel.linear.x = prev_cmd_vel.linear.x - max_linear_acc /
-    //   node_rate;
-    // } else {
-    //   joy_cmd_vel.linear.x =
-    //       msg.axes[static_cast<int>(axis::LY)] * max_linear_vel;
-    // }
+    // null check
 
-    // if (msg.axes[static_cast<int>(axis::LX)] * max_linear_vel -
-    //         prev_cmd_vel.linear.y >
-    //     max_linear_acc / node_rate) {
-    //   joy_cmd_vel.linear.y = prev_cmd_vel.linear.y + max_linear_acc /
-    //   node_rate;
-    // } else if (msg.axes[static_cast<int>(axis::LX)] * max_linear_vel -
-    //                prev_cmd_vel.linear.y <
-    //            -max_linear_acc / node_rate) {
-    //   joy_cmd_vel.linear.y = prev_cmd_vel.linear.y - max_linear_acc /
-    //   node_rate;
-    // } else {
-    //   joy_cmd_vel.linear.y =
-    //       msg.axes[static_cast<int>(axis::LX)] * max_linear_vel;
-    // }
+    if (current_joy.axes.size() == 0) return;
 
-    // if (msg.axes[static_cast<int>(axis::RX)] * max_angular_vel -
-    //         prev_cmd_vel.angular.z >
-    //     max_angular_acc / node_rate) {
-    //   joy_cmd_vel.angular.z =
-    //       prev_cmd_vel.angular.z + max_angular_acc / node_rate;
-    // } else if (msg.axes[static_cast<int>(axis::RX)] * max_angular_vel -
-    //                prev_cmd_vel.angular.z <
-    //            -max_angular_acc / node_rate) {
-    //   joy_cmd_vel.angular.z =
-    //       prev_cmd_vel.angular.z - max_angular_acc / node_rate;
-    // } else {
-    //   joy_cmd_vel.angular.z =
-    //       msg.axes[static_cast<int>(axis::RX)] * max_angular_vel;
-    // }
-    if (msg.axes[static_cast<int>(axis::LY)] == 0) {
-      joy_cmd_vel.linear.x = 0.0001;
+    RCLCPP_INFO(ros_ptr->get_logger(), "%f,%f,%f,%f", joy_cmd_vel.linear.x,
+                prev_cmd_vel.linear.x,
+                current_joy.axes[static_cast<int>(axis::LY)], max_linear_vel);
+
+    if (current_joy.axes[static_cast<int>(axis::LY)] * max_linear_vel -
+            prev_cmd_vel.linear.x >
+        max_linear_acc / node_rate) {
+      joy_cmd_vel.linear.x = prev_cmd_vel.linear.x + max_linear_acc / node_rate;
+    } else if (current_joy.axes[static_cast<int>(axis::LY)] * max_linear_vel -
+                   prev_cmd_vel.linear.x <
+               -max_linear_acc / node_rate) {
+      joy_cmd_vel.linear.x = prev_cmd_vel.linear.x - max_linear_acc / node_rate;
     } else {
       joy_cmd_vel.linear.x =
-          msg.axes[static_cast<int>(axis::LY)] * max_linear_vel;
+          current_joy.axes[static_cast<int>(axis::LY)] * max_linear_vel;
     }
 
-    // joy_cmd_vel.linear.y =
-    //     msg.axes[static_cast<int>(axis::LX)] * max_linear_vel;
-    // joy_cmd_vel.angular.z =
-    //     msg.axes[static_cast<int>(axis::RX)] * max_angular_vel;
+    if (current_joy.axes[static_cast<int>(axis::LX)] * max_linear_vel -
+            prev_cmd_vel.linear.y >
+        max_linear_acc / node_rate) {
+      joy_cmd_vel.linear.y = prev_cmd_vel.linear.y + max_linear_acc / node_rate;
+    } else if (current_joy.axes[static_cast<int>(axis::LX)] * max_linear_vel -
+                   prev_cmd_vel.linear.y <
+               -max_linear_acc / node_rate) {
+      joy_cmd_vel.linear.y = prev_cmd_vel.linear.y - max_linear_acc / node_rate;
+    } else {
+      joy_cmd_vel.linear.y =
+          current_joy.axes[static_cast<int>(axis::LX)] * max_linear_vel;
+    }
+
+    if (current_joy.axes[static_cast<int>(axis::RX)] * max_angular_vel -
+            prev_cmd_vel.angular.z >
+        max_angular_acc / node_rate) {
+      joy_cmd_vel.angular.z =
+          prev_cmd_vel.angular.z + max_angular_acc / node_rate;
+    } else if (current_joy.axes[static_cast<int>(axis::RX)] * max_angular_vel -
+                   prev_cmd_vel.angular.z <
+               -max_angular_acc / node_rate) {
+      joy_cmd_vel.angular.z =
+          prev_cmd_vel.angular.z - max_angular_acc / node_rate;
+    } else {
+      joy_cmd_vel.angular.z =
+          current_joy.axes[static_cast<int>(axis::RX)] * max_angular_vel;
+    }
+    // update prev_cmd_vel
+    prev_cmd_vel = joy_cmd_vel;
   }
 };
