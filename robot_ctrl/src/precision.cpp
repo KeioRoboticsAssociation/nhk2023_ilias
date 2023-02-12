@@ -16,6 +16,11 @@ class Precision {
 
   void precision_vel_generator() {
     sensor_val = sensor->read();
+    if (sensor_val.size() < 4) {
+      prc_cmd_vel.linear.x = 0;
+      prc_cmd_vel.angular.z = 0.0;
+      return;
+    }
     if (sensor_val[3] > 13000) {
       prc_cmd_vel.linear.x = 0.5;
       prc_cmd_vel.angular.z = 0.0;
