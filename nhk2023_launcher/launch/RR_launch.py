@@ -47,14 +47,22 @@ def generate_launch_description():
         output='screen'
     )
 
-    # include launch file from wheelctrl_ros
-    wheelctrl_ros2_launch_file = os.path.join(
+    wheelctrl_ros_launch = IncludeLaunchDescription(
+        launch_description_source=os.path.join(
         get_package_share_directory('wheelctrl_ros2'),
         'launch',
         'wheelctrl_ros2_launch.py')
-
-    wheelctrl_ros_launch = IncludeLaunchDescription(
-        launch_description_source=wheelctrl_ros2_launch_file
+    )
+    
+    rogi_link_2 = Node(
+        package='rogilink2',
+        executable = 'rogilink2',
+        name='rogilink2',
+        output='screen',
+        emulate_tty = True,
+        parameters=[{'config_path':os.path.join(
+            get_package_share_directory('rogilink2'),
+            'config','rrconfig.yaml')}]
     )
 
     robot_ctrl_launch_file = os.path.join(

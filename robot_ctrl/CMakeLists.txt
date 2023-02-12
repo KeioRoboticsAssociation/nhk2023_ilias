@@ -14,6 +14,7 @@ find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(sensor_lib REQUIRED)
 
 
 add_executable(robot_ctrl src/robot_ctrl.cpp src/joy_commander.cpp)
@@ -22,6 +23,7 @@ ament_target_dependencies(robot_ctrl
   geometry_msgs
   std_msgs
   sensor_msgs
+  sensor_lib
 )
 
 
