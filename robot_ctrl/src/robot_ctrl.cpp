@@ -12,6 +12,19 @@
 using namespace std::chrono_literals;
 
 class robot_ctrl : public rclcpp::Node {
+ public:
+  robot_ctrl();
+  // publish mode as topic
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr mode_pub_;
+  // subscribe joy topic
+  rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
+  // subscribe mode topic
+  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr mode_sub_;
+  // publish cmd_vel topic
+  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
+  // timer ptr
+  rclcpp::TimerBase::SharedPtr timer_;
+
  private:
   enum class Mode {
     MANUAL,
@@ -27,38 +40,25 @@ class robot_ctrl : public rclcpp::Node {
   Mode mode_, prev_mode_ = Mode::MANUAL;  // 初期モードはMANUAL
   void timer_callback();
   void mode_callback(const std_msgs::msg::String::SharedPtr msg);
-
- public:
-  robot_ctrl();
-
-  // publish mode as topic
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr mode_pub_;
-  // subscribe joy topic
-  rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
-  // subscribe mode topic
-  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr mode_sub_;
-  // publish cmd_vel topic
-  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
-  // timer ptr
-  rclcpp::TimerBase::SharedPtr timer_;
 };
 
-robot_ctrl::robot_ctrl() : Node("robot_ctrl"), precision(this) {
+robot_ctrl::robot_ctrl()
+    : Node("robot_ctrl"), joy_commander(this), precision(this) {
   RCLCPP_INFO(this->get_logger(), "robot_ctrl node is started");
 
   // set parameters
-  this->declare_parameter("max_linear_vel", 3);
-  this->declare_parameter("max_angular_vel", 1);
-  this->declare_parameter("max_linear_acc", 1);
-  this->declare_parameter("max_angular_acc", 1);
+  this->declare_parameter("max_linear_vel", 3.0);
+  this->declare_parameter("max_angular_vel", 1.0);
+  this->declare_parameter("max_linear_acc", 1.0);
+  this->declare_parameter("max_angular_acc", 1.0);
 
   // assign parameters
-  joy_commander.max_linear_vel = this->get_parameter("max_linear_vel").as_int();
+  joy_commander.max_linear_vel = this->get_parameter("max_linear_vel").as_double();
   joy_commander.max_angular_vel =
-      this->get_parameter("max_angular_vel").as_int();
-  joy_commander.max_linear_acc = this->get_parameter("max_linear_acc").as_int();
+      this->get_parameter("max_angular_vel").as_double();
+  joy_commander.max_linear_acc = this->get_parameter("max_linear_acc").as_double();
   joy_commander.max_angular_acc =
-      this->get_parameter("max_angular_acc").as_int();
+      this->get_parameter("max_angular_acc").as_double();
 
   // loop node at 100Hz
   timer_ = this->create_wall_timer(
@@ -84,14 +84,15 @@ robot_ctrl::robot_ctrl() : Node("robot_ctrl"), precision(this) {
 void robot_ctrl::timer_callback() {
   // publish mode as topic
   auto msg = std_msgs::msg::String();
-  RCLCPP_INFO(this->get_logger(), "timer callback");
+  // RCLCPP_INFO(this->get_logger(), "timer callback");
 
   switch (mode_) {
     case Mode::MANUAL:
       // publish cmd_vel topic
+      joy_commander.gen_cmd_vel();
       cmd_vel_pub_->publish(joy_commander.joy_cmd_vel);
       msg.data = "MANUAL";
-      RCLCPP_INFO(this->get_logger(), "current mode manual");
+      // RCLCPP_INFO(this->get_logger(), "current mode manual");
       break;
 
     case Mode::AUTO:
