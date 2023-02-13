@@ -66,52 +66,66 @@ class JoyCommander {
     // null check
 
     if (current_joy.axes.size() == 0) return;
+    joy_cmd_vel.linear.x =
+        current_joy.axes[static_cast<int>(axis::LY)] * max_linear_vel;
+    joy_cmd_vel.linear.y =
+        current_joy.axes[static_cast<int>(axis::LX)] * max_linear_vel;
+    joy_cmd_vel.angular.z =
+        current_joy.axes[static_cast<int>(axis::RX)] * max_angular_vel;
 
-    RCLCPP_INFO(ros_ptr->get_logger(), "%f,%f,%f,%f", joy_cmd_vel.linear.x,
-                prev_cmd_vel.linear.x,
-                current_joy.axes[static_cast<int>(axis::LY)], max_linear_vel);
+    //   RCLCPP_INFO(ros_ptr->get_logger(), "%f,%f,%f,%f", joy_cmd_vel.linear.x,
+    //               prev_cmd_vel.linear.x,
+    //               current_joy.axes[static_cast<int>(axis::LY)],
+    //               max_linear_vel);
 
-    if (current_joy.axes[static_cast<int>(axis::LY)] * max_linear_vel -
-            prev_cmd_vel.linear.x >
-        max_linear_acc / node_rate) {
-      joy_cmd_vel.linear.x = prev_cmd_vel.linear.x + max_linear_acc / node_rate;
-    } else if (current_joy.axes[static_cast<int>(axis::LY)] * max_linear_vel -
-                   prev_cmd_vel.linear.x <
-               -max_linear_acc / node_rate) {
-      joy_cmd_vel.linear.x = prev_cmd_vel.linear.x - max_linear_acc / node_rate;
-    } else {
-      joy_cmd_vel.linear.x =
-          current_joy.axes[static_cast<int>(axis::LY)] * max_linear_vel;
-    }
+    //   if (current_joy.axes[static_cast<int>(axis::LY)] * max_linear_vel -
+    //           prev_cmd_vel.linear.x >
+    //       max_linear_acc / node_rate) {
+    //     joy_cmd_vel.linear.x = prev_cmd_vel.linear.x + max_linear_acc /
+    //     node_rate;
+    //   } else if (current_joy.axes[static_cast<int>(axis::LY)] *
+    //   max_linear_vel -
+    //                  prev_cmd_vel.linear.x <
+    //              -max_linear_acc / node_rate) {
+    //     joy_cmd_vel.linear.x = prev_cmd_vel.linear.x - max_linear_acc /
+    //     node_rate;
+    //   } else {
+    //     joy_cmd_vel.linear.x =
+    //         current_joy.axes[static_cast<int>(axis::LY)] * max_linear_vel;
+    //   }
 
-    if (current_joy.axes[static_cast<int>(axis::LX)] * max_linear_vel -
-            prev_cmd_vel.linear.y >
-        max_linear_acc / node_rate) {
-      joy_cmd_vel.linear.y = prev_cmd_vel.linear.y + max_linear_acc / node_rate;
-    } else if (current_joy.axes[static_cast<int>(axis::LX)] * max_linear_vel -
-                   prev_cmd_vel.linear.y <
-               -max_linear_acc / node_rate) {
-      joy_cmd_vel.linear.y = prev_cmd_vel.linear.y - max_linear_acc / node_rate;
-    } else {
-      joy_cmd_vel.linear.y =
-          current_joy.axes[static_cast<int>(axis::LX)] * max_linear_vel;
-    }
+    //   if (current_joy.axes[static_cast<int>(axis::LX)] * max_linear_vel -
+    //           prev_cmd_vel.linear.y >
+    //       max_linear_acc / node_rate) {
+    //     joy_cmd_vel.linear.y = prev_cmd_vel.linear.y + max_linear_acc /
+    //     node_rate;
+    //   } else if (current_joy.axes[static_cast<int>(axis::LX)] *
+    //   max_linear_vel -
+    //                  prev_cmd_vel.linear.y <
+    //              -max_linear_acc / node_rate) {
+    //     joy_cmd_vel.linear.y = prev_cmd_vel.linear.y - max_linear_acc /
+    //     node_rate;
+    //   } else {
+    //     joy_cmd_vel.linear.y =
+    //         current_joy.axes[static_cast<int>(axis::LX)] * max_linear_vel;
+    //   }
 
-    if (current_joy.axes[static_cast<int>(axis::RX)] * max_angular_vel -
-            prev_cmd_vel.angular.z >
-        max_angular_acc / node_rate) {
-      joy_cmd_vel.angular.z =
-          prev_cmd_vel.angular.z + max_angular_acc / node_rate;
-    } else if (current_joy.axes[static_cast<int>(axis::RX)] * max_angular_vel -
-                   prev_cmd_vel.angular.z <
-               -max_angular_acc / node_rate) {
-      joy_cmd_vel.angular.z =
-          prev_cmd_vel.angular.z - max_angular_acc / node_rate;
-    } else {
-      joy_cmd_vel.angular.z =
-          current_joy.axes[static_cast<int>(axis::RX)] * max_angular_vel;
-    }
-    // update prev_cmd_vel
-    prev_cmd_vel = joy_cmd_vel;
+    //   if (current_joy.axes[static_cast<int>(axis::RX)] * max_angular_vel -
+    //           prev_cmd_vel.angular.z >
+    //       max_angular_acc / node_rate) {
+    //     joy_cmd_vel.angular.z =
+    //         prev_cmd_vel.angular.z + max_angular_acc / node_rate;
+    //   } else if (current_joy.axes[static_cast<int>(axis::RX)] *
+    //   max_angular_vel -
+    //                  prev_cmd_vel.angular.z <
+    //              -max_angular_acc / node_rate) {
+    //     joy_cmd_vel.angular.z =
+    //         prev_cmd_vel.angular.z - max_angular_acc / node_rate;
+    //   } else {
+    //     joy_cmd_vel.angular.z =
+    //         current_joy.axes[static_cast<int>(axis::RX)] * max_angular_vel;
+    //   }
+    //   // update prev_cmd_vel
+    //   prev_cmd_vel = joy_cmd_vel;
   }
 };
