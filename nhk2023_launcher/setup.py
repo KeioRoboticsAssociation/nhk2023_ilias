@@ -27,7 +27,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'static_odom_map_broadcaster = nhk2023_launcher.static_tf_broadcaster:main',
+            'static_tf_broadcaster = nhk2023_launcher.static_tf_broadcaster:main',
         ],
     },
 )

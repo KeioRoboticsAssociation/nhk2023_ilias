@@ -46,21 +46,21 @@ def generate_launch_description():
     #     arguments=[map_server_config_path]
     # )
 
-    lifecycle_nodes = ['map_server']
-    start_lifecycle_manager_cmd = launch_ros.actions.Node(
-        package='nav2_lifecycle_manager',
-        executable='lifecycle_manager',
-        name='lifecycle_manager',
-        output='screen',
-        emulate_tty=True,  # https://github.com/ros2/launch/issues/188
-        parameters=[{'use_sim_time': use_sim_time},
-                    {'autostart': autostart},
-                    {'node_names': lifecycle_nodes}])
+    # lifecycle_nodes = ['map_server']
+    # start_lifecycle_manager_cmd = launch_ros.actions.Node(
+    #     package='nav2_lifecycle_manager',
+    #     executable='lifecycle_manager',
+    #     name='lifecycle_manager',
+    #     output='screen',
+    #     emulate_tty=True,  # https://github.com/ros2/launch/issues/188
+    #     parameters=[{'use_sim_time': use_sim_time},
+    #                 {'autostart': autostart},
+    #                 {'node_names': lifecycle_nodes}])
 
-    static_map_odom_tf_broadcaster_node = Node(
+    static_tf_broadcaster_node = Node(
         package='nhk2023_launcher',
-        executable='static_odom_map_broadcaster',
-        name='static_odom_map_broadcaster',
+        executable='static_tf_broadcaster',
+        name='static_tf_broadcaster',
         output='screen'
     )
 
@@ -95,7 +95,7 @@ def generate_launch_description():
         robot_state_publisher_node,
         # map_server_node,
         # start_lifecycle_manager_cmd,
-        static_map_odom_tf_broadcaster_node,
+        static_tf_broadcaster_node,
         wheelctrl_ros_launch,
         robot_ctrl_launch,
         rogi_link_2

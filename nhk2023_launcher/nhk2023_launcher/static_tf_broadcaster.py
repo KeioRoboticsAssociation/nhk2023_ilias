@@ -6,7 +6,7 @@ from tf2_ros.static_transform_broadcaster import StaticTransformBroadcaster
 class static_tf_broadcaster(Node):
     def __init__(self):
         # Initialize the node
-        super().__init__('static_odom_map_broadcaster')
+        super().__init__('static_tf_broadcaster')
         self.tf_static_broadcaster = StaticTransformBroadcaster(self)
         self.publish_odom_map_transform()
         self.publish_map_pole_transform()
@@ -44,10 +44,10 @@ class static_tf_broadcaster(Node):
         self.tf_static_broadcaster.sendTransform(transform)
 
 def main():
-    logger = rclpy.logging.get_logger('static_odom_map_broadcaster')
+    logger = rclpy.logging.get_logger('static_tf_broadcaster')
     rclpy.init()
     node = static_tf_broadcaster()
-    logger.info('static_odom_map_broadcaster published')
+    logger.info('static_tf_broadcaster published')
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
