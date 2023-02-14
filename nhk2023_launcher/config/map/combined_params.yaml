@@ -4,14 +4,14 @@ map_server1:
         topic_name: "map"
         frame_id: "map"
 
-map_server2:
-    ros__parameters:
-        yaml_filename: "angkorwat_area_map.yaml"
-        topic_name: "map"
-        frame_id: "map"
+# map_server2:
+#     ros__parameters:
+#         yaml_filename: "angkorwat_area_map.yaml"
+#         topic_name: "map"
+#         frame_id: "map"
 
-map_server3:
-    ros__parameters:
-        yaml_filename: "angkorcenter_area_map.yaml"
-        topic_name: "map"
-        frame_id: "map"
+# map_server3:
+#     ros__parameters:
+#         yaml_filename: "angkorcenter_area_map.yaml"
+#         topic_name: "map"
+#         frame_id: "map"
