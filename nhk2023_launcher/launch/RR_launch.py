@@ -33,18 +33,18 @@ def generate_launch_description():
         parameters=[{'robot_description': robot_description}, {'rate': 100}]
     )
 
-    map_server_config_path = os.path.join(
-        get_package_share_directory('nhk2023_launcher'),
-        'config', 'map', 'combined_params.yaml')
+    # map_server_config_path = os.path.join(
+    #     get_package_share_directory('nhk2023_launcher'),
+    #     'config', 'map', 'combined_params.yaml')
 
-    map_server_node = Node(
-        package='nav2_map_server',
-        executable='map_server',
-        name='map_server',
-        output='screen',
-        emulate_tty=True, # https://github.com/ros2/launch/issues/188
-        arguments=[map_server_config_path]
-    )
+    # map_server_node = Node(
+    #     package='nav2_map_server',
+    #     executable='map_server',
+    #     name='map_server',
+    #     output='screen',
+    #     emulate_tty=True, # https://github.com/ros2/launch/issues/188
+    #     arguments=[map_server_config_path]
+    # )
 
     lifecycle_nodes = ['map_server']
     start_lifecycle_manager_cmd = launch_ros.actions.Node(
@@ -95,8 +95,8 @@ def generate_launch_description():
     return LaunchDescription([
         joint_state_publisher_node,
         robot_state_publisher_node,
-        map_server_node,
-        start_lifecycle_manager_cmd,
+        # map_server_node,
+        # start_lifecycle_manager_cmd,
         static_map_odom_tf_broadcaster_node,
         wheelctrl_ros_launch,
         robot_ctrl_launch,
