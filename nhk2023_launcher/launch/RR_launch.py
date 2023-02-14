@@ -79,10 +79,8 @@ def generate_launch_description():
         emulate_tty = True,
         parameters=[{'config_path':os.path.join(
             get_package_share_directory('rogilink2'),
-            'config','rrconfig.yaml')}]
+            'config','rr.yaml')}]
     )
-
-
 
     robot_ctrl_launch = IncludeLaunchDescription(
         launch_description_source= os.path.join(
