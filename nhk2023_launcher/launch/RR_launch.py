@@ -1,12 +1,14 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
+import launch_ros.actions
 # include
 from launch.actions import IncludeLaunchDescription
 import os
 from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
-
+    use_sim_time = True
+    autostart = True
     urdf_file_name = 'simple_odom_robot.urdf'
     urdf = os.path.join(
         get_package_share_directory('nhk2023_launcher'),
@@ -31,31 +33,42 @@ def generate_launch_description():
         parameters=[{'robot_description': robot_description}, {'rate': 100}]
     )
 
-    map_server_node = Node(
-        package='nav2_map_server',
-        executable='map_server',
-        name='map_server',
-        output='screen',
-        emulate_tty=True, # https://github.com/ros2/launch/issues/188
-        arguments=['config/map/combined_params.yaml']
-    )
+    # map_server_config_path = os.path.join(
+    #     get_package_share_directory('nhk2023_launcher'),
+    #     'config', 'map', 'combined_params.yaml')
 
-    static_map_odom_tf_broadcaster_node = Node(
+    # map_server_node = Node(
+    #     package='nav2_map_server',
+    #     executable='map_server',
+    #     name='map_server',
+    #     output='screen',
+    #     emulate_tty=True, # https://github.com/ros2/launch/issues/188
+    #     arguments=[map_server_config_path]
+    # )
+
+    # lifecycle_nodes = ['map_server']
+    # start_lifecycle_manager_cmd = launch_ros.actions.Node(
+    #     package='nav2_lifecycle_manager',
+    #     executable='lifecycle_manager',
+    #     name='lifecycle_manager',
+    #     output='screen',
+    #     emulate_tty=True,  # https://github.com/ros2/launch/issues/188
+    #     parameters=[{'use_sim_time': use_sim_time},
+    #                 {'autostart': autostart},
+    #                 {'node_names': lifecycle_nodes}])
+
+    static_tf_broadcaster_node = Node(
         package='nhk2023_launcher',
-        executable='static_odom_map_broadcaster',
-        name='static_odom_map_broadcaster',
+        executable='static_tf_broadcaster',
+        name='static_tf_broadcaster',
         output='screen'
     )
 
-    wheel_ctrl = Node(
-        package='wheelctrl_ros2',
-        executable = 'wheelctrl_ros2',
-        name='wheelctrl_ros2',
-        output='screen',
-        emulate_tty = True,
-        parameters=[os.path.join(
-            get_package_share_directory('wheelctrl_ros2'),
-            'config','rr.yaml')]
+    wheelctrl_ros_launch = IncludeLaunchDescription(
+        launch_description_source=os.path.join(
+        get_package_share_directory('wheelctrl_ros2'),
+        'launch',
+        'wheelctrl_ros2_launch.py')
     )
 
     rogi_link_2 = Node(
@@ -66,14 +79,24 @@ def generate_launch_description():
         emulate_tty = True,
         parameters=[{'config_path':os.path.join(
             get_package_share_directory('rogilink2'),
-            'config','rrconfig.yaml')}]
+            'config','rr.yaml')}]
     )
 
+    robot_ctrl_launch = IncludeLaunchDescription(
+        launch_description_source= os.path.join(
+        get_package_share_directory('robot_ctrl'),
+        'launch',
+        'robot_ctrl_launch.py')
+    )
+
+
     return LaunchDescription([
-        # joint_state_publisher_node,
-        # robot_state_publisher_node,
+        joint_state_publisher_node,
+        robot_state_publisher_node,
         # map_server_node,
-        # static_map_odom_tf_broadcaster_node,
-        wheel_ctrl,
+        # start_lifecycle_manager_cmd,
+        static_tf_broadcaster_node,
+        wheelctrl_ros_launch,
+        robot_ctrl_launch,
         rogi_link_2
     ])
