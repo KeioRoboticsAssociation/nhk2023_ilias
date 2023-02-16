@@ -52,9 +52,9 @@ class JoyServer : public rclcpp::Node {
   void joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg) {
     if (msg->buttons != prev_joy.buttons) {
       prev_joy = *msg;
+      rogilink2_interfaces::msg::Frame frame;
       if(msg->buttons[static_cast<int>(button::A)]==1){
-
-
+        
       }
 
       if(msg->buttons[static_cast<int>(button::B)]==1){
@@ -88,10 +88,16 @@ class JoyServer : public rclcpp::Node {
       if(msg->buttons[static_cast<int>(button::HOME)]==1){
 
       }
+
+      if(msg->buttons[static_cast<int>(button::L3)]==1){
+
+      }
+
+      if(msg->buttons[static_cast<int>(button::R3)]==1){
+
+      }
     }
   }
-
-  void
 };
 
 int main(int argc, char** argv) {
