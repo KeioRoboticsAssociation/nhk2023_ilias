@@ -75,35 +75,93 @@ class JoyCommander {
                 joy_cmd_vel.linear.x, joy_cmd_vel.linear.y,
                 joy_cmd_vel.angular.z);
 
-    current_norm = sqrt(pow(current_joy.axes[static_cast<int>(axis::LY)], 2) +
-                        pow(current_joy.axes[static_cast<int>(axis::LX)], 2)) *
-                   max_linear_vel;
-    current_args = atan2(current_joy.axes[static_cast<int>(axis::LX)],
-                         current_joy.axes[static_cast<int>(axis::LY)]);
+    // current_norm = sqrt(pow(current_joy.axes[static_cast<int>(axis::LY)], 2)
+    // +
+    //                     pow(current_joy.axes[static_cast<int>(axis::LX)], 2))
+    //                     *
+    //                max_linear_vel;
+    // current_args = atan2(current_joy.axes[static_cast<int>(axis::LX)],
+    //                      current_joy.axes[static_cast<int>(axis::LY)]);
 
-    RCLCPP_INFO(ros_ptr->get_logger(), "current_norm: %f", current_norm);
+    // if(current_joy.axes[static_cast<int>(axis::LY)] == 0 &&
+    //    current_joy.axes[static_cast<int>(axis::LX)] == 0){
+    //   current_args = atan2(prev_cmd_vel.linear.y, prev_cmd_vel.linear.x);
+    // }
+    // // RCLCPP_INFO(ros_ptr->get_logger(), "current_norm: %f",
+    // //             (current_norm - prv_norm));
 
-    if (current_norm - prv_norm > max_linear_acc) {
-      // add velocity to joy_cmd_vel linearly using
-      joy_cmd_vel.linear.x =
-          prev_cmd_vel.linear.x + max_linear_acc * cos(current_args);
-      joy_cmd_vel.linear.y =
-          prev_cmd_vel.linear.y + max_linear_acc * sin(current_args);
+    // if (current_norm - prv_norm > max_linear_acc) {
+    //   // add velocity to joy_cmd_vel linearly using
+    //   joy_cmd_vel.linear.x = prev_cmd_vel.linear.x +
+    //                          max_linear_acc * cos(current_args) / node_rate;
+    //   joy_cmd_vel.linear.y = prev_cmd_vel.linear.y +
+    //                          max_linear_acc * sin(current_args) / node_rate;
+    // } else if (current_norm - prv_norm < -max_linear_acc) {
+    //   joy_cmd_vel.linear.x = prev_cmd_vel.linear.x -
+    //                          max_linear_acc * cos(current_args) / node_rate;
+    //   joy_cmd_vel.linear.y = prev_cmd_vel.linear.y -
+    //                          max_linear_acc * sin(current_args) / node_rate;
+    // } else {
+    //   joy_cmd_vel.linear.x = current_norm * cos(current_args);
+    //   joy_cmd_vel.linear.y = current_norm * sin(current_args);
+    //   RCLCPP_INFO(ros_ptr->get_logger(), "###################");
+    // }
+
+    // if (current_joy.axes[static_cast<int>(axis::RX)] - joy_cmd_vel.angular.z
+    // >
+    //     max_angular_acc) {
+    //   joy_cmd_vel.angular.z =
+    //       joy_cmd_vel.angular.z + max_angular_acc / node_rate;
+    // } else {
+    //   joy_cmd_vel.angular.z =
+    //       current_joy.axes[static_cast<int>(axis::RX)] * max_angular_vel;
+    // }
+
+    // add acceleration limit to joy_cmd_vel if it is over acc limit
+    if (current_joy.axes[static_cast<int>(axis::LY)] * max_linear_vel -
+            prev_cmd_vel.linear.x >
+        max_linear_acc / node_rate) {
+      joy_cmd_vel.linear.x = prev_cmd_vel.linear.x + max_linear_acc / node_rate;
+    } else if (current_joy.axes[static_cast<int>(axis::LY)] * max_linear_vel -
+                   prev_cmd_vel.linear.x <
+               -max_linear_acc / node_rate) {
+      joy_cmd_vel.linear.x = prev_cmd_vel.linear.x - max_linear_acc / node_rate;
     } else {
-      joy_cmd_vel.linear.x = current_norm * cos(current_args);
-      joy_cmd_vel.linear.y = current_norm * sin(current_args);
+      joy_cmd_vel.linear.x =
+          current_joy.axes[static_cast<int>(axis::LY)] * max_linear_vel;
     }
 
-    if (current_joy.axes[static_cast<int>(axis::RX)] - joy_cmd_vel.angular.z >
-        max_angular_acc) {
-      joy_cmd_vel.angular.z = joy_cmd_vel.angular.z + max_angular_acc;
+    if (current_joy.axes[static_cast<int>(axis::LX)] * max_linear_vel -
+            prev_cmd_vel.linear.y >
+        max_linear_acc / node_rate) {
+      joy_cmd_vel.linear.y = prev_cmd_vel.linear.y + max_linear_acc / node_rate;
+    } else if (current_joy.axes[static_cast<int>(axis::LX)] * max_linear_vel -
+                   prev_cmd_vel.linear.y <
+               -max_linear_acc / node_rate) {
+      joy_cmd_vel.linear.y = prev_cmd_vel.linear.y - max_linear_acc / node_rate;
+    } else {
+      joy_cmd_vel.linear.y =
+          current_joy.axes[static_cast<int>(axis::LX)] * max_linear_vel;
+    }
+
+    if (current_joy.axes[static_cast<int>(axis::RX)] * max_angular_vel -
+            prev_cmd_vel.angular.z >
+        max_angular_acc / node_rate) {
+      joy_cmd_vel.angular.z =
+          prev_cmd_vel.angular.z + max_angular_acc / node_rate;
+    } else if (current_joy.axes[static_cast<int>(axis::RX)] * max_angular_vel -
+                   prev_cmd_vel.angular.z <
+               -max_angular_acc / node_rate) {
+      joy_cmd_vel.angular.z =
+          prev_cmd_vel.angular.z - max_angular_acc / node_rate;
     } else {
       joy_cmd_vel.angular.z =
           current_joy.axes[static_cast<int>(axis::RX)] * max_angular_vel;
     }
 
-    // update
-    prv_norm = current_norm;
+    // // update
+    // prv_norm =
+    //     sqrt(pow(joy_cmd_vel.linear.x, 2) + pow(joy_cmd_vel.linear.y, 2));
     prev_cmd_vel = joy_cmd_vel;
   }
 };
