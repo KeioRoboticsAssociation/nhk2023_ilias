@@ -14,17 +14,31 @@ find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rogilink2_interfaces REQUIRED)
+find_package(md_lib REQUIRED)
 
-add_executable(joy_server src/joy_server.cpp)
-ament_target_dependencies(joy_server
+add_executable(rr_joy_server src/rr_joy_server.cpp)
+add_executable(er_joy_server src/er_joy_server.cpp)
+ament_target_dependencies(rr_joy_server
   rclcpp
   sensor_msgs
   std_msgs
   rogilink2_interfaces
+  md_lib
+)
+ament_target_dependencies(er_joy_server
+  rclcpp
+  sensor_msgs
+  std_msgs
+  rogilink2_interfaces
+  md_lib
 )
 
 install(TARGETS
-  joy_server
+  rr_joy_server
+  DESTINATION lib/${PROJECT_NAME}
+)
+install(TARGETS
+  er_joy_server
   DESTINATION lib/${PROJECT_NAME}
 )
 
