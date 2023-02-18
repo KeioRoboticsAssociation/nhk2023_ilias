@@ -43,7 +43,7 @@ class robot_ctrl : public rclcpp::Node {
 };
 
 robot_ctrl::robot_ctrl()
-    : Node("robot_ctrl"), joy_commander(this), precision(this) {
+    : Node("rr_robot_ctrl"), joy_commander(this), precision(this) {
   RCLCPP_INFO(this->get_logger(), "robot_ctrl node is started");
 
   // set parameters
