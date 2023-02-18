@@ -72,7 +72,7 @@ def generate_launch_description():
         emulate_tty = True,
         parameters=[os.path.join(
             get_package_share_directory('wheelctrl_ros2'),
-            'config','rr.yaml')]
+            'config','er.yaml')]
 
     )
 
@@ -84,16 +84,15 @@ def generate_launch_description():
         emulate_tty = True,
         parameters=[{'config_path':os.path.join(
             get_package_share_directory('rogilink2'),
-            'config','rr.yaml')}]
+            'config','er.yaml')}]
     )
 
     robot_ctrl = Node(
         package='robot_ctrl',
-        executable='rr_robot_ctrl',
-        name='rr_robot_ctrl',
+        executable='er_robot_ctrl',
+        name='er_robot_ctrl',
         output='screen',
     )
-
 
     return LaunchDescription([
         joint_state_publisher_node,
