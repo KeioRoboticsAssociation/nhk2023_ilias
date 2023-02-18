@@ -16,6 +16,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name), glob('launch/*launch.[pxy][yma]*')),
         (os.path.join('share', package_name), glob('urdf/*')),
+        (os.path.join('share', package_name), glob('config/map/*'))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -26,7 +27,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'static_odom_map_broadcaster = nhk2023_launcher.static_odom_map_broadcaster:main',
+            'static_tf_broadcaster = nhk2023_launcher.static_tf_broadcaster:main',
         ],
     },
 )
