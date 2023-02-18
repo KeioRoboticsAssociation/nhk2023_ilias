@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(state_ctrl)
+project(rr_state_ctrl)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -25,7 +25,7 @@ ament_auto_find_build_dependencies()
 #   include/tinyfsm/include/tinyfsm.hpp
 # )
 
-add_executable(state_ctrl
+add_executable(rr_state_ctrl
   src/main.cpp
   src/idle.cpp
   src/joy.cpp
@@ -34,7 +34,7 @@ add_executable(state_ctrl
   src/state_ctrl.cpp
 )
 
-ament_target_dependencies(state_ctrl
+ament_target_dependencies(rr_state_ctrl
   rclcpp
   std_msgs
 )
@@ -71,14 +71,8 @@ if(BUILD_TESTING)
 endif()
 
 install(TARGETS
-  state_ctrl
+  rr_state_ctrl
   DESTINATION lib/${PROJECT_NAME}
-)
-
-# Install launch files.
-install(DIRECTORY
-  launch
-  DESTINATION share/${PROJECT_NAME}/
 )
 
 ament_auto_package()

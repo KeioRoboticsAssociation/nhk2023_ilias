@@ -7,7 +7,7 @@
 #include "state_ctrl.hpp"
 #include "std_msgs/msg/string.hpp"
 
-RobotStateCtrl::RobotStateCtrl() : Node("robot_state_ctrl") {
+RobotStateCtrl::RobotStateCtrl() : Node("er_state_ctrl") {
   RCLCPP_INFO(this->get_logger(), "RobotStateCtrl");
   RCLCPP_INFO(this->get_logger(), "RobotStateCtrl constructor start");
   // subscribe mode changer as topic
