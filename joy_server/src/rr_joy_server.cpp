@@ -169,7 +169,7 @@ class JoyServer : public rclcpp::Node {
           std::this_thread::sleep_for(std::chrono::milliseconds(1));
           shooter.setVelocity(0.0);
           std::this_thread::sleep_for(std::chrono::milliseconds(1));
-          shooter.setVoltage(0.0);
+          shooter.setVelocity(0.0);
         }
       }
       // use Y
