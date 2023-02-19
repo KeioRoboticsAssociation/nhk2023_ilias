@@ -15,6 +15,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rogilink2_interfaces REQUIRED)
 find_package(md_lib REQUIRED)
+find_package(actuator_lib REQUIRED)
 
 add_executable(rr_joy_server src/rr_joy_server.cpp)
 add_executable(er_joy_server src/er_joy_server.cpp)
@@ -24,6 +25,7 @@ ament_target_dependencies(rr_joy_server
   std_msgs
   rogilink2_interfaces
   md_lib
+  actuator_lib
 )
 ament_target_dependencies(er_joy_server
   rclcpp
@@ -31,6 +33,7 @@ ament_target_dependencies(er_joy_server
   std_msgs
   rogilink2_interfaces
   md_lib
+  actuator_lib
 )
 
 install(TARGETS

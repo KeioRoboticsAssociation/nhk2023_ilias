@@ -32,8 +32,8 @@ class JoyServer : public rclcpp::Node {
 
   void init() {
     magazine.init();
-    magazine.setMode(Md::Mode::Voltage);
-    magazine.setVoltage(0.0);
+    magazine.setMode(Md::Mode::Position);
+    magazine.setPosition(0.0);
 
     chamber.init();
     chamber.setMode(Md::Mode::Voltage);
@@ -59,6 +59,9 @@ class JoyServer : public rclcpp::Node {
   MD2022 chamber;
   MD2022 hammer;
   ODrive shooter;
+
+  double current_magazine_position = 0.0;
+  double ring_thickness = 0.26;
 
   // logicool
   enum class button {
@@ -133,18 +136,10 @@ class JoyServer : public rclcpp::Node {
           // button A is released
           RCLCPP_INFO(this->get_logger(), "A is released");
           hammer.setVoltage(0.0);
-        }
-      } else if (msg->buttons[static_cast<int>(button::B)] !=
-                 prev_joy.buttons[static_cast<int>(button::B)]) {
-        if (msg->buttons[static_cast<int>(button::B)] == 1) {
-          // button B is pressed
-          RCLCPP_INFO(this->get_logger(), "B is pressed");
-          magazine.setVoltage(0.1);
-          std::this_thread::sleep_for(0.2s);
-        } else {
-          // button B is released
-          RCLCPP_INFO(this->get_logger(), "B is released");
-          magazine.setVoltage(0.0);
+          std::this_thread::sleep_for(std::chrono::milliseconds(1));
+          hammer.setVoltage(0.0);
+          std::this_thread::sleep_for(std::chrono::milliseconds(1));
+          hammer.setVoltage(0.0);
         }
       } else if (msg->buttons[static_cast<int>(button::X)] !=
                  prev_joy.buttons[static_cast<int>(button::X)]) {
@@ -156,19 +151,46 @@ class JoyServer : public rclcpp::Node {
           // button X is released
           RCLCPP_INFO(this->get_logger(), "X is released");
           chamber.setVoltage(0.0);
+          std::this_thread::sleep_for(std::chrono::milliseconds(1));
+          chamber.setVoltage(0.0);
+          std::this_thread::sleep_for(std::chrono::milliseconds(1));
+          chamber.setVoltage(0.0);
         }
       } else if (msg->buttons[static_cast<int>(button::RT)] !=
                  prev_joy.buttons[static_cast<int>(button::RT)]) {
         if (msg->buttons[static_cast<int>(button::RT)] == 1) {
           // button RT is pressed
           RCLCPP_INFO(this->get_logger(), "RT is pressed");
-          shooter.setVelocity(-50.0);
+          shooter.setVelocity(-55.0);
         } else {
           // button RT is released
           RCLCPP_INFO(this->get_logger(), "RT is released");
           shooter.setVelocity(0.0);
+          std::this_thread::sleep_for(std::chrono::milliseconds(1));
+          shooter.setVelocity(0.0);
+          std::this_thread::sleep_for(std::chrono::milliseconds(1));
+          shooter.setVoltage(0.0);
         }
       }
+      // use Y
+      else if (msg->buttons[static_cast<int>(button::Y)] !=
+               prev_joy.buttons[static_cast<int>(button::Y)]) {
+        if (msg->buttons[static_cast<int>(button::Y)] == 1) {
+          // button Y is pressed
+          RCLCPP_INFO(this->get_logger(), "Y is pressed");
+          current_magazine_position += ring_thickness;
+          magazine.setPosition(current_magazine_position);
+        }
+      } else if (msg->buttons[static_cast<int>(button::B)] !=
+                 prev_joy.buttons[static_cast<int>(button::B)]) {
+        if (msg->buttons[static_cast<int>(button::B)] == 1) {
+          // button B is pressed
+          RCLCPP_INFO(this->get_logger(), "B is pressed");
+          current_magazine_position -= ring_thickness;
+          magazine.setPosition(current_magazine_position);
+        }
+      }
+
       prev_joy = *msg;
     }
   }

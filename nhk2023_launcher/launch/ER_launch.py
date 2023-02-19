@@ -94,11 +94,9 @@ def generate_launch_description():
     return LaunchDescription([
         joint_state_publisher_node,
         robot_state_publisher_node,
-        # map_server_node,
-        # start_lifecycle_manager_cmd,
         static_tf_broadcaster_node,
         # wheelctrl_ros,
         robot_ctrl,
-        # rogi_link_2,
+        rogi_link_2,
         joy,
     ])

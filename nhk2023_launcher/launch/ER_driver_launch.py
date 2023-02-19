@@ -24,6 +24,6 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        # wheelctrl_ros,
+        wheelctrl_ros,
         joy_server,
     ])
