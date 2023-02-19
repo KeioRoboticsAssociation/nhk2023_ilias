@@ -51,9 +51,9 @@ class JoyServer : public rclcpp::Node {
 
     servo.init();
     // 0: lock 1: lock 2: supply
-    servo.setPosition(0, 110);  // 50
-    servo.setPosition(1, 50);   // 120
-    servo.setPosition(2, 125);  // 65
+    servo.setPosition(0, 110);  // 50 110
+    servo.setPosition(1, 50);   // 120 50
+    servo.setPosition(2, 125);  // 65 125
   }
 
  private:
@@ -69,6 +69,7 @@ class JoyServer : public rclcpp::Node {
   Servo servo;
 
   double current_angle_position = 0.0;
+  bool servo_flip = false;
 
   // logicool
   enum class button {
@@ -221,6 +222,8 @@ class JoyServer : public rclcpp::Node {
           // button LT is pressed
           RCLCPP_INFO(this->get_logger(), "LT is pressed");
           catapult.setPosition(0.0);
+          catapult.setMode(Md::Mode::Position);
+          catapult.setPosition(0.0);
         }
       } else if (msg->buttons[static_cast<int>(button::X)] !=
                  prev_joy.buttons[static_cast<int>(button::X)]) {
@@ -240,26 +243,25 @@ class JoyServer : public rclcpp::Node {
           servo.setPosition(0, 50);
           servo.setPosition(1, 120);
         }
-      } else if (msg->buttons[static_cast<int>(button::START)] !=
-                 prev_joy.buttons[static_cast<int>(button::START)]) {
-        if (msg->buttons[static_cast<int>(button::START)] == 1) {
-          catapult.setPosition(0.0);
-          catapult.setMode(Md::Mode::Position);
-          catapult.setPosition(0.0);
-        }
-      } else if (msg->buttons[static_cast<int>(button::LB)] !=
-                 prev_joy.buttons[static_cast<int>(button::LB)]) {
-        if (msg->buttons[static_cast<int>(button::LB)] == 1) {
+      } else if (msg->buttons[static_cast<int>(button::BACK)] !=
+                 prev_joy.buttons[static_cast<int>(button::BACK)]) {
+        if (msg->buttons[static_cast<int>(button::BACK)] == 1) {
           // button LB is pressed
           RCLCPP_INFO(this->get_logger(), "LB is pressed");
-          servo.setPosition(2, 125);
+          if (servo_flip) {
+            servo.setPosition(2, 125);
+          } else {
+            servo.setPosition(2, 65);
+          }
+          servo_flip = !servo_flip;
         }
-      } else if (msg->buttons[static_cast<int>(button::LT)] !=
-                 prev_joy.buttons[static_cast<int>(button::LT)]) {
-        if (msg->buttons[static_cast<int>(button::LT)] == 1) {
-          // button LT is pressed
-          RCLCPP_INFO(this->get_logger(), "LT is pressed");
-          servo.setPosition(2, 65);
+      } else if (msg->buttons[static_cast<int>(button::R3)] !=
+                 prev_joy.buttons[static_cast<int>(button::R3)]) {
+        if (msg->buttons[static_cast<int>(button::R3)] == 1) {
+          // button R3 is pressed
+          RCLCPP_INFO(this->get_logger(), "R3 is pressed");
+          servo.setPosition(0, 110);
+          servo.setPosition(1, 50);
         }
       }
       prev_joy = *msg;
