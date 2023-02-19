@@ -69,7 +69,7 @@ class JoyServer : public rclcpp::Node {
   Servo servo;
 
   double current_angle_position = 0.0;
-  bool servo_flip = false;
+  uint8_t servo_flip = false;
 
   // logicool
   enum class button {
@@ -214,7 +214,7 @@ class JoyServer : public rclcpp::Node {
         if (msg->buttons[static_cast<int>(button::LB)] == 1) {
           // button LB is pressed
           RCLCPP_INFO(this->get_logger(), "LB is pressed");
-          catapult.setPosition(-0.5);
+          catapult.setPosition(-4.5);
         }
       } else if (msg->buttons[static_cast<int>(button::LT)] !=
                  prev_joy.buttons[static_cast<int>(button::LT)]) {
@@ -247,16 +247,22 @@ class JoyServer : public rclcpp::Node {
                  prev_joy.buttons[static_cast<int>(button::BACK)]) {
         if (msg->buttons[static_cast<int>(button::BACK)] == 1) {
           // button LB is pressed
-          RCLCPP_INFO(this->get_logger(), "LB is pressed");
-          if (servo_flip) {
-            servo.setPosition(2, 125);
-          } else {
+          RCLCPP_INFO(this->get_logger(), "BACK is pressed");
+          if (servo_flip == 2) {
+            servo.setPosition(2, 120);
+            servo_flip = 0;
+          } else if (servo_flip == 0) {
             servo.setPosition(2, 65);
+            servo_flip = 1;
+          } else if (servo_flip == 1) {
+            servo.setPosition(2, 180);
+            servo_flip = 2;
           }
-          servo_flip = !servo_flip;
         }
-      } else if (msg->buttons[static_cast<int>(button::R3)] !=
-                 prev_joy.buttons[static_cast<int>(button::R3)]) {
+      }
+
+      else if (msg->buttons[static_cast<int>(button::R3)] !=
+               prev_joy.buttons[static_cast<int>(button::R3)]) {
         if (msg->buttons[static_cast<int>(button::R3)] == 1) {
           // button R3 is pressed
           RCLCPP_INFO(this->get_logger(), "R3 is pressed");
@@ -264,8 +270,8 @@ class JoyServer : public rclcpp::Node {
           servo.setPosition(1, 50);
         }
       }
-      prev_joy = *msg;
     }
+    prev_joy = *msg;
   }
 };
 
