@@ -139,7 +139,7 @@ class JoyServer : public rclcpp::Node {
         if (msg->buttons[static_cast<int>(button::A)] == 1) {
           // button A is pressed
           RCLCPP_INFO(this->get_logger(), "A is pressed");
-          supply.setVoltage(1.0);
+          supply.setVoltage(0.7);
         } else {
           // button A is released
           RCLCPP_INFO(this->get_logger(), "A is released");
@@ -214,7 +214,7 @@ class JoyServer : public rclcpp::Node {
         if (msg->buttons[static_cast<int>(button::LB)] == 1) {
           // button LB is pressed
           RCLCPP_INFO(this->get_logger(), "LB is pressed");
-          catapult.setPosition(-4.5);
+          catapult.setPosition(-4.8);
         }
       } else if (msg->buttons[static_cast<int>(button::LT)] !=
                  prev_joy.buttons[static_cast<int>(button::LT)]) {

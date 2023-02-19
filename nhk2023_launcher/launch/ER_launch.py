@@ -87,6 +87,7 @@ def generate_launch_description():
         executable='joy_linux_node',
         name='joy_linux_node',
         output='screen',
+        parameters=[{'deadzone': 0.02}]
     )
 
 
