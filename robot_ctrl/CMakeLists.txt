@@ -14,19 +14,33 @@ find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(sensor_lib REQUIRED)
 
 
-add_executable(robot_ctrl src/robot_ctrl.cpp src/joy_commander.cpp)
-ament_target_dependencies(robot_ctrl
+add_executable(rr_robot_ctrl src/rr/robot_ctrl.cpp)
+ament_target_dependencies(rr_robot_ctrl
   rclcpp
   geometry_msgs
   std_msgs
   sensor_msgs
+  sensor_lib
+)
+add_executable(er_robot_ctrl src/er/robot_ctrl.cpp)
+ament_target_dependencies(er_robot_ctrl
+  rclcpp
+  geometry_msgs
+  std_msgs
+  sensor_msgs
+  sensor_lib
 )
 
 
 install(TARGETS
-  robot_ctrl
+  rr_robot_ctrl
+  DESTINATION lib/${PROJECT_NAME}
+)
+install(TARGETS
+  er_robot_ctrl
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -35,3 +49,5 @@ install(DIRECTORY
   launch
   DESTINATION share/${PROJECT_NAME}/
 )
+
+ament_package()
