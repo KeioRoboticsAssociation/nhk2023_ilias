@@ -1,0 +1,27 @@
+<library path="src">
+  <!-- クラス名が重要なので書き間違えないように -->
+  <class name="LocalGUI" type="local_gui.local_gui.LocalGUI" base_class_type="rqt_gui_py::Plugin">
+    <description>
+      <!-- プラグインの説明です。 -->
+      A Python GUI plugin for NHK2023
+    </description>
+    <qtgui>
+      <group>
+        <!-- プラグインのグループを設定します -->
+        <!-- rqtを起動したときにPluginsから選択するアレです -->
+        <!-- さすがにLoggerではないのでVisualizationにしました -->
+        <!-- すでにあるVisualizationのプラグイン（例えばImage Viewを）を参照するのがおすすめ -->
+        <label>Visualization</label>
+        <icon type="theme">folder</icon>
+        <statustip>Plugins related to visualization.</statustip>
+      </group>
+      <!-- プラグインのラベルです。ちゃんとTsuraiって書こうね -->
+      <label>NHK2023</label>
+      <!-- プラグインのアイコンです。何でもいいと思います。 -->
+      <!-- Image Viewと同じにしました。 -->
+      <icon type="theme">image-x-generic</icon>
+      <!-- プラグイン選択時にrqtウィンドウの１番下に表示される説明文です -->
+      <statustip>A Python GUI plugin for displaying info about NHK2023</statustip>
+    </qtgui>
+  </class>
+</library>
