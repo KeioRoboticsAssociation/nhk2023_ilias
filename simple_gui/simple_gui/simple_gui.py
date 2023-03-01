@@ -6,10 +6,12 @@ from rogilink2_interfaces.msg import Frame
 
 # ros node
 class SimpleGUI(Node):
+    prev_event = None
+
     def __init__(self):
         super().__init__('simple_gui')
         self.gui = GUI()
-        self.publisher = self.create_publisher(Frame, 'rogilink_send', 10)
+        self.rogilink_publisher = self.create_publisher(Frame, 'rogilink_send', 10)
         self.timer = self.create_timer(0.1, self.timer_callback)
 
 
@@ -17,10 +19,20 @@ class SimpleGUI(Node):
         msg = Frame()
         msg.hardid = hardid
         msg.data = data
-        self.publisher.publish(msg)
+        self.rogilink_publisher.publish(msg)
 
     def timer_callback(self):
         self.gui.gui_check()
+        if self.gui.event != self.prev_event:
+            self.prev_event = self.gui.event
+            # ros logger
+            self.get_logger().info('Event: %s' % self.gui.event)
+
+    def gui_callback(self):
+        if self.gui.event == 'emergency_stop':
+            self.rogilink_publisher(0x00,0)
+        
+
 
 if __name__ == '__main__':
     rclpy.init()

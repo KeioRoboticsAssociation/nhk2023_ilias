@@ -36,7 +36,7 @@ class GUI:
 
   window = sg.Window('NHK2023 LocalGUI', layout, resizable=True, size=(1000, 800))
   current_layout = 1
-  event, values = window.read()
+  event, values = None , None
 
   # function
   def gui_check(self):
