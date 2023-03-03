@@ -12,6 +12,7 @@ class SimpleGUI(Node):
         super().__init__('simple_gui')
         self.gui = GUI()
         self.rogilink_publisher = self.create_publisher(Frame, 'rogilink_send', 10)
+        self.state_subscriber = self.create_subscription(Frame, 'mode', self.state_callback, 10)
         self.timer = self.create_timer(0.1, self.timer_callback)
 
 
@@ -31,7 +32,17 @@ class SimpleGUI(Node):
     def gui_callback(self):
         if self.gui.event == 'emergency_stop':
             self.rogilink_publisher(0x00,0)
-        
+
+    def state_callback(self, msg):
+        # changing the state image
+        if msg.data == 'start':
+            self.gui.rr_img_change('start')
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
