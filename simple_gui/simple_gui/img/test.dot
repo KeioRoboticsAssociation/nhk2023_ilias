@@ -1,14 +1,4 @@
 digraph state_machine {
-	START
-	ReSTART
-	Hill_top
-	Hill_bottom
-	Angkor
-	Angkor_Center
-	Type2_attack
-	Pole_block
-	Last_attack
-	END
 	START -> Hill_bottom
 	ReSTART -> Hill_bottom
 	Hill_bottom -> Hill_top

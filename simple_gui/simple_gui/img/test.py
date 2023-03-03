@@ -1,18 +1,18 @@
 from graphviz import Digraph
 # png
-G = Digraph('state_machine', filename='test.gv', format='png')
+G = Digraph('state_machine', filename='test.dot', format='png')
 
 G.attr("node")
-G.node('START')
-G.node('ReSTART')
-G.node('Hill_top')
-G.node('Hill_bottom')
-G.node('Angkor')
-G.node('Angkor_Center')
-G.node('Type2_attack')
-G.node('Pole_block')
-G.node('Last_attack')
-G.node('END')
+# G.node('START',style='filled', fillcolor='#ff000042')
+# G.node('ReSTART',style='filled', fillcolor='#ff000042')
+# G.node('Hill_top',style='filled', fillcolor='#ff000042')
+# G.node('Hill_bottom', style='filled',fillcolor='#ff000042')
+# G.node('Angkor',style='filled', fillcolor='#ff000042')
+# G.node('Angkor_Center',style='filled', fillcolor='#ff000042')
+# G.node('Type2_attack', style='filled',fillcolor='#ff000042')
+# G.node('Pole_block', style='filled',fillcolor='#ff000042')
+# G.node('Last_attack',style='filled', fillcolor='#ff000042')
+# G.node('END', style='filled',fillcolor='#ff000042')
 
 G.edge('START', 'Hill_bottom')
 G.edge('ReSTART', 'Hill_bottom')
@@ -25,4 +25,4 @@ G.edge('Pole_block', 'Last_attack')
 G.edge('Last_attack', 'END')
 
 # write out png file
-G.render('test')
+G.render()
