@@ -1,11 +1,13 @@
 import PySimpleGUI as sg
+from ament_index_python.packages import get_package_share_directory
+img_folder_path = get_package_share_directory('simple_gui') + '/img'
 
 # GUI class
 class GUI:
   sg.theme('Topanga')
 
   header = [
-      [sg.Button('Home', font='Helvetica 10',size=(10,2)) ,sg.Text('Ilias2023', font='Helvetica 30', size=(20, 2), justification='center'), sg.Button(key='emergency_stop',image_filename='img/emergency_stop.png', image_size=(100, 100), button_color=(sg.theme_background_color(), sg.theme_background_color()), )]
+      [sg.Button('Home', font='Helvetica 10',size=(10,2)) ,sg.Text('Ilias2023', font='Helvetica 30', size=(20, 2), justification='center'), sg.Button(key='emergency_stop',image_filename=f'{img_folder_path}/emergency_stop.png', image_size=(100, 100), button_color=(sg.theme_background_color(), sg.theme_background_color()), )]
   ]
   home = [
       [sg.Button('RR',font='Helvetica 20', size=(10, 2)),sg.Button('ER',font='Helvetica 20', size=(10, 2))],
@@ -29,7 +31,7 @@ class GUI:
   # RRHOME menu
   rr_state_frame=sg.Frame('State',[
           # show image
-          [sg.Image(filename='img/start.png', key='rr_state_img')],
+          [sg.Image(filename=f'{img_folder_path}/start.png', key='rr_state_img')],
           [sg.Text('State', size=(5, 1),font='Helcetica 20'), sg.InputCombo(('Start', 'Restart', 'Hill_bottom','Hill_top','Angkor','Angkor_Center','Type2_attack','Pole_block','Last_attack','END'),key='rr_state_select', size=(15, 1),font='Helcetica 20'), sg.Button('Set', key='set_state', size=(5, 1),font='Helcetica 20')],
           [sg.Column([[sg.Button('Start', key='start', font='Helvetica 20',size=(10,2)), sg.Button('Restart', key='restart', font='Helvetica 20',size=(10,2))]], justification='center')],
           [sg.Column([[sg.Button('Idle', key='idle', font='Helvetica 20',size=(10,2)), sg.Button('Manual', key='manual', font='Helvetica 20',size=(10,2))]], justification='center')],
@@ -53,7 +55,7 @@ class GUI:
 
   # function
   def gui_check(self):
-      self.event, self.values = self.window.read()
+      self.event, self.values = self.window.read(timeout=1)
       print(self.event, self.values)
 
       if self.event in (None, 'Exit'):
@@ -73,9 +75,11 @@ class GUI:
           self.current_layout = 1
           self.window[f'-{self.current_layout}-'].update(visible=True)
 
+
+
   def rr_img_change(self,rr_state_img):
       # update rr state image
-      self.window['rr_state_img'].update(filename=f'img/mini_{rr_state_img}.png')
+      self.window['rr_state_img'].update(filename=f'{img_folder_path}/mini_{rr_state_img}.png')
 
 
 
