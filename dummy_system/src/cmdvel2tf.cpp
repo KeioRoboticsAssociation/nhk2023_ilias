@@ -49,13 +49,13 @@ class cmdvel2tf : public rclcpp::Node {
         odom2base.transform.translation.y + msg->linear.y * dt;
     odom2base_new.transform.translation.z =
         odom2base.transform.translation.z + msg->linear.z * dt;
+
     // add the rotation
     tf2::Quaternion q;
     q.setRPY(0, 0, msg->angular.z * dt);
-    tf2::Quaternion q_old;
-    tf2::convert(odom2base.transform.rotation, q_old);
-    q = q * q_old;
-    tf2::convert(q, odom2base_new.transform.rotation);
+    geometry_msgs::msg::Quaternion q_msg;
+    tf2::convert(q, q_msg);
+    odom2base_new.transform.rotation = odom2base.transform.rotation * q_msg;
 
     // publish the transform
     br_->sendTransform(odom2base_new);
