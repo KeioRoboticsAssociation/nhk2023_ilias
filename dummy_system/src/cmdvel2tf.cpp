@@ -1,5 +1,6 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/convert.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/transform_listener.h>
@@ -53,9 +54,11 @@ class cmdvel2tf : public rclcpp::Node {
     // add the rotation
     tf2::Quaternion q;
     q.setRPY(0, 0, msg->angular.z * dt);
-    geometry_msgs::msg::Quaternion q_msg;
-    tf2::convert(q, q_msg);
-    odom2base_new.transform.rotation = odom2base.transform.rotation * q_msg;
+    tf2::Quaternion q_old;
+    tf2::convert(odom2base.transform.rotation, q_old);
+    q = q_old * q;
+    q.normalize();
+    odom2base_new.transform.rotation = tf2::toMsg(q);
 
     // publish the transform
     br_->sendTransform(odom2base_new);
