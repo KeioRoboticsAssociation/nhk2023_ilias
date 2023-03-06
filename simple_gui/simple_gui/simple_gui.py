@@ -9,6 +9,7 @@ from std_msgs.msg import String
 class SimpleGUI(Node):
     prev_event = None
 
+
     def __init__(self):
         super().__init__('simple_gui')
         self.gui = GUI()
@@ -31,10 +32,12 @@ class SimpleGUI(Node):
             self.prev_event = self.gui.event
             # ros logger
             self.get_logger().info('Event: %s' % self.gui.event)
+            self.gui_callback()
 
     def gui_callback(self):
         if self.gui.event == 'emergency_stop':
             self.rogilink_publisher(0x00,0)
+            self.get_logger().error('********EMERGENCY STOP*********')
 
     def state_callback(self, msg):
         # info
