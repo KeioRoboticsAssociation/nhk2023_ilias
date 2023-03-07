@@ -5,17 +5,19 @@ class PingNode : public rclcpp::Node {
  public:
   PingNode() : Node("ping_node") {
     publisher_ =
-        this->create_publisher<rogilink2_interfaces::msg::Frame>("ping", 10);
+        this->create_publisher<rogilink2_interfaces::msg::Frame>("rogilink2/send", 10);
     timer_ =
-        this->create_wall_timer(std::chrono::milliseconds(10),
+        this->create_wall_timer(std::chrono::milliseconds(100),
                                 std::bind(&PingNode::timer_callback, this));
   }
 
  private:
   void timer_callback() {
     auto message = rogilink2_interfaces::msg::Frame();
+    message.name = "broadcast";
     message.hard_id = 0x3F;
     message.cmd_id = 0x01;
+    message.is_remote = true;
     publisher_->publish(message);
     RCLCPP_INFO(this->get_logger(), "ping");
   }
