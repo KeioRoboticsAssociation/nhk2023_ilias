@@ -1,11 +1,4 @@
 digraph state_machine {
-	START -> Hill_bottom
-	ReSTART -> Hill_bottom
-	Hill_bottom -> Hill_top
-	Hill_top -> Angkor
-	Angkor -> Angkor_Center
-	Angkor_Center -> Type2_attack
-	Type2_attack -> Pole_block
-	Pole_block -> Last_attack
-	Last_attack -> END
+  graph [ dpi = 300, ratio = 0.5];
+	MANUAL [fillcolor="#ff000042" style=filled]
 }

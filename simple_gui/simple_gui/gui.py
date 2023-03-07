@@ -4,18 +4,23 @@ img_folder_path = get_package_share_directory('simple_gui') + '/img'
 
 # GUI class
 class GUI:
-  sg.theme('HotDogStand')
-
+  sg.theme('Topanga')
+  ################### Header ###################
   header = [
-      [sg.Button('Home', font='Helvetica 10',size=(10,2)) ,sg.Text('Ilias2023', font='Helvetica 30', size=(20, 2), justification='center'), sg.Button(key='emergency_stop',image_filename=f'{img_folder_path}/emergency_stop.png', image_size=(100, 100), button_color=(sg.theme_background_color(), sg.theme_background_color()), )]
+      [sg.Button('Home', font='Helvetica 10',size=(10,2)) ,
+       sg.Text('Ilias2023', font='Helvetica 30', size=(20, 2), justification='center'),
+       sg.Button(key='emergency_stop',image_filename=f'{img_folder_path}/emergency_stop.png', image_size=(100, 100), button_color=(sg.theme_background_color(), sg.theme_background_color()), )]
   ]
   home = [
       [sg.Button('RR',font='Helvetica 20', size=(10, 2)),sg.Button('ER',font='Helvetica 20', size=(10, 2))],
   ]
-  # ERHOME menu
+
+  ################### ERHOME menu ###################
   er_state_frame=sg.Frame('State',[
           # text box to choose state
-          [sg.Text('State', size=(10, 1)), sg.InputCombo(('Start', 'Restart', 'Hill_bottom','Hill_top','Angkor','Angkor_Center','Type2_attack','Pole_block','Last_attack','END'),key='state', size=(20, 1)), sg.Button('Set', key='set_state', size=(10, 1))],
+          [sg.Text('State', size=(10, 1)),
+           sg.InputCombo(('Start', 'Restart', 'Hill_bottom','Hill_top','Angkor','Angkor_Center','Type2_attack','Pole_block','Last_attack','END'),key='state', size=(20, 1)),
+           sg.Button('Set', key='set_state', size=(10, 1))],
           [sg.Button('Start', key='start', size=(10, 1)), sg.Button('Restart', key='restart', size=(10, 1))],
           [sg.Button('Idele', key='idele', size=(10, 1)), sg.Button('Manual', key='manual', size=(10, 1))],
       ],size=(500, 800))
@@ -28,22 +33,26 @@ class GUI:
       [er_state_frame,er_menu_frame],
   ]
 
-  # RRHOME menu
+  ################### RRHOME menu ###################
   rr_state_frame=sg.Frame('State',[
           # show image
-          [sg.Image(filename=f'{img_folder_path}/start.png', key='rr_state_img')],
-          [sg.Text('State', size=(5, 1),font='Helcetica 20'), sg.InputCombo(('Start', 'Restart', 'Hill_bottom','Hill_top','Angkor','Angkor_Center','Type2_attack','Pole_block','Last_attack','END'),key='rr_state_select', size=(15, 1),font='Helcetica 20'), sg.Button('Set', key='set_state', size=(5, 1),font='Helcetica 20')],
-          [sg.Column([[sg.Button('Start', key='start', font='Helvetica 20',size=(10,2)), sg.Button('Restart', key='restart', font='Helvetica 20',size=(10,2))]], justification='center')],
-          [sg.Column([[sg.Button('Idle', key='idle', font='Helvetica 20',size=(10,2)), sg.Button('Manual', key='manual', font='Helvetica 20',size=(10,2))]], justification='center')],
+          [sg.Image(filename=f'{img_folder_path}/mini_start.png', key='rr_state_img')],
+          [sg.Text('State', size=(5, 1),font='Helcetica 20'),
+           sg.InputCombo(('Start', 'Restart', 'Hill_bottom','Hill_top','Angkor','Angkor_Center','Type2_attack','Pole_block','Last_attack','END'),
+          key='rr_state_select', size=(15, 1),font='Helcetica 20'), sg.Button('Set', key='set_state', size=(5, 1),font='Helcetica 20')],
+          [sg.Column([[sg.Button('Start', key='rr_start', font='Helvetica 20',size=(10,2)), sg.Button('Restart', key='rr_restart', font='Helvetica 20',size=(10,2))]], justification='center')],
+          [sg.Column([[sg.Button('Idle', key='rr_idle', font='Helvetica 20',size=(10,2)), sg.Button('Manual', key='rr_manual', font='Helvetica 20',size=(10,2))]], justification='center')],
     ],size=(500, 800))
   rr_menu_frame=sg.Frame('Menu',[[
 
     ]],size=(500, 800))
+
   rrhome = [
       [sg.Text('RR',font='Helvetica 20', size=(10, 2), justification='center')],
       [rr_state_frame,rr_menu_frame]
   ]
 
+  ################### total layout ###################
   layout = [
       [sg.Column(header, key='-HEADER-',justification='center')],
       [sg.Column(home, key='-1-',justification='center'),sg.Column(erhome, visible=False, key='-2-',justification='center'),sg.Column(rrhome, visible=False, key='-3-',justification='center'),],
@@ -55,7 +64,7 @@ class GUI:
 
   # function
   def gui_check(self):
-      self.event, self.values = self.window.read(timeout=1)
+      self.event, self.values = self.window.read(timeout=10)
       print(self.event, self.values)
 
       if self.event in (None, 'Exit'):
