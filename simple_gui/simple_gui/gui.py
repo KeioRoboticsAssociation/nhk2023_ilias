@@ -4,7 +4,7 @@ img_folder_path = get_package_share_directory('simple_gui') + '/img'
 
 # GUI class
 class GUI:
-  sg.theme('Topanga')
+  sg.theme('HotDogStand')
 
   header = [
       [sg.Button('Home', font='Helvetica 10',size=(10,2)) ,sg.Text('Ilias2023', font='Helvetica 30', size=(20, 2), justification='center'), sg.Button(key='emergency_stop',image_filename=f'{img_folder_path}/emergency_stop.png', image_size=(100, 100), button_color=(sg.theme_background_color(), sg.theme_background_color()), )]
