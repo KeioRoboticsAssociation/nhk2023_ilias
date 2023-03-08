@@ -42,7 +42,7 @@ class GUI:
           key='rr_state_select', size=(15, 1),font='Helcetica 20'), sg.Button('Set', key='set_state', size=(5, 1),font='Helcetica 20')],
           [sg.Column([[sg.Button('Start', key='rr_start', font='Helvetica 20',size=(10,2)), sg.Button('Restart', key='rr_restart', font='Helvetica 20',size=(10,2))]], justification='center')],
           [sg.Column([[sg.Button('Idle', key='rr_idle', font='Helvetica 20',size=(10,2)), sg.Button('Manual', key='rr_manual', font='Helvetica 20',size=(10,2))]], justification='center')],
-          [sg.Column([[sg.Button('Foward', key='rr_foward', font='Helvetica 20',size=(10,2)),]], justification='center')],
+          [sg.Column([[sg.Button('Forward', key='rr_forward', font='Helvetica 20',size=(10,2)),]], justification='center')],
     ],size=(500, 800))
   rr_menu_frame=sg.Frame('Menu',[[
 

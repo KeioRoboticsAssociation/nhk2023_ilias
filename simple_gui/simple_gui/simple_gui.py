@@ -51,11 +51,11 @@ class SimpleGUI(Node):
         elif self.gui.event == 'rr_manual':
             self.state_callback('manual')
             self.get_logger().info('********MANUAL*********')
-        elif self.gui.event == 'rr_foward':
+        elif self.gui.event == 'rr_forward':
             msg = String()
-            msg.data = 'foward'
+            msg.data = 'FORWARD'
             self.state_toggle_pub_.publish(msg)
-            self.get_logger().info('********FOWARD*********')
+            self.get_logger().info('********FORWARD*********')
 
 
     def state_callback(self, msg):
