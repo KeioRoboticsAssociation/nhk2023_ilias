@@ -8,6 +8,7 @@
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <nav_msgs/msg/odometry.hpp>
 
 class cmdvel2tf : public rclcpp::Node {
  public:
@@ -18,6 +19,7 @@ class cmdvel2tf : public rclcpp::Node {
     tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
     tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
     br_ = std::make_shared<tf2_ros::TransformBroadcaster>(*this);
+    odometry_pub_ = this->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
   }
 
  private:
@@ -70,12 +72,27 @@ class cmdvel2tf : public rclcpp::Node {
 
     // publish the transform
     br_->sendTransform(odom2base_new);
+
+    // publish odometry
+    nav_msgs::msg::Odometry odom;
+    odom.header.stamp = current_time;
+    odom.header.frame_id = "odom";
+    odom.child_frame_id = "base_link";
+    odom.pose.pose.position.x = odom2base_new.transform.translation.x;
+    odom.pose.pose.position.y = odom2base_new.transform.translation.y;
+    odom.pose.pose.position.z = 0.0;
+    odom.pose.pose.orientation = odom2base_new.transform.rotation;
+    odom.twist.twist.linear.x = msg->linear.x;
+    odom.twist.twist.linear.y = msg->linear.y;
+    odom.twist.twist.angular.z = msg->angular.z;
+    odometry_pub_->publish(odom);
   }
 
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr sub_;
   std::shared_ptr<tf2_ros::TransformBroadcaster> br_;
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+  rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odometry_pub_;
 };
 
 int main(int argc, char* argv[]) {
