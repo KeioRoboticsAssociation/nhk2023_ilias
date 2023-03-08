@@ -15,6 +15,7 @@ RobotStateCtrl::RobotStateCtrl() : Node("rr_state_ctrl") {
       "state_toggle", 10,
       std::bind(&RobotStateCtrl::state_toggle_callback, this,
                 std::placeholders::_1));
+  // publish state
 
   RCLCPP_INFO(this->get_logger(), "RobotStateCtrl constructor wei");
   // publish mode as topic
