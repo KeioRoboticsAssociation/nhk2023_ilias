@@ -14,6 +14,15 @@ struct GOD_Flag : tinyfsm::Event {};
 class Idle;
 class Joy;
 class Start;
+class Restart;
+class Hill_Bottom;
+class Hill_Top;
+class Angkor;
+class Angkor_Center;
+class Type2_Attack;
+class Pole_Block;
+class Last_Attack;
+class End;
 
 class StateMachine : public tinyfsm::Fsm<StateMachine> {
  public:
@@ -51,7 +60,62 @@ class Joy : public StateMachine {
 class Start : public StateMachine {
  public:
   void entry(void) override;
+  void react(Forward_Flag const &) override { transit<Hill_Bottom>(); };
 };
+
+class Restart : public StateMachine {
+ public:
+  void entry(void) override;
+  void react(Forward_Flag const &) override { transit<Hill_Bottom>(); };
+};
+
+class Hill_Bottom : public StateMachine {
+ public:
+  void entry(void) override;
+  void react(Forward_Flag const &) override { transit<Hill_Top>(); };
+};
+
+class Hill_Top : public StateMachine {
+ public:
+  void entry(void) override;
+  void react(Forward_Flag const &) override { transit<Angkor>(); };
+};
+
+class Angkor : public StateMachine {
+ public:
+  void entry(void) override;
+  void react(Forward_Flag const &) override { transit<Angkor_Center>(); };
+};
+
+class Angkor_Center : public StateMachine {
+ public:
+  void entry(void) override;
+  void react(Forward_Flag const &) override { transit<Type2_Attack>(); };
+};
+
+class Type2_Attack : public StateMachine {
+ public:
+  void entry(void) override;
+  void react(Forward_Flag const &) override { transit<Pole_Block>(); };
+};
+
+class Pole_Block : public StateMachine {
+ public:
+  void entry(void) override;
+  void react(Forward_Flag const &) override { transit<Last_Attack>(); };
+};
+
+class Last_Attack : public StateMachine {
+ public:
+  void entry(void) override;
+  void react(Forward_Flag const &) override { transit<End>(); };
+};
+
+class End : public StateMachine {
+ public:
+  void entry(void) override;
+};
+
 
 using state_machine = StateMachine;
 
