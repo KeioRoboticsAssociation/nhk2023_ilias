@@ -1,6 +1,5 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/convert.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/transform_listener.h>
@@ -8,6 +7,7 @@
 #include <geometry_msgs/msg/twist.hpp>
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 class cmdvel2tf : public rclcpp::Node {
  public:
@@ -28,8 +28,9 @@ class cmdvel2tf : public rclcpp::Node {
     rclcpp::Time current_time = this->now();
     double dt = (current_time - last_time).seconds();
     last_time = current_time;
+    RCLCPP_INFO(this->get_logger(), "dt: %f", dt);
 
-    // get the transform from odom to base_link
+    // get the transform from base_link to odom
     geometry_msgs::msg::TransformStamped odom2base;
     try {
       odom2base =
@@ -39,23 +40,30 @@ class cmdvel2tf : public rclcpp::Node {
       return;
     }
 
+    tf2::Quaternion q_old;
+    tf2::convert(odom2base.transform.rotation, q_old);
+
+    // convert quaternion to roll pitch yaw
+    tf2::Matrix3x3 m(q_old);
+    double roll, pitch, yaw;
+    m.getRPY(roll, pitch, yaw);
+
     // calculate the transform from odom to base_link
     geometry_msgs::msg::TransformStamped odom2base_new;
     odom2base_new.header.stamp = current_time;
     odom2base_new.header.frame_id = "odom";
     odom2base_new.child_frame_id = "base_link";
     odom2base_new.transform.translation.x =
-        odom2base.transform.translation.x + msg->linear.x * dt;
+        odom2base.transform.translation.x +
+        (msg->linear.x * cos(yaw) - msg->linear.y * sin(yaw)) * dt;
     odom2base_new.transform.translation.y =
-        odom2base.transform.translation.y + msg->linear.y * dt;
-    odom2base_new.transform.translation.z =
-        odom2base.transform.translation.z + msg->linear.z * dt;
+        odom2base.transform.translation.y +
+        (msg->linear.x * sin(yaw) + msg->linear.y * cos(yaw)) * dt;
+    odom2base_new.transform.translation.z = 0.0;
 
     // add the rotation
     tf2::Quaternion q;
     q.setRPY(0, 0, msg->angular.z * dt);
-    tf2::Quaternion q_old;
-    tf2::convert(odom2base.transform.rotation, q_old);
     q = q_old * q;
     q.normalize();
     odom2base_new.transform.rotation = tf2::toMsg(q);
