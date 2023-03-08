@@ -32,6 +32,15 @@ add_executable(rr_state_ctrl
   src/start.cpp
   src/robot_state_ctrl.cpp
   src/state_ctrl.cpp
+  src/angkor_center.cpp
+  src/angkor.cpp
+  src/end.cpp
+  src/hill_bottom.cpp
+  src/hill_top.cpp
+  src/last_attack.cpp
+  src/pole_block.cpp
+  src/restart.cpp
+  src/type2_attack.cpp
 )
 
 ament_target_dependencies(rr_state_ctrl
