@@ -1,0 +1,4 @@
+digraph state_machine {
+  graph [ dpi = 300, ratio = 0.5];
+	MANUAL [fillcolor="#ff000042" style=filled]
+}
