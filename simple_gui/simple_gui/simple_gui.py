@@ -9,13 +9,13 @@ from std_msgs.msg import String
 class SimpleGUI(Node):
     prev_event = None
 
-
     def __init__(self):
         super().__init__('simple_gui')
         self.gui = GUI()
         self.rogimsg_pub_ = self.create_publisher(Frame, 'rogilink2/send', 10)
         self.state_subscriber = self.create_subscription(String, 'state', self.state_callback, 10)
         self.timer = self.create_timer(0.1, self.timer_callback)
+        self.state_toggle_pub_ = self.create_publisher(String, 'state_toggle', 10)
 
 
     def rogilink_publisher(self, hard_id, data):
@@ -51,6 +51,11 @@ class SimpleGUI(Node):
         elif self.gui.event == 'rr_manual':
             self.state_callback('manual')
             self.get_logger().info('********MANUAL*********')
+        elif self.gui.event == 'rr_foward':
+            msg = String()
+            msg.data = 'foward'
+            self.state_toggle_pub_.publish(msg)
+            self.get_logger().info('********FOWARD*********')
 
 
     def state_callback(self, msg):
