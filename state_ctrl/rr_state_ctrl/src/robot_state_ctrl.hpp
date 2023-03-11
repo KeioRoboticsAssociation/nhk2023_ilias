@@ -12,6 +12,8 @@ class RobotStateCtrl : public rclcpp::Node {
   ~RobotStateCtrl(){}
   // publish mode as topic
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr mode_pub_;
+  // publish state as topic
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_pub_;
   // subscribe mode changer as topic
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr state_toggle_sub_;
 

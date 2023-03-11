@@ -8,4 +8,8 @@ void Angkor::entry(void) {
   msg.data = "ANGKOR";
   robot_state_ctrl->mode_pub_->publish(msg);
   RCLCPP_INFO(robot_state_ctrl->get_logger(), "mode msg angkor");
+  // publish state message
+  msg.data = "ANGKOR";
+  robot_state_ctrl->state_pub_->publish(msg);
+  RCLCPP_INFO(robot_state_ctrl->get_logger(), "state msg angkor");
 }
