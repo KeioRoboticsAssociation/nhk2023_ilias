@@ -55,9 +55,9 @@ class JoyCommander {
   enum class axis {
     LX = 0,
     LY = 1,
-    LT = 2,
-    RX = 3,
-    RY = 4,
+    LT = 4,
+    RX = 2,
+    RY = 3,
     RT = 5,
     DPAD_X = 6,
     DPAD_Y = 7,

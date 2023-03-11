@@ -64,17 +64,17 @@ def generate_launch_description():
         output='screen'
     )
 
-    wheelctrl_ros = Node(
-        package='wheelctrl_ros2',
-        executable = 'wheelctrl_ros2',
-        name='wheelctrl_ros2',
-        output='screen',
-        emulate_tty = True,
-        parameters=[os.path.join(
-            get_package_share_directory('wheelctrl_ros2'),
-            'config','rr.yaml')]
+    # wheelctrl_ros = Node(
+    #     package='wheelctrl_ros2',
+    #     executable = 'wheelctrl_ros2',
+    #     name='wheelctrl_ros2',
+    #     output='screen',
+    #     emulate_tty = True,
+    #     parameters=[os.path.join(
+    #         get_package_share_directory('wheelctrl_ros2'),
+    #         'config','rr.yaml')]
 
-    )
+    # )
 
     rogi_link_2 = Node(
         package='rogilink2',
@@ -94,6 +94,13 @@ def generate_launch_description():
         output='screen',
     )
 
+    joy = Node(
+        package='joy_linux',
+        executable='joy_linux_node',
+        name='joy_linux_node',
+        output='screen',
+    )
+
 
     return LaunchDescription([
         joint_state_publisher_node,
@@ -101,7 +108,8 @@ def generate_launch_description():
         # map_server_node,
         # start_lifecycle_manager_cmd,
         static_tf_broadcaster_node,
-        wheelctrl_ros,
+        # wheelctrl_ros,
         robot_ctrl,
-        rogi_link_2
+        # rogi_link_2,
+        joy,
     ])

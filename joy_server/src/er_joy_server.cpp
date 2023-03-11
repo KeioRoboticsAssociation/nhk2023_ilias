@@ -4,6 +4,7 @@
 #include <rogilink2_interfaces/msg/frame.hpp>
 #include <sensor_msgs/msg/joy.hpp>
 
+#include "actuator_lib/servo.hpp"
 #include "md_lib/md2022.hpp"
 #include "md_lib/odrive.hpp"
 
@@ -16,13 +17,14 @@ class JoyServer : public rclcpp::Node {
         magazine(this, "magazine"),
         angle(this, "angle"),
         supply(this, "supply"),
-        catapult(this, "catapult") {
+        catapult(this, "catapult"),
+        servo(this, "servo") {
     RCLCPP_INFO(this->get_logger(), "joy_server is started");
     joy_sub = this->create_subscription<sensor_msgs::msg::Joy>(
         "/joy", 10,
         std::bind(&JoyServer::joy_callback, this, std::placeholders::_1));
     rogilink2_pub = this->create_publisher<rogilink2_interfaces::msg::Frame>(
-        "/rogilink/send", 10);
+        "/rogilink2/send", 10);
   }
 
   // subscriber
@@ -37,7 +39,7 @@ class JoyServer : public rclcpp::Node {
 
     angle.init();
     angle.setMode(Md::Mode::Voltage);
-    angle.setVoltage(0.0);
+    angle.setPosition(0.0);
 
     supply.init();
     supply.setMode(Md::Mode::Voltage);
@@ -47,10 +49,11 @@ class JoyServer : public rclcpp::Node {
     catapult.setMode(Md::Mode::Position);
     catapult.setPosition(0.0);
 
-    // shooter.init();
-    // shooter.setMode(Md::Mode::Velocity,
-    //                 ODriveEnum::InputMode::INPUT_MODE_VEL_RAMP);
-    // shooter.setVelocity(0.0);
+    servo.init();
+    // 0: lock 1: lock 2: supply
+    servo.setPosition(0, 110);  // 50 110
+    servo.setPosition(1, 50);   // 120 50
+    servo.setPosition(2, 125);  // 65 125
   }
 
  private:
@@ -63,7 +66,10 @@ class JoyServer : public rclcpp::Node {
   MD2022 angle;
   MD2022 supply;
   MD2022 catapult;
-  // ODrive shooter;
+  Servo servo;
+
+  double current_angle_position = 0.0;
+  uint8_t servo_flip = false;
 
   // logicool
   enum class button {
@@ -133,10 +139,14 @@ class JoyServer : public rclcpp::Node {
         if (msg->buttons[static_cast<int>(button::A)] == 1) {
           // button A is pressed
           RCLCPP_INFO(this->get_logger(), "A is pressed");
-          supply.setVoltage(1.0);
+          supply.setVoltage(0.7);
         } else {
           // button A is released
           RCLCPP_INFO(this->get_logger(), "A is released");
+          supply.setVoltage(0.0);
+          std::this_thread::sleep_for(0.1s);
+          supply.setVoltage(0.0);
+          std::this_thread::sleep_for(0.1s);
           supply.setVoltage(0.0);
         }
       } else if (msg->buttons[static_cast<int>(button::B)] !=
@@ -145,45 +155,123 @@ class JoyServer : public rclcpp::Node {
           // button B is pressed
           RCLCPP_INFO(this->get_logger(), "B is pressed");
           magazine.setVoltage(0.5);
-          std::this_thread::sleep_for(0.5s);
         } else {
           // button B is released
           RCLCPP_INFO(this->get_logger(), "B is released");
           magazine.setVoltage(0.0);
+          std::this_thread::sleep_for(0.1s);
+          magazine.setVoltage(0.0);
+          std::this_thread::sleep_for(0.1s);
+          magazine.setVoltage(0.0);
         }
-      } else if (msg->buttons[static_cast<int>(button::X)] !=
-                 prev_joy.buttons[static_cast<int>(button::X)]) {
-        if (msg->buttons[static_cast<int>(button::X)] == 1) {
-          // button X is pressed
-          RCLCPP_INFO(this->get_logger(), "X is pressed");
-          angle.setVoltage(-1.0);
-        } else {
-          // button X is released
-          RCLCPP_INFO(this->get_logger(), "X is released");
-          angle.setVoltage(0.0);
-        }
-      } else if (msg->buttons[static_cast<int>(button::RT)] != 0) {
-        // button RT is pressed
-        RCLCPP_INFO(this->get_logger(), "RT is pressed");
-        magazine.setVoltage(0.5);
-        std::this_thread::sleep_for(0.5s);
       } else if (msg->buttons[static_cast<int>(button::Y)] !=
                  prev_joy.buttons[static_cast<int>(button::Y)]) {
         if (msg->buttons[static_cast<int>(button::Y)] == 1) {
           // button Y is pressed
           RCLCPP_INFO(this->get_logger(), "Y is pressed");
-          catapult.setPosition(1.0);
+          magazine.setVoltage(-0.5);
+        } else {
+          // button Y is released
+          RCLCPP_INFO(this->get_logger(), "Y is released");
+          magazine.setVoltage(0.0);
+          std::this_thread::sleep_for(0.1s);
+          magazine.setVoltage(0.0);
+          std::this_thread::sleep_for(0.1s);
+          magazine.setVoltage(0.0);
+        }
+      } else if (msg->buttons[static_cast<int>(button::RB)] !=
+                 prev_joy.buttons[static_cast<int>(button::RB)]) {
+        if (msg->buttons[static_cast<int>(button::RB)] == 1) {
+          // button RB is pressed
+          RCLCPP_INFO(this->get_logger(), "RB is pressed");
+          angle.setVoltage(-0.1);
+        } else {
+          // button RB is released
+          RCLCPP_INFO(this->get_logger(), "RB is released");
+          angle.setVoltage(0.0);
+          std::this_thread::sleep_for(0.1s);
+          angle.setVoltage(0.0);
+          std::this_thread::sleep_for(0.1s);
+          angle.setVoltage(0.0);
+        }
+      } else if (msg->buttons[static_cast<int>(button::RT)] !=
+                 prev_joy.buttons[static_cast<int>(button::RT)]) {
+        if (msg->buttons[static_cast<int>(button::RT)] == 1) {
+          // button RT is pressed
+          RCLCPP_INFO(this->get_logger(), "RT is pressed");
+          angle.setVoltage(0.1);
+        } else {
+          // button RT is released
+          RCLCPP_INFO(this->get_logger(), "RT is released");
+          angle.setVoltage(0.0);
+          std::this_thread::sleep_for(0.1s);
+          angle.setVoltage(0.0);
+          std::this_thread::sleep_for(0.1s);
+          angle.setVoltage(0.0);
         }
       } else if (msg->buttons[static_cast<int>(button::LB)] !=
                  prev_joy.buttons[static_cast<int>(button::LB)]) {
         if (msg->buttons[static_cast<int>(button::LB)] == 1) {
           // button LB is pressed
           RCLCPP_INFO(this->get_logger(), "LB is pressed");
+          catapult.setPosition(-4.8);
+        }
+      } else if (msg->buttons[static_cast<int>(button::LT)] !=
+                 prev_joy.buttons[static_cast<int>(button::LT)]) {
+        if (msg->buttons[static_cast<int>(button::LT)] == 1) {
+          // button LT is pressed
+          RCLCPP_INFO(this->get_logger(), "LT is pressed");
+          catapult.setPosition(0.0);
+          catapult.setMode(Md::Mode::Position);
           catapult.setPosition(0.0);
         }
+      } else if (msg->buttons[static_cast<int>(button::X)] !=
+                 prev_joy.buttons[static_cast<int>(button::X)]) {
+        if (msg->buttons[static_cast<int>(button::X)] == 1) {
+          // button X is pressed
+          RCLCPP_INFO(this->get_logger(), "X is pressed");
+          // kaihou
+          catapult.setMode(Md::Mode::Idle);
+          servo.setPosition(0, 50);
+          servo.setPosition(1, 120);
+          std::this_thread::sleep_for(0.05s);
+          catapult.setMode(Md::Mode::Idle);
+          servo.setPosition(0, 50);
+          servo.setPosition(1, 120);
+          std::this_thread::sleep_for(0.05s);
+          catapult.setMode(Md::Mode::Idle);
+          servo.setPosition(0, 50);
+          servo.setPosition(1, 120);
+        }
+      } else if (msg->buttons[static_cast<int>(button::BACK)] !=
+                 prev_joy.buttons[static_cast<int>(button::BACK)]) {
+        if (msg->buttons[static_cast<int>(button::BACK)] == 1) {
+          // button LB is pressed
+          RCLCPP_INFO(this->get_logger(), "BACK is pressed");
+          if (servo_flip == 2) {
+            servo.setPosition(2, 120);
+            servo_flip = 0;
+          } else if (servo_flip == 0) {
+            servo.setPosition(2, 65);
+            servo_flip = 1;
+          } else if (servo_flip == 1) {
+            servo.setPosition(2, 180);
+            servo_flip = 2;
+          }
+        }
       }
-      prev_joy = *msg;
+
+      else if (msg->buttons[static_cast<int>(button::R3)] !=
+               prev_joy.buttons[static_cast<int>(button::R3)]) {
+        if (msg->buttons[static_cast<int>(button::R3)] == 1) {
+          // button R3 is pressed
+          RCLCPP_INFO(this->get_logger(), "R3 is pressed");
+          servo.setPosition(0, 110);
+          servo.setPosition(1, 50);
+        }
+      }
     }
+    prev_joy = *msg;
   }
 };
 
