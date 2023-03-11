@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(robot_ctrl)
+project(ping_node)
 
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
@@ -15,18 +15,11 @@ find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(sensor_lib REQUIRED)
+find_package(rogilink2_interfaces REQUIRED)
 
 
-add_executable(rr_robot_ctrl src/rr/robot_ctrl.cpp)
-ament_target_dependencies(rr_robot_ctrl
-  rclcpp
-  geometry_msgs
-  std_msgs
-  sensor_msgs
-  sensor_lib
-)
-add_executable(er_robot_ctrl src/er/robot_ctrl.cpp)
-ament_target_dependencies(er_robot_ctrl
+add_executable(ping_node src/main.cpp)
+ament_target_dependencies(ping_node
   rclcpp
   geometry_msgs
   std_msgs
@@ -34,13 +27,8 @@ ament_target_dependencies(er_robot_ctrl
   sensor_lib
 )
 
-
 install(TARGETS
-  rr_robot_ctrl
-  DESTINATION lib/${PROJECT_NAME}
-)
-install(TARGETS
-  er_robot_ctrl
+  ping_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
