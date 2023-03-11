@@ -39,7 +39,7 @@ class GUI:
           [sg.Image(filename=f'{img_folder_path}/mini_start.png', key='rr_state_img')],
           [sg.Text('State', size=(5, 1),font='Helcetica 20'),
            sg.InputCombo(('Start', 'Restart', 'Hill_bottom','Hill_top','Angkor','Angkor_Center','Type2_attack','Pole_block','Last_attack','END'),
-          key='rr_state_select', size=(15, 1),font='Helcetica 20'), sg.Button('Set', key='set_state', size=(5, 1),font='Helcetica 20')],
+          key='rr_state_select', size=(15, 1),font='Helcetica 20'), sg.Button('Set', key='rr_set_state', size=(5, 1),font='Helcetica 20')],
           [sg.Column([[sg.Button('Start', key='rr_start', font='Helvetica 20',size=(10,2)), sg.Button('Restart', key='rr_restart', font='Helvetica 20',size=(10,2))]], justification='center')],
           [sg.Column([[sg.Button('Idle', key='rr_idle', font='Helvetica 20',size=(10,2)), sg.Button('Manual', key='rr_manual', font='Helvetica 20',size=(10,2))]], justification='center')],
           [sg.Column([[sg.Button('Forward', key='rr_forward', font='Helvetica 20',size=(10,2)),]], justification='center')],

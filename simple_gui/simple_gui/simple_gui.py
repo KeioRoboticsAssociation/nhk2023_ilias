@@ -40,50 +40,63 @@ class SimpleGUI(Node):
             self.rogilink_publisher(0x00,[0,0,0,0,0,0,0,0])
             self.get_logger().error('********EMERGENCY STOP*********')
         elif self.gui.event == 'rr_start':
-            self.state_callback('start')
+            msg = String()
+            msg.data = 'START'
+            self.state_toggle_pub_.publish(msg)
             self.get_logger().info('********START*********')
         elif self.gui.event == 'rr_restart':
-            self.state_callback('restart')
+            msg = String()
+            msg.data = 'RESTART'
+            self.state_toggle_pub_.publish(msg)
             self.get_logger().info('********RESTART*********')
         elif self.gui.event == 'rr_idle':
-            self.state_callback('idle')
+            msg = String()
+            msg.data = 'IDLE'
+            self.state_toggle_pub_.publish(msg)
             self.get_logger().info('********IDLE*********')
         elif self.gui.event == 'rr_manual':
-            self.state_callback('manual')
+            msg = String()
+            msg.data = 'MANUAL'
+            self.state_toggle_pub_.publish(msg)
             self.get_logger().info('********MANUAL*********')
         elif self.gui.event == 'rr_forward':
             msg = String()
             msg.data = 'FORWARD'
             self.state_toggle_pub_.publish(msg)
             self.get_logger().info('********FORWARD*********')
-
+        elif self.gui.event == 'rr_set_state':
+            msg = String()
+            msg.data = f'{self.gui.values["rr_state_select"].upper()}'
+            self.state_toggle_pub_.publish(msg)
+            self.get_logger().info('********SET STATE*********')
 
     def state_callback(self, msg):
+        self.get_logger().info('State callback')
         # changing the state image
-        if msg == 'start':
+        if msg.data == 'START':
             self.gui.rr_img_change('start')
-        elif msg == 'restart':
+        elif msg.data == 'RESTART':
             self.gui.rr_img_change('restart')
-        elif msg == 'hill_bottom':
-            self.gui.rr_img_change('hill_bottom')
-        elif msg == 'hill_top':
-            self.gui.rr_img_change('hill_top')
-        elif msg == 'angkor':
-            self.gui.rr_img_change('angkor')
-        elif msg == 'angkor_center':
-            self.gui.rr_img_change('angkor_center')
-        elif msg == 'type2_attack':
-            self.gui.rr_img_change('type2_attack')
-        elif msg == 'pole_block':
-            self.gui.rr_img_change('pole_block')
-        elif msg == 'last_attack':
-            self.gui.rr_img_change('last_attack')
-        elif msg == 'end':
-            self.gui.rr_img_change('end')
-        elif msg == 'manual':
-            self.gui.rr_img_change('manual')
-        elif msg == 'idle':
+        elif msg.data == 'IDLE':
             self.gui.rr_img_change('idle')
+        elif msg.data == 'MANUAL':
+            self.gui.rr_img_change('manual')
+        elif msg.data == 'HILL_BOTTOM':
+            self.gui.rr_img_change('hill_bottom')
+        elif msg.data == 'HILL_TOP':
+            self.gui.rr_img_change('hill_top')
+        elif msg.data == 'ANGKOR':
+            self.gui.rr_img_change('angkor')
+        elif msg.data == 'ANGKOR_CENTER':
+            self.gui.rr_img_change('angkor_center')
+        elif msg.data == 'TYPE2_ATTACK':
+            self.gui.rr_img_change('type2_attack')
+        elif msg.data == 'POLE_BLOCK':
+            self.gui.rr_img_change('pole_block')
+        elif msg.data == 'LAST_ATTACK':
+            self.gui.rr_img_change('last_attack')
+        elif msg.data == 'END':
+            self.gui.rr_img_change('end')
 
 def main(args=None):
     rclpy.init(args=args)
