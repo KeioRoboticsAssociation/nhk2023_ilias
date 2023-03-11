@@ -28,9 +28,9 @@ void RobotStateCtrl::state_toggle_callback(
   RCLCPP_INFO(robot_state_ctrl->get_logger(), "state_toggle_callback");
   RCLCPP_INFO(robot_state_ctrl->get_logger(), "I heard: [%s]",
               msg->data.c_str());
-  if (msg->data == "JOY") {
-    RCLCPP_INFO(robot_state_ctrl->get_logger(), "JOY");
-    state_machine::dispatch(Joy_Flag());
+  if (msg->data == "MANUAL") {
+    RCLCPP_INFO(robot_state_ctrl->get_logger(), "MANUAL");
+    state_machine::dispatch(Manual_Flag());
   } else if (msg->data == "IDLE") {
     RCLCPP_INFO(robot_state_ctrl->get_logger(), "IDLE");
     state_machine::dispatch(Idle_Flag());

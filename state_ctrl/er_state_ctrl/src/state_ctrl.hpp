@@ -6,13 +6,13 @@
 #include "../include/tinyfsm/include/tinyfsm.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-struct Joy_Flag : tinyfsm::Event {};
+struct Manual_Flag : tinyfsm::Event {};
 struct Idle_Flag : tinyfsm::Event {};
 struct Forward_Flag : tinyfsm::Event {};
 struct GOD_Flag : tinyfsm::Event {};
 
 class Idle;
-class Joy;
+class Manual;
 class Start;
 
 class StateMachine : public tinyfsm::Fsm<StateMachine> {
@@ -20,15 +20,15 @@ class StateMachine : public tinyfsm::Fsm<StateMachine> {
   StateMachine();
   void react(tinyfsm::Event const &){};
 
-  void react(Joy_Flag const &) { transit<Joy>(); };
+  void react(Manual_Flag const &) { transit<Manual>(); };
   void react(Idle_Flag const &) { transit<Idle>(); };
   void react(GOD_Flag const &, std::string destination) {
     if (destination == "start") {
       transit<Start>();
     } else if (destination == "idle") {
       transit<Idle>();
-    } else if (destination == "joy") {
-      transit<Joy>();
+    } else if (destination == "manual") {
+      transit<Manual>();
     }
   };
 
@@ -43,7 +43,7 @@ class Idle : public StateMachine {
   void entry(void) override;
 };
 
-class Joy : public StateMachine {
+class Manual : public StateMachine {
  public:
   void entry(void) override;
 };

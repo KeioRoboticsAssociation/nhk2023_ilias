@@ -8,40 +8,53 @@ class static_tf_broadcaster(Node):
         # Initialize the node
         super().__init__('static_tf_broadcaster')
         self.tf_static_broadcaster = StaticTransformBroadcaster(self)
-        self.publish_odom_map_transform()
-        self.publish_map_pole_transform()
+        self.gen_odom_map_transform()
+        self.gen_map_pole_transform()
+        self.gen_odom_base_link_transform()
+        self.tf_static_broadcaster.sendTransform([self.odom_map_transform, self.map_pole_transform,self.odom_base_link_transform])
 
-    def publish_odom_map_transform(self):
+    def gen_odom_map_transform(self):
         # Create the transform
-        transform = TransformStamped()
-        transform.header.stamp = self.get_clock().now().to_msg()
-        transform.header.frame_id = 'map'
-        transform.child_frame_id = 'odom'
-        transform.transform.translation.x = 0.0
-        transform.transform.translation.y = 0.0
-        transform.transform.translation.z = 0.0
-        transform.transform.rotation.x = 0.0
-        transform.transform.rotation.y = 0.0
-        transform.transform.rotation.z = 0.0
-        transform.transform.rotation.w = 1.0
-        # Publish the transform
-        self.tf_static_broadcaster.sendTransform(transform)
+        self.odom_map_transform = TransformStamped()
+        self.odom_map_transform.header.stamp = self.get_clock().now().to_msg()
+        self.odom_map_transform.header.frame_id = 'map'
+        self.odom_map_transform.child_frame_id = 'odom'
+        self.odom_map_transform.transform.translation.x = 0.0
+        self.odom_map_transform.transform.translation.y = 0.0
+        self.odom_map_transform.transform.translation.z = 0.0
+        self.odom_map_transform.transform.rotation.x = 0.0
+        self.odom_map_transform.transform.rotation.y = 0.0
+        self.odom_map_transform.transform.rotation.z = 0.0
+        self.odom_map_transform.transform.rotation.w = 1.0
 
-    def publish_map_pole_transform(self):
+    def gen_map_pole_transform(self):
         # Create the transform
-        transform = TransformStamped()
-        transform.header.stamp = self.get_clock().now().to_msg()
-        transform.header.frame_id = 'map'
-        transform.child_frame_id = 'type3_pole'
-        transform.transform.translation.x = 0.0
-        transform.transform.translation.y = 0.0
-        transform.transform.translation.z = 0.4
-        transform.transform.rotation.x = 0.0
-        transform.transform.rotation.y = 0.0
-        transform.transform.rotation.z = 0.0
-        transform.transform.rotation.w = 1.0
-        # Publish the transform
-        self.tf_static_broadcaster.sendTransform(transform)
+        self.map_pole_transform = TransformStamped()
+        self.map_pole_transform.header.stamp = self.get_clock().now().to_msg()
+        self.map_pole_transform.header.frame_id = 'map'
+        self.map_pole_transform.child_frame_id = 'type3_pole'
+        self.map_pole_transform.transform.translation.x = 0.0
+        self.map_pole_transform.transform.translation.y = 0.0
+        self.map_pole_transform.transform.translation.z = 0.4
+        self.map_pole_transform.transform.rotation.x = 0.0
+        self.map_pole_transform.transform.rotation.y = 0.0
+        self.map_pole_transform.transform.rotation.z = 0.0
+        self.map_pole_transform.transform.rotation.w = 1.0
+
+    def gen_odom_base_link_transform(self):
+        # Create the transform
+        self.odom_base_link_transform = TransformStamped()
+        self.odom_base_link_transform.header.stamp = self.get_clock().now().to_msg()
+        self.odom_base_link_transform.header.frame_id = 'odom'
+        self.odom_base_link_transform.child_frame_id = 'base_link'
+        self.odom_base_link_transform.transform.translation.x = 0.0
+        self.odom_base_link_transform.transform.translation.y = 0.0
+        self.odom_base_link_transform.transform.translation.z = 0.0
+        self.odom_base_link_transform.transform.rotation.x = 0.0
+        self.odom_base_link_transform.transform.rotation.y = 0.0
+        self.odom_base_link_transform.transform.rotation.z = 0.0
+        self.odom_base_link_transform.transform.rotation.w = 1.0
+
 
 def main():
     logger = rclpy.logging.get_logger('static_tf_broadcaster')
