@@ -18,7 +18,7 @@ ament_auto_find_build_dependencies()
 # ament_auto_add_library(state_ctrl SHARED
 #   src/main.cpp
 #   src/idle.cpp
-#   src/joy.cpp
+#   src/manual.cpp
 #   src/start.cpp
 #   src/main.hpp
 #   src/state_ctrl.hpp
@@ -28,7 +28,7 @@ ament_auto_find_build_dependencies()
 add_executable(rr_state_ctrl
   src/main.cpp
   src/idle.cpp
-  src/joy.cpp
+  src/manual.cpp
   src/start.cpp
   src/robot_state_ctrl.cpp
   src/state_ctrl.cpp

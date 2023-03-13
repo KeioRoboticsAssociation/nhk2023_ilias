@@ -8,4 +8,8 @@ void Restart::entry(void) {
   msg.data = "RESTART";
   robot_state_ctrl->mode_pub_->publish(msg);
   RCLCPP_INFO(robot_state_ctrl->get_logger(), "mode msg restart");
+  // publish state message
+  msg.data = "RESTART";
+  robot_state_ctrl->state_pub_->publish(msg);
+  RCLCPP_INFO(robot_state_ctrl->get_logger(), "state msg restart");
 }

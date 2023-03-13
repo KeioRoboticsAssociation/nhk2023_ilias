@@ -8,4 +8,8 @@ void Start::entry(void) {
   msg.data = "AUTO";
   robot_state_ctrl->mode_pub_->publish(msg);
   RCLCPP_INFO(robot_state_ctrl->get_logger(), "mode msg auto");
+  // publish state message
+  msg.data = "START";
+  robot_state_ctrl->state_pub_->publish(msg);
+  RCLCPP_INFO(robot_state_ctrl->get_logger(), "state msg start");
 }
