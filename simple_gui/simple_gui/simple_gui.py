@@ -4,6 +4,7 @@ import rclpy
 from rclpy.node import Node
 from rogilink2_interfaces.msg import Frame
 from std_msgs.msg import String
+from rogilink2_interfaces.msg import Ping
 
 # ros node
 class SimpleGUI(Node):
@@ -16,7 +17,11 @@ class SimpleGUI(Node):
         self.state_subscriber = self.create_subscription(String, 'state', self.state_callback, 10)
         self.timer = self.create_timer(0.1, self.timer_callback)
         self.state_toggle_pub_ = self.create_publisher(String, 'state_toggle', 10)
+        self.ping_pub_ = self.create_subscription(Ping, 'rogilink2/ping', self.ping_callback, 10)
 
+    def ping_callback(self, msg):
+        self.get_logger().info('Ping callback')
+        self.gui.ping_gui(msg)
 
     def rogilink_publisher(self, hard_id, data):
         msg = Frame()
