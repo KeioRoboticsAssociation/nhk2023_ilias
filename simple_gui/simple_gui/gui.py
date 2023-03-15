@@ -1,9 +1,16 @@
 import PySimpleGUI as sg
 from ament_index_python.packages import get_package_share_directory
+from rogilink2_interfaces.msg import Ping
+
 img_folder_path = get_package_share_directory('simple_gui') + '/img'
+rr_hard_id = (0,"FR_S","FR","FL_S","FL","RR_S","RR","RL_S","RL",0,0,0,0,"limit_sw","steer_sensor","sensor","LED")
+discon = ('White', 'Black')
+connected = ('Black', 'White')
 
 # GUI class
 class GUI:
+
+
   sg.theme('Topanga')
   ################### Header ###################
   header = [
@@ -44,9 +51,13 @@ class GUI:
           [sg.Column([[sg.Button('Idle', key='rr_idle', font='Helvetica 20',size=(10,2)), sg.Button('Manual', key='rr_manual', font='Helvetica 20',size=(10,2))]], justification='center')],
           [sg.Column([[sg.Button('Forward', key='rr_forward', font='Helvetica 20',size=(10,2)),]], justification='center')],
     ],size=(500, 800))
-  rr_menu_frame=sg.Frame('Menu',[[
 
-    ]],size=(500, 800))
+  rr_menu_frame=sg.Frame('INFO',[
+      [sg.Column([[sg.Button(f'{rr_hard_id[0x01]}', key='rr_01', font='Helvetica 20',size=(4,2),button_color=(discon)),sg.Button(f'{rr_hard_id[0x02]}', key='rr_02', font='Helvetica 20',size=(4,2),button_color=(discon)),sg.Button(f'{rr_hard_id[0x03]}', key='rr_03', font='Helvetica 20',size=(4,2),button_color=(discon)),sg.Button(f'{rr_hard_id[0x04]}', key='rr_04', font='Helvetica 20',size=(4,2),button_color=(discon))] ], justification='center')],
+      [sg.Column([[sg.Button(f'{rr_hard_id[0x05]}', key='rr_05', font='Helvetica 20',size=(4,2),button_color=(discon)),sg.Button(f'{rr_hard_id[0x06]}', key='rr_06', font='Helvetica 20',size=(4,2),button_color=(discon)),sg.Button(f'{rr_hard_id[0x07]}', key='rr_07', font='Helvetica 20',size=(4,2),button_color=(discon)),sg.Button(f'{rr_hard_id[0x08]}', key='rr_08', font='Helvetica 20',size=(4,2),button_color=(discon))] ], justification='center')],
+      [sg.Column([[sg.Button(f'{rr_hard_id[0x09]}', key='rr_09', font='Helvetica 20',size=(4,2),button_color=(discon)),sg.Button(f'{rr_hard_id[0x0A]}', key='rr_0A', font='Helvetica 20',size=(4,2),button_color=(discon)),sg.Button(f'{rr_hard_id[0x0B]}', key='rr_0B', font='Helvetica 20',size=(4,2),button_color=(discon)),sg.Button(f'{rr_hard_id[0x0C]}', key='rr_0C', font='Helvetica 20',size=(4,2),button_color=(discon))] ], justification='center')],
+      [sg.Column([[sg.Button(f'{rr_hard_id[0x0D]}', key='rr_0D', font='Helvetica 20',size=(4,2),button_color=(discon)),sg.Button(f'{rr_hard_id[0x0E]}', key='rr_0E', font='Helvetica 20',size=(4,2),button_color=(discon)),sg.Button(f'{rr_hard_id[0x0F]}', key='rr_0F', font='Helvetica 20',size=(4,2),button_color=(discon)),sg.Button(f'{rr_hard_id[0x10]}', key='rr_10', font='Helvetica 20',size=(4,2),button_color=(discon))] ], justification='center')],
+  ],size=(500, 800))
 
   rrhome = [
       [sg.Text('RR',font='Helvetica 20', size=(10, 2), justification='center')],
@@ -90,6 +101,17 @@ class GUI:
   def rr_img_change(self,rr_state_img):
       # update rr state image
       self.window['rr_state_img'].update(filename=f'{img_folder_path}/mini_{rr_state_img}.png')
+
+  def ping_gui(self,msg:Ping):
+      for i in msg.devices:
+          if i.is_active == True:
+              self.window[f'rr_{format(i.hard_id,"02x").upper()}'].update(button_color=(connected))
+          else:
+              self.window[f'rr_{format(i.hard_id,"02x").upper()}'].update(button_color=(discon))
+
+
+
+
 
 
 
