@@ -18,7 +18,7 @@ RobotStateCtrl::RobotStateCtrl() : Node("rr_state_ctrl") {
   // publish state
   state_pub_ = this->create_publisher<std_msgs::msg::String>("state", 10);
   // publish cmd_vel mode as topic
-  mode_pub_ = this->create_publisher<std_msgs::msg::String>("cmd_vel_mode", 10);
+  mode_pub_ = this->create_publisher<std_msgs::msg::String>("mode", 10);
 
   RCLCPP_INFO(this->get_logger(), "RobotStateCtrl constructor end");
 }
