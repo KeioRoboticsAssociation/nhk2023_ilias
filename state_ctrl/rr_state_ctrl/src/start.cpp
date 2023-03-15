@@ -12,4 +12,11 @@ void Start::entry(void) {
   msg.data = "START";
   robot_state_ctrl->state_pub_->publish(msg);
   RCLCPP_INFO(robot_state_ctrl->get_logger(), "state msg start");
+  // publish pure pursuit command
+  auto pure_pursuit_msg = pure_pursuit_interface::msg::Frame();
+  pure_pursuit_msg.forward_flag = true;
+  pure_pursuit_msg.path_num = 1;
+  pure_pursuit_msg.is_allowed_to_pub = true;
+  robot_state_ctrl->pure_pursuit_pub_->publish(pure_pursuit_msg);
+  RCLCPP_INFO(robot_state_ctrl->get_logger(), "pure pursuit msg published");
 }
