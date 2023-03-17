@@ -15,9 +15,10 @@ find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
 
 add_executable(dummy_system src/cmdvel2tf.cpp)
-ament_target_dependencies(dummy_system rclcpp tf2_ros geometry_msgs tf2_geometry_msgs tf2)
+ament_target_dependencies(dummy_system rclcpp tf2_ros geometry_msgs tf2_geometry_msgs tf2 nav_msgs)
 
 install(TARGETS
   dummy_system

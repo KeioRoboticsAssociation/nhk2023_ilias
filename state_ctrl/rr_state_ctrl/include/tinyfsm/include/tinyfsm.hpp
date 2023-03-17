@@ -38,6 +38,8 @@
 #ifndef TINYFSM_HPP_INCLUDED
 #define TINYFSM_HPP_INCLUDED
 
+#include <string>
+
 #ifndef TINYFSM_NOSTDLIB
 #include <type_traits>
 #endif
@@ -124,6 +126,12 @@ namespace tinyfsm
     template<typename E>
     static void dispatch(E const & event) {
       current_state_ptr->react(event);
+    }
+    // this function only had event as parameter, but we need to add destination
+    // so made a new function that also takes destination as parameter
+    template<typename E>
+    static void dispatch(E const & event,const std::string destination) {
+      current_state_ptr->react(event, destination);
     }
 
 
