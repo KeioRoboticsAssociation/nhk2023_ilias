@@ -19,6 +19,9 @@ RobotStateCtrl::RobotStateCtrl() : Node("rr_state_ctrl") {
   state_pub_ = this->create_publisher<std_msgs::msg::String>("state", 10);
   // publish cmd_vel mode as topic
   mode_pub_ = this->create_publisher<std_msgs::msg::String>("mode", 10);
+  // publish pure pursuit command as topic
+  pure_pursuit_pub_ = this->create_publisher<pure_pursuit_interface::msg::Frame>(
+      "pp_cmd", 10);
 
   RCLCPP_INFO(this->get_logger(), "RobotStateCtrl constructor end");
 }

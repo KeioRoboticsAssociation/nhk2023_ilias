@@ -9,6 +9,7 @@ endif()
 find_package(ament_cmake_auto REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(pure_pursuit_interface REQUIRED)
 
 ament_auto_find_build_dependencies()
 
@@ -46,6 +47,7 @@ add_executable(rr_state_ctrl
 ament_target_dependencies(rr_state_ctrl
   rclcpp
   std_msgs
+  pure_pursuit_interface
 )
 
 # ament_target_dependencies(md_lib rclcpp std_msgs rogilink2_interfaces)

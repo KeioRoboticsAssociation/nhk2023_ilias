@@ -47,8 +47,8 @@ class static_tf_broadcaster(Node):
         self.odom_base_link_transform.header.stamp = self.get_clock().now().to_msg()
         self.odom_base_link_transform.header.frame_id = 'odom'
         self.odom_base_link_transform.child_frame_id = 'base_link'
-        self.odom_base_link_transform.transform.translation.x = 0.0
-        self.odom_base_link_transform.transform.translation.y = 0.0
+        self.odom_base_link_transform.transform.translation.x = -5.0
+        self.odom_base_link_transform.transform.translation.y = -0.2
         self.odom_base_link_transform.transform.translation.z = 0.0
         self.odom_base_link_transform.transform.rotation.x = 0.0
         self.odom_base_link_transform.transform.rotation.y = 0.0
