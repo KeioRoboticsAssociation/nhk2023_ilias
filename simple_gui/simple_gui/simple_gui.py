@@ -5,6 +5,7 @@ from rclpy.node import Node
 from rogilink2_interfaces.msg import Frame
 from std_msgs.msg import String
 from rogilink2_interfaces.msg import Ping
+from pure_pursuit_interface.msg import Frame as PurePursuitFrame
 
 # ros node
 class SimpleGUI(Node):
@@ -18,6 +19,7 @@ class SimpleGUI(Node):
         self.timer = self.create_timer(0.1, self.timer_callback)
         self.state_toggle_pub_ = self.create_publisher(String, 'state_toggle', 10)
         self.ping_pub_ = self.create_subscription(Ping, 'rogilink2/ping', self.ping_callback, 10)
+        self.rr_path_pub_ = self.create_publisher(PurePursuitFrame, 'pp_cmd', 10)
 
     def ping_callback(self, msg):
         self.get_logger().info('Ping callback')
@@ -48,32 +50,48 @@ class SimpleGUI(Node):
             msg = String()
             msg.data = 'START'
             self.state_toggle_pub_.publish(msg)
-            self.get_logger().info('********START*********')
+            self.get_logger().info('********RR_START*********')
         elif self.gui.event == 'rr_restart':
             msg = String()
             msg.data = 'RESTART'
             self.state_toggle_pub_.publish(msg)
-            self.get_logger().info('********RESTART*********')
+            self.get_logger().info('********RR_RESTART*********')
         elif self.gui.event == 'rr_idle':
             msg = String()
             msg.data = 'IDLE'
             self.state_toggle_pub_.publish(msg)
-            self.get_logger().info('********IDLE*********')
+            self.get_logger().info('********RR_IDLE*********')
         elif self.gui.event == 'rr_manual':
             msg = String()
             msg.data = 'MANUAL'
             self.state_toggle_pub_.publish(msg)
-            self.get_logger().info('********MANUAL*********')
+            self.get_logger().info('********RR_MANUAL*********')
         elif self.gui.event == 'rr_forward':
             msg = String()
             msg.data = 'FORWARD'
             self.state_toggle_pub_.publish(msg)
-            self.get_logger().info('********FORWARD*********')
+            self.get_logger().info('********RR_FORWARD*********')
         elif self.gui.event == 'rr_set_state':
             msg = String()
             msg.data = f'{self.gui.values["rr_state_select"].upper()}'
             self.state_toggle_pub_.publish(msg)
-            self.get_logger().info('********SET STATE*********')
+            self.get_logger().info('********RR SET STATE*********')
+        elif self.gui.event == 'rr_path_forward':
+            msg = PurePursuitFrame()
+            msg.forward_flag = True
+            msg.path_num = int(self.gui.values['rr_path'])
+            msg.is_allowed_to_pub = True
+            self.rr_path_pub_.publish(msg)
+            self.get_logger().info('********RR PATH FORWARD*********')
+        elif self.gui.event == 'rr_path_backward':
+            msg = PurePursuitFrame()
+            msg.forward_flag = False
+            msg.path_num = int(self.gui.values['rr_path'])
+            msg.is_allowed_to_pub = True
+            self.rr_path_pub_.publish(msg)
+            self.get_logger().info('********RR PATH BACKWARD*********')
+
+
 
     def state_callback(self, msg):
         self.get_logger().info('State callback')
