@@ -12,4 +12,8 @@ void Restart::entry(void) {
   msg.data = "RESTART";
   robot_state_ctrl->state_pub_->publish(msg);
   RCLCPP_INFO(robot_state_ctrl->get_logger(), "state msg restart");
+
+  robot_state_ctrl->led_->init();
+  robot_state_ctrl->led_->setMode(Led::LedMessageId::Lighting, 8, 0,
+                                  Led::LedColor::Green, 0, 0);
 }

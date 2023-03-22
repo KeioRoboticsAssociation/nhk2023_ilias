@@ -22,6 +22,8 @@ RobotStateCtrl::RobotStateCtrl() : Node("rr_state_ctrl") {
   // publish pure pursuit command as topic
   pure_pursuit_pub_ = this->create_publisher<pure_pursuit_interface::msg::Frame>(
       "pp_cmd", 10);
+  // led
+  led_ = std::make_unique<Led>(this,"LED");
 
   RCLCPP_INFO(this->get_logger(), "RobotStateCtrl constructor end");
 }

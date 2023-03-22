@@ -19,4 +19,8 @@ void Start::entry(void) {
   pure_pursuit_msg.is_allowed_to_pub = true;
   robot_state_ctrl->pure_pursuit_pub_->publish(pure_pursuit_msg);
   RCLCPP_INFO(robot_state_ctrl->get_logger(), "pure pursuit msg published");
+  // set led
+  robot_state_ctrl->led_->init();
+  robot_state_ctrl->led_->setMode(Led::LedMessageId::Lighting, 0, 0,
+                                  Led::LedColor::Green, 0, 0);
 }
