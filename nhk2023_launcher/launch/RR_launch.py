@@ -101,6 +101,21 @@ def generate_launch_description():
         output='screen',
     )
 
+    simple_gui = Node(
+        package='simple_gui',
+        executable='simple_gui',
+        name='simple_gui',
+        output='screen',
+    )
+
+    rr_state_ctrl = Node(
+        package='rr_state_ctrl',
+        executable='rr_state_ctrl',
+        name='rr_state_ctrl',
+        output='screen',
+    )
+
+
 
     return LaunchDescription([
         joint_state_publisher_node,
@@ -112,4 +127,6 @@ def generate_launch_description():
         robot_ctrl,
         # rogi_link_2,
         joy,
+        simple_gui,
+        rr_state_ctrl,
     ])
