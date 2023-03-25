@@ -7,6 +7,7 @@ from std_msgs.msg import String
 from rogilink2_interfaces.msg import Ping
 from pure_pursuit_interface.msg import Frame as PurePursuitFrame
 
+
 # ros node
 class SimpleGUI(Node):
     prev_event = None
@@ -15,11 +16,15 @@ class SimpleGUI(Node):
         super().__init__('simple_gui')
         self.gui = GUI()
         self.rogimsg_pub_ = self.create_publisher(Frame, 'rogilink2/send', 10)
-        self.state_subscriber = self.create_subscription(String, 'state', self.state_callback, 10)
+        self.state_subscriber = self.create_subscription(
+            String, 'state', self.state_callback, 10)
         self.timer = self.create_timer(0.1, self.timer_callback)
-        self.state_toggle_pub_ = self.create_publisher(String, 'state_toggle', 10)
-        self.ping_pub_ = self.create_subscription(Ping, 'rogilink2/ping', self.ping_callback, 10)
-        self.rr_path_pub_ = self.create_publisher(PurePursuitFrame, 'pp_cmd', 10)
+        self.state_toggle_pub_ = self.create_publisher(String, 'state_toggle',
+                                                       10)
+        self.ping_pub_ = self.create_subscription(Ping, 'rogilink2/ping',
+                                                  self.ping_callback, 10)
+        self.rr_path_pub_ = self.create_publisher(PurePursuitFrame, 'pp_cmd',
+                                                  10)
 
     def ping_callback(self, msg):
         self.get_logger().info('Ping callback')
@@ -44,7 +49,7 @@ class SimpleGUI(Node):
     def gui_callback(self):
         self.get_logger().info('GUI callback')
         if self.gui.event == 'emergency_stop':
-            self.rogilink_publisher(0x00,[0,0,0,0,0,0,0,0])
+            self.rogilink_publisher(0x00, [0, 0, 0, 0, 0, 0, 0, 0])
             self.get_logger().error('********EMERGENCY STOP*********')
         elif self.gui.event == 'rr_start':
             msg = String()
@@ -91,8 +96,6 @@ class SimpleGUI(Node):
             self.rr_path_pub_.publish(msg)
             self.get_logger().info('********RR PATH BACKWARD*********')
 
-
-
     def state_callback(self, msg):
         self.get_logger().info('State callback')
         # changing the state image
@@ -121,6 +124,7 @@ class SimpleGUI(Node):
         elif msg.data == 'END':
             self.gui.rr_img_change('end')
 
+
 def main(args=None):
     rclpy.init(args=args)
     simple_gui = SimpleGUI()
@@ -128,5 +132,6 @@ def main(args=None):
     simple_gui.destroy_node()
     rclpy.shutdown()
 
+
 if __name__ == '__main__':
-  main()
+    main()
