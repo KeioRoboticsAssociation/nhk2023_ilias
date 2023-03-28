@@ -28,13 +28,6 @@ def generate_launch_description():
                             'config', 'rr.yaml')
                     }])
 
-    joy_server = Node(
-        package='joy_server',
-        executable='rr_joy_server',
-        name='rr_joy_server',
-        output='screen',
-        emulate_tty=True,
-    )
 
     bno055 = Node(
         package='rogibno055',
@@ -67,9 +60,8 @@ def generate_launch_description():
 
 
     return LaunchDescription([
-        # rogi_link_2,
-        # wheelctrl_ros,
-        # joy_server,
+        rogi_link_2,
+        wheelctrl_ros,
         bno055,
         ekf,
     ])
