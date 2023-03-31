@@ -50,6 +50,9 @@ class cmdvel2tf : public rclcpp::Node {
     double roll, pitch, yaw;
     m.getRPY(roll, pitch, yaw);
 
+    // adding noize
+    yaw = yaw + 0.1 * dt;
+
     // calculate the transform from odom to base_link
     geometry_msgs::msg::TransformStamped odom2base_new;
     odom2base_new.header.stamp = current_time;
