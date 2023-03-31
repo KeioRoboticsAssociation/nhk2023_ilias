@@ -81,6 +81,7 @@ class SimpleGUI(Node):
             msg.forward_flag = True
             msg.path_num = int(self.gui.values['rr_path'])
             msg.is_allowed_to_pub = True
+            msg.is_parallel=bool(int(self.gui.values['is_parallel']))
             self.rr_path_pub_.publish(msg)
             self.get_logger().info('********RR PATH FORWARD*********')
         elif self.gui.event == 'rr_path_backward':
@@ -88,8 +89,10 @@ class SimpleGUI(Node):
             msg.forward_flag = False
             msg.path_num = int(self.gui.values['rr_path'])
             msg.is_allowed_to_pub = True
+            msg.is_parallel=bool(int(self.gui.values['is_parallel']))
             self.rr_path_pub_.publish(msg)
             self.get_logger().info('********RR PATH BACKWARD*********')
+        
 
 
 
