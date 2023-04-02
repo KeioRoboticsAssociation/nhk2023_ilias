@@ -29,9 +29,8 @@ class robot_ctrl : public rclcpp::Node {
   enum class Mode {
     MANUAL,
     AUTO,
-    CLIMB,
-    PRECISION,
     IDLE,
+    PICKUP,
   };
 
   JoyCommander joy_commander;
@@ -102,17 +101,9 @@ void robot_ctrl::timer_callback() {
       RCLCPP_INFO(this->get_logger(), "current mode auto");
       break;
 
-    case Mode::CLIMB:
-      msg.data = "CLIMB";
-      RCLCPP_INFO(this->get_logger(), "current mode climb");
-      break;
-
-    case Mode::PRECISION:
-      precision.precision_vel_generator();
-      RCLCPP_INFO(this->get_logger(), "sensor: %d", precision.sensor_val[3]);
-      cmd_vel_pub_->publish(precision.prc_cmd_vel);
-      msg.data = "PRECISION";
-      RCLCPP_INFO(this->get_logger(), "current mode precision");
+    case Mode::PICKUP:
+      msg.data = "PICKUP";
+      RCLCPP_INFO(this->get_logger(), "current mode pickup");
       break;
 
     case Mode::IDLE:
