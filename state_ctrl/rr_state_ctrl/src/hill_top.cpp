@@ -8,4 +8,8 @@ void Hill_Top::entry(void) {
   msg.data = "HILL_TOP";
   robot_state_ctrl->mode_pub_->publish(msg);
   RCLCPP_INFO(robot_state_ctrl->get_logger(), "mode msg hill_top");
+  // publish state message
+  msg.data = "HILL_TOP";
+  robot_state_ctrl->state_pub_->publish(msg);
+  RCLCPP_INFO(robot_state_ctrl->get_logger(), "state msg hill_top");
 }

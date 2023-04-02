@@ -8,4 +8,8 @@ void Pole_Block::entry(void) {
   msg.data = "POLE_BLOCK";
   robot_state_ctrl->mode_pub_->publish(msg);
   RCLCPP_INFO(robot_state_ctrl->get_logger(), "mode msg pole_block");
+  // publish state message
+  msg.data = "POLE_BLOCK";
+  robot_state_ctrl->state_pub_->publish(msg);
+  RCLCPP_INFO(robot_state_ctrl->get_logger(), "state msg pole_block");
 }

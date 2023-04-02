@@ -6,13 +6,15 @@
 #include "../include/tinyfsm/include/tinyfsm.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-struct Joy_Flag : tinyfsm::Event {};
+struct Manual_Flag : tinyfsm::Event {};
 struct Idle_Flag : tinyfsm::Event {};
 struct Forward_Flag : tinyfsm::Event {};
+
+// prepared GOD_Flag since only static function can be used as callback
 struct GOD_Flag : tinyfsm::Event {};
 
 class Idle;
-class Joy;
+class Manual;
 class Start;
 class Restart;
 class Hill_Bottom;
@@ -29,15 +31,29 @@ class StateMachine : public tinyfsm::Fsm<StateMachine> {
   StateMachine();
   void react(tinyfsm::Event const &){};
 
-  void react(Joy_Flag const &) { transit<Joy>(); };
+  void react(Manual_Flag const &) { transit<Manual>(); };
   void react(Idle_Flag const &) { transit<Idle>(); };
   void react(GOD_Flag const &, std::string destination) {
-    if (destination == "start") {
+    if (destination == "START") {
       transit<Start>();
-    } else if (destination == "idle") {
-      transit<Idle>();
-    } else if (destination == "joy") {
-      transit<Joy>();
+    } else if (destination == "RESTART") {
+      transit<Restart>();
+    } else if (destination == "HILL_BOTTOM") {
+      transit<Hill_Bottom>();
+    } else if (destination == "HILL_TOP") {
+      transit<Hill_Top>();
+    } else if (destination == "ANGKOR") {
+      transit<Angkor>();
+    } else if (destination == "ANGKOR_CENTER") {
+      transit<Angkor_Center>();
+    } else if (destination == "TYPE2_ATTACK") {
+      transit<Type2_Attack>();
+    } else if (destination == "POLE_BLOCK") {
+      transit<Pole_Block>();
+    } else if (destination == "LAST_ATTACK") {
+      transit<Last_Attack>();
+    } else if (destination == "END") {
+      transit<End>();
     }
   };
 
@@ -52,7 +68,7 @@ class Idle : public StateMachine {
   void entry(void) override;
 };
 
-class Joy : public StateMachine {
+class Manual : public StateMachine {
  public:
   void entry(void) override;
 };
@@ -115,7 +131,6 @@ class End : public StateMachine {
  public:
   void entry(void) override;
 };
-
 
 using state_machine = StateMachine;
 
