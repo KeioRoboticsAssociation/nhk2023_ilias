@@ -49,22 +49,37 @@ class GUI:
         [
             # text box to choose state
             [
-                sg.Text('State', size=(10, 1)),
-                sg.InputCombo(('Start', 'Restart', 'Hill_bottom', 'Hill_top',
-                               'Angkor', 'Angkor_Center', 'Type2_attack',
-                               'Pole_block', 'Last_attack', 'END'),
-                              key='state',
-                              size=(20, 1)),
-                sg.Button('Set', key='set_state', size=(10, 1))
+                sg.Text('State', size=(5, 1), font='Helcetica 20'),
+                sg.InputCombo(('Start', 'Restart', 'PickupLeft', 'PickupRight',
+                               'PreShot', 'Shot', 'End'),
+                              key='er_state_select',
+                              size=(15, 1),
+                              font='Helcetica 20'),
+                sg.Button('Set',
+                          key='er_set_state',
+                          size=(5, 1),
+                          font='Helcetica 20')
             ],
             [
-                sg.Button('Start', key='start', size=(10, 1)),
-                sg.Button('Restart', key='restart', size=(10, 1))
+                sg.Column([[
+                    create_state_frame_button('Start', 'er_start'),
+                    create_state_frame_button('Restart', 'er_restart')
+                ]],
+                          justification='center'),
             ],
             [
-                sg.Button('Idele', key='idele', size=(10, 1)),
-                sg.Button('Manual', key='manual', size=(10, 1))
+                sg.Column([[
+                    create_state_frame_button('Idle', 'er_idle'),
+                    create_state_frame_button('Manual', 'er_manual')
+                ]],
+                          justification='center')
             ],
+            [
+                sg.Column([[
+                    create_state_frame_button('Forward', 'er_forward'),
+                ]],
+                          justification='center')
+            ]
         ],
         size=(500, 800))
     er_menu_frame = sg.Frame('Menu', [[]], size=(500, 800))

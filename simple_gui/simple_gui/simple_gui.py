@@ -95,6 +95,31 @@ class SimpleGUI(Node):
             msg.is_allowed_to_pub = True
             self.rr_path_pub_.publish(msg)
             self.get_logger().info('********RR PATH BACKWARD*********')
+        elif self.gui.event == 'er_start':
+            msg = String()
+            msg.data = 'START'
+            self.state_toggle_pub_.publish(msg)
+            self.get_logger().info('********ER_START*********')
+        elif self.gui.event == 'er_restart':
+            msg = String()
+            msg.data = 'RESTART'
+            self.state_toggle_pub_.publish(msg)
+            self.get_logger().info('********ER_RESTART*********')
+        elif self.gui.event == 'er_idle':
+            msg = String()
+            msg.data = 'IDLE'
+            self.state_toggle_pub_.publish(msg)
+            self.get_logger().info('********ER_IDLE*********')
+        elif self.gui.event == 'er_manual':
+            msg = String()
+            msg.data = 'MANUAL'
+            self.state_toggle_pub_.publish(msg)
+            self.get_logger().info('********ER_MANUAL*********')
+        elif self.gui.event == 'er_forward':
+            msg = String()
+            msg.data = 'FORWARD'
+            self.state_toggle_pub_.publish(msg)
+            self.get_logger().info('********ER_FORWARD*********')
 
     def state_callback(self, msg):
         self.get_logger().info('State callback')
