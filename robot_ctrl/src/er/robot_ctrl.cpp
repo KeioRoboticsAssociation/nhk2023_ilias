@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <geometry_msgs/msg/twist.hpp>
+#include <pure_pursuit_interface/msg/frame.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/joy.hpp>
 #include <std_msgs/msg/string.hpp>
@@ -24,6 +25,11 @@ class robot_ctrl : public rclcpp::Node {
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
   // publish state_ctrl topic
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_ctrl_pub_;
+  // publish pure_pursuit topic
+  rclcpp::Publisher<pure_pursuit_interface::msg::Frame>::SharedPtr
+      pure_pursuit_pub_;
+  // subscribe pursuit_end topic
+  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr pursuit_end_sub_;
   // timer ptr
   rclcpp::TimerBase::SharedPtr timer_;
 
@@ -44,6 +50,7 @@ class robot_ctrl : public rclcpp::Node {
   Mode mode_, prev_mode_ = Mode::MANUAL;  // 初期モードはMANUAL
   void timer_callback();
   void mode_callback(const std_msgs::msg::String::SharedPtr msg);
+  void pursuit_end_callback(const std_msgs::msg::String::SharedPtr msg);
 };
 
 robot_ctrl::robot_ctrl()
@@ -88,6 +95,29 @@ robot_ctrl::robot_ctrl()
   // publish state_ctrl topic
   state_ctrl_pub_ =
       this->create_publisher<std_msgs::msg::String>("state_toggle", 10);
+  // publish pure_pursuit topic
+  pure_pursuit_pub_ =
+      this->create_publisher<pure_pursuit_interface::msg::Frame>("pure_pursuit",
+                                                                 10);
+  // subscribe pursuit_end topic
+  pursuit_end_sub_ = this->create_subscription<std_msgs::msg::String>(
+      "pursuit_end", 10,
+      std::bind(&robot_ctrl::pursuit_end_callback, this,
+                std::placeholders::_1));
+}
+
+void robot_ctrl::pursuit_end_callback(
+    const std_msgs::msg::String::SharedPtr msg) {
+  RCLCPP_INFO(this->get_logger(), "pursuit_end_callback");
+  if (msg->data != "1") return;
+
+  auto disableCmd = pure_pursuit_interface::msg::Frame();
+  disableCmd.is_allowed_to_pub = false;
+  pure_pursuit_pub_->publish(disableCmd);
+
+  auto stateForwardMsg = std_msgs::msg::String();
+  stateForwardMsg.data = "FORWARD";
+  state_ctrl_pub_->publish(stateForwardMsg);
 }
 
 void robot_ctrl::timer_callback() {
@@ -179,6 +209,12 @@ void robot_ctrl::mode_callback(const std_msgs::msg::String::SharedPtr msg) {
     mode_ = Mode::SHOT;
   } else if (msg->data == "PRE_SHOT") {
     mode_ = Mode::PRE_SHOT;
+    // 射出位置へ移動
+    auto cmd = pure_pursuit_interface::msg::Frame();
+    cmd.forward_flag = true;
+    cmd.is_allowed_to_pub = true;
+    cmd.path_num = 1;
+    pure_pursuit_pub_->publish(cmd);
   } else if (msg->data == "IDLE") {
     mode_ = Mode::IDLE;
   } else {
