@@ -3,7 +3,9 @@ from rclpy.node import Node
 from tf2_ros import TransformStamped
 from tf2_ros.static_transform_broadcaster import StaticTransformBroadcaster
 
+
 class static_tf_broadcaster(Node):
+
     def __init__(self):
         # Initialize the node
         super().__init__('static_tf_broadcaster')
@@ -11,7 +13,10 @@ class static_tf_broadcaster(Node):
         self.gen_odom_map_transform()
         self.gen_map_pole_transform()
         self.gen_odom_base_link_transform()
-        self.tf_static_broadcaster.sendTransform([self.odom_map_transform, self.map_pole_transform,self.odom_base_link_transform])
+        self.tf_static_broadcaster.sendTransform([
+            self.odom_map_transform, self.map_pole_transform,
+            self.odom_base_link_transform
+        ])
 
     def gen_odom_map_transform(self):
         # Create the transform
@@ -44,7 +49,8 @@ class static_tf_broadcaster(Node):
     def gen_odom_base_link_transform(self):
         # Create the transform
         self.odom_base_link_transform = TransformStamped()
-        self.odom_base_link_transform.header.stamp = self.get_clock().now().to_msg()
+        self.odom_base_link_transform.header.stamp = self.get_clock().now(
+        ).to_msg()
         self.odom_base_link_transform.header.frame_id = 'odom'
         self.odom_base_link_transform.child_frame_id = 'base_link'
         self.odom_base_link_transform.transform.translation.x = -5.0
@@ -67,6 +73,7 @@ def main():
         pass
 
     rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()

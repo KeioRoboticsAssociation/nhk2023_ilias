@@ -89,6 +89,7 @@ void robot_ctrl::timer_callback() {
   // publish mode as topic
   auto msg = std_msgs::msg::String();
   // RCLCPP_INFO(this->get_logger(), "timer callback");
+  bool isPickupFinished = false;
 
   switch (mode_) {
     case Mode::MANUAL:
@@ -106,16 +107,27 @@ void robot_ctrl::timer_callback() {
 
     case Mode::PICKUP_LEFT:
       msg.data = "PICKUP_LEFT";
-      pick_up.pick_up_vel_generator(1, 1);
+      isPickupFinished = pick_up.pick_up_vel_generator(1);
       cmd_vel_pub_->publish(pick_up.pick_up_cmd_vel);
+      if (isPickupFinished) {
+        // change state
+      }
       RCLCPP_INFO(this->get_logger(), "current mode pickup");
       break;
 
     case Mode::PICKUP_RIGHT:
       msg.data = "PICKUP_RIGHT";
-      pick_up.pick_up_vel_generator(1, 0);
+      isPickupFinished = pick_up.pick_up_vel_generator(0);
       cmd_vel_pub_->publish(pick_up.pick_up_cmd_vel);
+      if (isPickupFinished) {
+        // change state
+      }
       RCLCPP_INFO(this->get_logger(), "current mode pickup");
+      break;
+
+    case Mode::PRE_SHOT:
+      msg.data = "PRE_SHOT";
+      RCLCPP_INFO(this->get_logger(), "current mode pre_shot");
       break;
 
     case Mode::SHOT:
@@ -157,7 +169,8 @@ void robot_ctrl::mode_callback(const std_msgs::msg::String::SharedPtr msg) {
     mode_ = Mode::PICKUP_RIGHT;
   } else if (msg->data == "SHOT") {
     mode_ = Mode::SHOT;
-    RCLCPP_INFO(this->get_logger(), "shot mode is not implemented yet");
+  } else if (msg->data == "PRE_SHOT") {
+    mode_ = Mode::PRE_SHOT;
   } else if (msg->data == "IDLE") {
     mode_ = Mode::IDLE;
   } else {
