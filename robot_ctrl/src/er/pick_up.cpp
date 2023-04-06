@@ -18,14 +18,14 @@ class Pick_Up {
   // make prc_cmd_vel
   geometry_msgs::msg::Twist pick_up_cmd_vel;
 
-  void pick_up_vel_generator(bool is_pick_up, bool dir) {
+  void pick_up_vel_generator(bool is_pick_up, bool isLeft) {
     sensor_val = sensor->read();
     // calc robot angular velocity from 2 sensor
     // migh be like p controller?
     pick_up_cmd_vel.angular.z =
         (sensor_val[RIGHT_SENSOR] - sensor_val[LEFT_SENSOR]) / SENSOR_MAX * 0.5;
     // just give constant velocity to y axis
-    if (dir) {
+    if (isLeft) {
       if (is_pick_up) {
         pick_up_cmd_vel.linear.y = 0.5;
       } else {
@@ -41,6 +41,6 @@ class Pick_Up {
     // calc robot x velocity from 2 sensor
     // migh be like p controller?
     pick_up_cmd_vel.linear.x =
-        ((sensor_val[RIGHT_SENSOR] + sensor_val[LEFT_SENSOR])/2 - 1000) * 0.5;
+        ((sensor_val[RIGHT_SENSOR] + sensor_val[LEFT_SENSOR]) / 2 - 1000) * 0.5;
   }
 };

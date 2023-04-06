@@ -51,6 +51,31 @@ class Manual : public StateMachine {
 class Start : public StateMachine {
  public:
   void entry(void) override;
+  void react(Forward_Flag const &flag) override;
+};
+
+class PickupLeft : public StateMachine {
+ public:
+  void entry(void) override;
+  void react(Forward_Flag const &flag) override;
+};
+
+class PickupRight : public StateMachine {
+ public:
+  void entry(void) override;
+  void react(Forward_Flag const &flag) override;
+};
+
+class PreShot : public StateMachine {
+ public:
+  void entry(void) override;
+  void react(Forward_Flag const &flag) override;
+};
+
+class Shot : public StateMachine {
+ public:
+  void entry(void) override;
+  void react(Forward_Flag const &flag) override;
 };
 
 using state_machine = StateMachine;

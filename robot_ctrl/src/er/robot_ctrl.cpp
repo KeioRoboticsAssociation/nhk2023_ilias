@@ -7,7 +7,7 @@
 #include <std_msgs/msg/string.hpp>
 
 #include "joy_commander.cpp"
-#include "precision.cpp"
+#include "pick_up.cpp"
 
 using namespace std::chrono_literals;
 
@@ -30,11 +30,14 @@ class robot_ctrl : public rclcpp::Node {
     MANUAL,
     AUTO,
     IDLE,
-    PICKUP,
+    PICKUP_LEFT,
+    PICKUP_RIGHT,
+    SHOT,
+    PRE_SHOT,
   };
 
   JoyCommander joy_commander;
-  Precision precision;
+  Pick_Up pick_up;
 
   Mode mode_, prev_mode_ = Mode::MANUAL;  // 初期モードはMANUAL
   void timer_callback();
@@ -42,7 +45,7 @@ class robot_ctrl : public rclcpp::Node {
 };
 
 robot_ctrl::robot_ctrl()
-    : Node("er_robot_ctrl"), joy_commander(this), precision(this) {
+    : Node("er_robot_ctrl"), joy_commander(this), pick_up(this) {
   RCLCPP_INFO(this->get_logger(), "robot_ctrl node is started");
 
   // set parameters
@@ -101,8 +104,23 @@ void robot_ctrl::timer_callback() {
       RCLCPP_INFO(this->get_logger(), "current mode auto");
       break;
 
-    case Mode::PICKUP:
-      msg.data = "PICKUP";
+    case Mode::PICKUP_LEFT:
+      msg.data = "PICKUP_LEFT";
+      pick_up.pick_up_vel_generator(1, 1);
+      cmd_vel_pub_->publish(pick_up.pick_up_cmd_vel);
+      RCLCPP_INFO(this->get_logger(), "current mode pickup");
+      break;
+
+    case Mode::PICKUP_RIGHT:
+      msg.data = "PICKUP_RIGHT";
+      pick_up.pick_up_vel_generator(1, 0);
+      cmd_vel_pub_->publish(pick_up.pick_up_cmd_vel);
+      RCLCPP_INFO(this->get_logger(), "current mode pickup");
+      break;
+
+    case Mode::SHOT:
+      msg.data = "SHOT";
+      cmd_vel_pub_->publish(pick_up.pick_up_cmd_vel);
       RCLCPP_INFO(this->get_logger(), "current mode pickup");
       break;
 
@@ -133,10 +151,13 @@ void robot_ctrl::mode_callback(const std_msgs::msg::String::SharedPtr msg) {
     mode_ = Mode::MANUAL;
   } else if (msg->data == "AUTO") {
     mode_ = Mode::AUTO;
-  } else if (msg->data == "CLIMB") {
-    mode_ = Mode::CLIMB;
-  } else if (msg->data == "PRECISION") {
-    mode_ = Mode::PRECISION;
+  } else if (msg->data == "PICKUP_LEFT") {
+    mode_ = Mode::PICKUP_LEFT;
+  } else if (msg->data == "PICKUP_RIGHT") {
+    mode_ = Mode::PICKUP_RIGHT;
+  } else if (msg->data == "SHOT") {
+    mode_ = Mode::SHOT;
+    RCLCPP_INFO(this->get_logger(), "shot mode is not implemented yet");
   } else if (msg->data == "IDLE") {
     mode_ = Mode::IDLE;
   } else {

@@ -16,20 +16,23 @@ ament_auto_find_build_dependencies()
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 # ament_auto_add_library(state_ctrl SHARED
-#   src/main.cpp
-#   src/idle.cpp
-#   src/manual.cpp
-#   src/start.cpp
-#   src/main.hpp
-#   src/state_ctrl.hpp
-#   include/tinyfsm/include/tinyfsm.hpp
+# src/main.cpp
+# src/idle.cpp
+# src/manual.cpp
+# src/start.cpp
+# src/main.hpp
+# src/state_ctrl.hpp
+# include/tinyfsm/include/tinyfsm.hpp
 # )
-
 add_executable(er_state_ctrl
   src/main.cpp
   src/idle.cpp
   src/manual.cpp
   src/start.cpp
+  src/pickupLeft.cpp
+  src/pickupRight.cpp
+  src/shot.cpp
+  src/preshot.cpp
   src/robot_state_ctrl.cpp
   src/state_ctrl.cpp
 )
