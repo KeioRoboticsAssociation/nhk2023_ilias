@@ -8,4 +8,4 @@ void PickupLeft::entry() {
   RCLCPP_INFO(robot_state_ctrl->get_logger(), "mode msg pickupLeft");
 }
 
-void PickupLeft::react(Forward_Flag const& flag) { transit<PreShot>(); }
+void PickupLeft::react(Forward_Flag const&) { transit<PreShot>(); }

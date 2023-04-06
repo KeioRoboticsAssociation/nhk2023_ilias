@@ -22,6 +22,8 @@ class robot_ctrl : public rclcpp::Node {
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr mode_sub_;
   // publish cmd_vel topic
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
+  // publish state_ctrl topic
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_ctrl_pub_;
   // timer ptr
   rclcpp::TimerBase::SharedPtr timer_;
 
@@ -83,6 +85,9 @@ robot_ctrl::robot_ctrl()
       this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
   // publish mode as topic
   mode_pub_ = this->create_publisher<std_msgs::msg::String>("cmd_vel_mode", 10);
+  // publish state_ctrl topic
+  state_ctrl_pub_ =
+      this->create_publisher<std_msgs::msg::String>("state_toggle", 10);
 }
 
 void robot_ctrl::timer_callback() {
@@ -90,6 +95,9 @@ void robot_ctrl::timer_callback() {
   auto msg = std_msgs::msg::String();
   // RCLCPP_INFO(this->get_logger(), "timer callback");
   bool isPickupFinished = false;
+  // state_ctrlにFORWARDを送信するためのmsg
+  auto stateForwardMsg = std_msgs::msg::String();
+  stateForwardMsg.data = "FORWARD";
 
   switch (mode_) {
     case Mode::MANUAL:
@@ -110,7 +118,7 @@ void robot_ctrl::timer_callback() {
       isPickupFinished = pick_up.pick_up_vel_generator(1);
       cmd_vel_pub_->publish(pick_up.pick_up_cmd_vel);
       if (isPickupFinished) {
-        // change state
+        state_ctrl_pub_->publish(stateForwardMsg);
       }
       RCLCPP_INFO(this->get_logger(), "current mode pickup");
       break;
@@ -120,7 +128,7 @@ void robot_ctrl::timer_callback() {
       isPickupFinished = pick_up.pick_up_vel_generator(0);
       cmd_vel_pub_->publish(pick_up.pick_up_cmd_vel);
       if (isPickupFinished) {
-        // change state
+        state_ctrl_pub_->publish(stateForwardMsg);
       }
       RCLCPP_INFO(this->get_logger(), "current mode pickup");
       break;

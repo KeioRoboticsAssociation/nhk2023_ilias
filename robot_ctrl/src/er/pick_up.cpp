@@ -63,5 +63,7 @@ class Pick_Up {
         ((behindVal[BEHIND_RIGHT_SENSOR] + behindVal[BEHIND_LEFT_SENSOR]) / 2 -
          1000) *
         0.5;
+    if (y_vel == 0) return 1;
+    return 0;
   }
 };
