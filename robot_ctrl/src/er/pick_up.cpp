@@ -9,16 +9,18 @@ const int SIDE_RIGHT_TH1 = 1;  // 右サイドセンサーの２段階目
 const int SIDE_LEFT_TH0 = 2;   // 左サイドセンサーの１段階目
 const int SIDE_LEFT_TH1 = 3;   // 左サイドセンサーの２段階目
 
-const u_int16_t SENSOR_MAX = 4095;
+const uint16_t SENSOR_MAX = 4095;
+const uint16_t TARGET_DISTANCE = 1000;
 const float MAX_Y_VEL = 0.5;
 const float SLOW_Y_VEL = 0.1;
 
 class Pick_Up {
  private:
   std::unique_ptr<Sensor> sideSensor, behindSensor;
+  rclcpp::Node *ptr;
 
  public:
-  Pick_Up(rclcpp::Node *ptr) {
+  Pick_Up(rclcpp::Node *ptr) : ptr(ptr) {
     // サイド: デジタル測距
     sideSensor = std::make_unique<Sensor>(ptr, "side_sensor");
     // 後ろ: アナログ測距
@@ -35,6 +37,11 @@ class Pick_Up {
   bool pick_up_vel_generator(bool isLeft) {
     behindVal = behindSensor->read();
     sideVal = sideSensor->read();
+
+    if (behindVal.size() < 4 && sideVal.size() < 4) {
+      RCLCPP_ERROR(ptr->get_logger(), "sensor read error");
+      return false;
+    }
     // calc robot angular velocity from 2 sideSensor
     // migh be like p controller?
     pick_up_cmd_vel.angular.z =
@@ -61,7 +68,7 @@ class Pick_Up {
     // migh be like p controller?
     pick_up_cmd_vel.linear.x =
         ((behindVal[BEHIND_RIGHT_SENSOR] + behindVal[BEHIND_LEFT_SENSOR]) / 2 -
-         1000) *
+         TARGET_DISTANCE) *
         0.5;
     if (y_vel == 0) return 1;
     return 0;

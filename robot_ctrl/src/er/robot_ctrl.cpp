@@ -5,6 +5,7 @@
 #include <pure_pursuit_interface/msg/frame.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/joy.hpp>
+#include <std_msgs/msg/empty.hpp>
 #include <std_msgs/msg/string.hpp>
 
 #include "joy_commander.cpp"
@@ -29,7 +30,7 @@ class robot_ctrl : public rclcpp::Node {
   rclcpp::Publisher<pure_pursuit_interface::msg::Frame>::SharedPtr
       pure_pursuit_pub_;
   // subscribe pursuit_end topic
-  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr pursuit_end_sub_;
+  rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr pursuit_end_sub_;
   // timer ptr
   rclcpp::TimerBase::SharedPtr timer_;
 
@@ -50,7 +51,7 @@ class robot_ctrl : public rclcpp::Node {
   Mode mode_, prev_mode_ = Mode::MANUAL;  // 初期モードはMANUAL
   void timer_callback();
   void mode_callback(const std_msgs::msg::String::SharedPtr msg);
-  void pursuit_end_callback(const std_msgs::msg::String::SharedPtr msg);
+  void pursuit_end_callback(const std_msgs::msg::Empty::SharedPtr msg);
 };
 
 robot_ctrl::robot_ctrl()
@@ -97,19 +98,16 @@ robot_ctrl::robot_ctrl()
       this->create_publisher<std_msgs::msg::String>("state_toggle", 10);
   // publish pure_pursuit topic
   pure_pursuit_pub_ =
-      this->create_publisher<pure_pursuit_interface::msg::Frame>("pure_pursuit",
-                                                                 10);
+      this->create_publisher<pure_pursuit_interface::msg::Frame>("pp_cmd", 10);
   // subscribe pursuit_end topic
-  pursuit_end_sub_ = this->create_subscription<std_msgs::msg::String>(
-      "pursuit_end", 10,
+  pursuit_end_sub_ = this->create_subscription<std_msgs::msg::Empty>(
+      "pp_end", 10,
       std::bind(&robot_ctrl::pursuit_end_callback, this,
                 std::placeholders::_1));
 }
 
-void robot_ctrl::pursuit_end_callback(
-    const std_msgs::msg::String::SharedPtr msg) {
+void robot_ctrl::pursuit_end_callback(const std_msgs::msg::Empty::SharedPtr) {
   RCLCPP_INFO(this->get_logger(), "pursuit_end_callback");
-  if (msg->data != "1") return;
 
   auto disableCmd = pure_pursuit_interface::msg::Frame();
   disableCmd.is_allowed_to_pub = false;
@@ -171,7 +169,7 @@ void robot_ctrl::timer_callback() {
     case Mode::SHOT:
       msg.data = "SHOT";
       cmd_vel_pub_->publish(pick_up.pick_up_cmd_vel);
-      RCLCPP_INFO(this->get_logger(), "current mode pickup");
+      RCLCPP_INFO(this->get_logger(), "current mode shot");
       break;
 
     case Mode::IDLE:

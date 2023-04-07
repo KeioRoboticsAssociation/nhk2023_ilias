@@ -8,8 +8,6 @@ void Start::entry(void) {
   msg.data = "AUTO";
   robot_state_ctrl->mode_pub_->publish(msg);
   RCLCPP_INFO(robot_state_ctrl->get_logger(), "mode msg auto");
-
-  dispatch(Forward_Flag());
 }
 
 void Start::react(Forward_Flag const& flag) { transit<PickupLeft>(); }

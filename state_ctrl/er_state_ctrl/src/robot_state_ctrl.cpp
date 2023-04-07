@@ -34,6 +34,9 @@ void RobotStateCtrl::state_toggle_callback(
   } else if (msg->data == "IDLE") {
     RCLCPP_INFO(robot_state_ctrl->get_logger(), "IDLE");
     state_machine::dispatch(Idle_Flag());
+  } else if (msg->data == "START") {
+    RCLCPP_INFO(robot_state_ctrl->get_logger(), "START");
+    state_machine::dispatch(Start_Flag());
   } else if (msg->data == "FORWARD") {
     RCLCPP_INFO(robot_state_ctrl->get_logger(), "FORWARD");
     state_machine::dispatch(Forward_Flag());

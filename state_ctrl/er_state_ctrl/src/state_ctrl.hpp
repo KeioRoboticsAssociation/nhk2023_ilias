@@ -9,6 +9,7 @@
 struct Manual_Flag : tinyfsm::Event {};
 struct Idle_Flag : tinyfsm::Event {};
 struct Forward_Flag : tinyfsm::Event {};
+struct Start_Flag : tinyfsm::Event {};
 struct GOD_Flag : tinyfsm::Event {};
 
 class Idle;
@@ -22,6 +23,7 @@ class StateMachine : public tinyfsm::Fsm<StateMachine> {
 
   void react(Manual_Flag const &) { transit<Manual>(); };
   void react(Idle_Flag const &) { transit<Idle>(); };
+  void react(Start_Flag const &) { transit<Start>(); };
   void react(GOD_Flag const &, std::string destination) {
     if (destination == "start") {
       transit<Start>();

@@ -95,12 +95,20 @@ def generate_launch_description():
                    'deadzone': 0.02
                }])
 
+    simple_gui = Node(
+        package='simple_gui',
+        executable='simple_gui',
+        name='simple_gui',
+        output='screen',
+    )
+
     return LaunchDescription([
         joint_state_publisher_node,
         robot_state_publisher_node,
         static_tf_broadcaster_node,
         # wheelctrl_ros,
         robot_ctrl,
-        rogi_link_2,
+        # rogi_link_2,
         joy,
+        simple_gui
     ])
