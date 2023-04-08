@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <geometry_msgs/msg/twist.hpp>
 
 #include "sensor.hpp"
@@ -35,8 +36,12 @@ class Pick_Up {
    * @return true: finish, false: not finish
    */
   bool pick_up_vel_generator(bool isLeft) {
-    behindVal = behindSensor->read();
-    sideVal = sideSensor->read();
+    // behindVal = behindSensor->read();
+    // sideVal = sideSensor->read();
+    behindVal.resize(4);
+    behindVal[0] = 1500;
+    behindVal[1] = 1500;
+    sideVal.resize(4);
 
     if (behindVal.size() < 4 && sideVal.size() < 4) {
       RCLCPP_ERROR(ptr->get_logger(), "sensor read error");
@@ -45,8 +50,10 @@ class Pick_Up {
     // calc robot angular velocity from 2 sideSensor
     // migh be like p controller?
     pick_up_cmd_vel.angular.z =
-        (behindVal[BEHIND_RIGHT_SENSOR] - behindVal[BEHIND_LEFT_SENSOR]) /
-        SENSOR_MAX * 0.5;
+        std::clamp((double)(behindVal[BEHIND_RIGHT_SENSOR] -
+                           behindVal[BEHIND_LEFT_SENSOR]) /
+                       SENSOR_MAX,
+                   -3.14, 3.14);
 
     // just give constant velocity to y axis
     float y_vel = MAX_Y_VEL;
@@ -67,9 +74,12 @@ class Pick_Up {
     // calc robot x velocity from 2 sideSensor
     // migh be like p controller?
     pick_up_cmd_vel.linear.x =
-        ((behindVal[BEHIND_RIGHT_SENSOR] + behindVal[BEHIND_LEFT_SENSOR]) / 2 -
-         TARGET_DISTANCE) *
-        0.5;
+        std::clamp(-(float)((behindVal[BEHIND_RIGHT_SENSOR] +
+                             behindVal[BEHIND_LEFT_SENSOR]) /
+                                2 -
+                            TARGET_DISTANCE) *
+                       0.01,
+                   -0.5, 0.5);
     if (y_vel == 0) return 1;
     return 0;
   }

@@ -107,7 +107,7 @@ def generate_launch_description():
         robot_state_publisher_node,
         static_tf_broadcaster_node,
         # wheelctrl_ros,
-        robot_ctrl,
+        # robot_ctrl,
         # rogi_link_2,
         joy,
         simple_gui

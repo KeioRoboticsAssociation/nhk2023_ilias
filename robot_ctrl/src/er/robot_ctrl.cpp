@@ -168,7 +168,7 @@ void robot_ctrl::timer_callback() {
 
     case Mode::SHOT:
       msg.data = "SHOT";
-      cmd_vel_pub_->publish(pick_up.pick_up_cmd_vel);
+      // cmd_vel_pub_->publish(pick_up.pick_up_cmd_vel);
       RCLCPP_INFO(this->get_logger(), "current mode shot");
       break;
 
@@ -207,6 +207,8 @@ void robot_ctrl::mode_callback(const std_msgs::msg::String::SharedPtr msg) {
     mode_ = Mode::SHOT;
   } else if (msg->data == "PRE_SHOT") {
     mode_ = Mode::PRE_SHOT;
+    auto cmdVel = geometry_msgs::msg::Twist();
+    cmd_vel_pub_->publish(cmdVel);
     // 射出位置へ移動
     auto cmd = pure_pursuit_interface::msg::Frame();
     cmd.forward_flag = true;
