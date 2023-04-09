@@ -21,10 +21,10 @@ class JoyServer : public rclcpp::Node {
         servo(this, "servo") {
     RCLCPP_INFO(this->get_logger(), "joy_server is started");
     joy_sub = this->create_subscription<sensor_msgs::msg::Joy>(
-        "/joy", 10,
+        "joy", 10,
         std::bind(&JoyServer::joy_callback, this, std::placeholders::_1));
     rogilink2_pub = this->create_publisher<rogilink2_interfaces::msg::Frame>(
-        "/rogilink2/send", 10);
+        "rogilink2/send", 10);
   }
 
   // subscriber
