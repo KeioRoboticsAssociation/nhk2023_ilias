@@ -1,4 +1,9 @@
 #include <std_msgs/msg/int16.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/convert.h>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
 
 #include <chrono>
 #include <geometry_msgs/msg/twist.hpp>
@@ -7,7 +12,9 @@
 #include <sensor_msgs/msg/joy.hpp>
 #include <std_msgs/msg/empty.hpp>
 #include <std_msgs/msg/string.hpp>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
+#include "aim.cpp"
 #include "joy_commander.cpp"
 #include "pick_up.cpp"
 
@@ -33,6 +40,10 @@ class robot_ctrl : public rclcpp::Node {
   rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr pursuit_end_sub_;
   // timer ptr
   rclcpp::TimerBase::SharedPtr timer_;
+  // tf buffer
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
+  // tf listener
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
  private:
   enum class Mode {
@@ -104,6 +115,9 @@ robot_ctrl::robot_ctrl()
       "pp_end", 10,
       std::bind(&robot_ctrl::pursuit_end_callback, this,
                 std::placeholders::_1));
+  // tf buffer
+  tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 }
 
 void robot_ctrl::pursuit_end_callback(const std_msgs::msg::Empty::SharedPtr) {
@@ -126,6 +140,7 @@ void robot_ctrl::timer_callback() {
   // state_ctrlにFORWARDを送信するためのmsg
   auto stateForwardMsg = std_msgs::msg::String();
   stateForwardMsg.data = "FORWARD";
+  auto aimVel = aim(this, tf_buffer_);
 
   switch (mode_) {
     case Mode::MANUAL:
@@ -168,7 +183,10 @@ void robot_ctrl::timer_callback() {
 
     case Mode::SHOT:
       msg.data = "SHOT";
-      // cmd_vel_pub_->publish(pick_up.pick_up_cmd_vel);
+      // cmd_vel_pub_->publish(cmdVel);
+      if (aimVel != std::nullopt) {
+        cmd_vel_pub_->publish(aimVel.value());
+      }
       RCLCPP_INFO(this->get_logger(), "current mode shot");
       break;
 
