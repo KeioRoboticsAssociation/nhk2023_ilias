@@ -7,7 +7,7 @@ const float MAGAZINE_FIRST_POS = 5;
 
 void Loading::entry() {
   logInfo("Enter Loading");
-  if (context.usingMagazin == Context::USING_MAGAZIN::LEFT) {
+  if (context.usingMagazin == Context::LEFT) {
   } else {
   }
 }

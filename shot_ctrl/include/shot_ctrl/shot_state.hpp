@@ -19,7 +19,6 @@ struct MainShotEvent : tinyfsm::Event {};
 struct SubShotEvent : tinyfsm::Event {};
 struct MagazinLoadedEvent : tinyfsm::Event {
   bool isLeft;
-  ;
 };
 struct UpdateEvent : tinyfsm::Event {};
 

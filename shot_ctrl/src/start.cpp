@@ -1,5 +1,3 @@
-#pragma once
-
 #include "../include/shot_ctrl/shot_state.hpp"
 
 void Start::entry(void) {
@@ -10,10 +8,10 @@ void Start::entry(void) {
 void Start::react(MagazinLoadedEvent const& event) {
   if (event.isLeft) {
     context.leftRemain = 10;
-    context.usingMagazin = Context::USING_MAGAZIN::LEFT;
+    context.usingMagazin = Context::LEFT;
   } else {
     context.rightRemain = 10;
-    context.usingMagazin = Context::USING_MAGAZIN::RIGHT;
+    context.usingMagazin = Context::RIGHT;
   }
   transit<Loading>();
 }
