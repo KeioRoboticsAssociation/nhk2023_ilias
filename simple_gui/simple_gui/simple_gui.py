@@ -14,7 +14,7 @@ class SimpleGUI(Node):
 
     def __init__(self):
         super().__init__('simple_gui')
-        self.gui = GUI()
+        self.gui = GUI(self)
         self.rogimsg_pub_ = self.create_publisher(Frame, 'rogilink2/send', 10)
         self.state_subscriber = self.create_subscription(
             String, 'state', self.state_callback, 10)

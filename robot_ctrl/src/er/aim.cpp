@@ -26,7 +26,7 @@ std::optional<geometry_msgs::msg::Twist> aim(
   float y = robo2pole.transform.translation.y;
   float yaw = atan2(y, x);
 
-  RCLCPP_INFO(node->get_logger(), "x: %f, y: %f, yaw: %f", x, y, yaw);
+  // RCLCPP_INFO(node->get_logger(), "x: %f, y: %f, yaw: %f", x, y, yaw);
 
   geometry_msgs::msg::Twist cmd_vel;
   cmd_vel.angular.z = yaw * 1;

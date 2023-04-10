@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 from ament_index_python.packages import get_package_share_directory
 from rogilink2_interfaces.msg import Ping
+from rclpy.node import Node
 
 img_folder_path = get_package_share_directory('simple_gui') + '/img'
 rr_hard_id = (0, "FR_S", "FR", "FL_S", "FL", "RR_S", "RR", "RL_S", "RL", 0, 0,
@@ -225,6 +226,9 @@ class GUI:
     current_layout = 1
     event, values = None, None
 
+    def __init__(self, node):
+        self.node: Node = node
+
     # function
     def gui_check(self):
         self.event, self.values = self.window.read(timeout=10)
@@ -254,6 +258,11 @@ class GUI:
 
     def ping_gui(self, msg: Ping):
         for i in msg.devices:
+
+            if (not hasattr(self.window,
+                            f'rr_{format(i.hard_id,"02x").upper()}')):
+                continue
+
             if i.is_active is True:
                 self.window[f'rr_{format(i.hard_id,"02x").upper()}'].update(
                     button_color=(connected))

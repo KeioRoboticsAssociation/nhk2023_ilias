@@ -102,13 +102,21 @@ def generate_launch_description():
         output='screen',
     )
 
+    er_state_ctrl = Node(
+        package='er_state_ctrl',
+        executable='er_state_ctrl',
+        name='er_state_ctrl',
+        output='screen',
+    )
+
     return LaunchDescription([
         joint_state_publisher_node,
         robot_state_publisher_node,
         static_tf_broadcaster_node,
         # wheelctrl_ros,
-        # robot_ctrl,
-        # rogi_link_2,
+        robot_ctrl,
+        rogi_link_2,
         joy,
-        simple_gui
+        simple_gui,
+        er_state_ctrl
     ])

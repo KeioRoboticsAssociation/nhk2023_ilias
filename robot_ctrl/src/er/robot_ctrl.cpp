@@ -219,12 +219,15 @@ void robot_ctrl::mode_callback(const std_msgs::msg::String::SharedPtr msg) {
     mode_ = Mode::AUTO;
   } else if (msg->data == "PICKUP_LEFT") {
     mode_ = Mode::PICKUP_LEFT;
+    pick_up.startSensing();
   } else if (msg->data == "PICKUP_RIGHT") {
     mode_ = Mode::PICKUP_RIGHT;
+    pick_up.startSensing();
   } else if (msg->data == "SHOT") {
     mode_ = Mode::SHOT;
   } else if (msg->data == "PRE_SHOT") {
     mode_ = Mode::PRE_SHOT;
+    pick_up.stopSensing();
     auto cmdVel = geometry_msgs::msg::Twist();
     cmd_vel_pub_->publish(cmdVel);
     // 射出位置へ移動
