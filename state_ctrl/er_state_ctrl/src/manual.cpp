@@ -7,5 +7,5 @@ void Manual::entry(void) {
   auto msg = std_msgs::msg::String();
   msg.data = "MANUAL";
   robot_state_ctrl->mode_pub_->publish(msg);
-  RCLCPP_INFO(robot_state_ctrl->get_logger(), "mode msg manual");
+  robot_state_ctrl->state_pub_->publish(msg);
 }

@@ -9,7 +9,7 @@
 
 RobotStateCtrl::RobotStateCtrl() : Node("er_state_ctrl") {
   RCLCPP_INFO(this->get_logger(), "RobotStateCtrl");
-  RCLCPP_INFO(this->get_logger(), "RobotStateCtrl constructor start");
+  // RCLCPP_INFO(this->get_logger(), "RobotStateCtrl constructor start");
   // subscribe mode changer as topic
   state_toggle_sub_ = this->create_subscription<std_msgs::msg::String>(
       "state_toggle", 10,
@@ -19,8 +19,12 @@ RobotStateCtrl::RobotStateCtrl() : Node("er_state_ctrl") {
   RCLCPP_INFO(this->get_logger(), "RobotStateCtrl constructor wei");
   // publish mode as topic
   mode_pub_ = this->create_publisher<std_msgs::msg::String>("mode", 10);
+  state_pub_ = this->create_publisher<std_msgs::msg::String>("state", 10);
+  // publish cmd_vel topic
+  cmd_vel_pub_ =
+      this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
 
-  RCLCPP_INFO(this->get_logger(), "RobotStateCtrl constructor end");
+  // RCLCPP_INFO(this->get_logger(), "RobotStateCtrl constructor end");
 }
 
 void RobotStateCtrl::state_toggle_callback(

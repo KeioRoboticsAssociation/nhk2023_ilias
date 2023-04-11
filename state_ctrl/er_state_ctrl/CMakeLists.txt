@@ -9,6 +9,7 @@ endif()
 find_package(ament_cmake_auto REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 ament_auto_find_build_dependencies()
 
@@ -40,6 +41,7 @@ add_executable(er_state_ctrl
 ament_target_dependencies(er_state_ctrl
   rclcpp
   std_msgs
+  geometry_msgs
 )
 
 # ament_target_dependencies(md_lib rclcpp std_msgs rogilink2_interfaces)

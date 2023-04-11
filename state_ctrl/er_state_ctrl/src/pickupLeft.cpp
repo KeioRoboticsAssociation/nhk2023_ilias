@@ -5,7 +5,10 @@ void PickupLeft::entry() {
   auto msg = std_msgs::msg::String();
   msg.data = "PICKUP_LEFT";
   robot_state_ctrl->mode_pub_->publish(msg);
-  RCLCPP_INFO(robot_state_ctrl->get_logger(), "mode msg pickupLeft");
+  msg.data = "AUTO";
+  robot_state_ctrl->state_pub_->publish(msg);
 }
 
-void PickupLeft::react(Forward_Flag const&) { transit<PreShot>(); }
+void PickupLeft::react(Forward_Flag const &) { transit<PreShot>(); }
+
+void PickupLeft::react(Update_Flag const &) {}

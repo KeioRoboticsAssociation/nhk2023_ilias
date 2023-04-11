@@ -50,6 +50,14 @@ class GUI:
         [
             # text box to choose state
             [
+                sg.Column([[
+                    sg.Text('Current State', size=(15, 1),
+                            font='Helcetica 20'),
+                    sg.Text(
+                        '', key='er_state', size=(5, 1), font='Helcetica 20')
+                ]])
+            ],
+            [
                 sg.Text('State', size=(5, 1), font='Helcetica 20'),
                 sg.InputCombo(('Start', 'Restart', 'PickupLeft', 'PickupRight',
                                'PreShot', 'Shot', 'End'),
