@@ -15,6 +15,10 @@ struct GOD_Flag : tinyfsm::Event {};
 struct Update_Flag : tinyfsm::Event {};
 struct Shot_Flag : tinyfsm::Event {};
 
+class Start;
+class Idle;
+class Manual;
+
 class StateMachine : public tinyfsm::Fsm<StateMachine> {
  public:
   StateMachine();
@@ -63,6 +67,7 @@ class PickupLeft : public StateMachine {
   void entry(void) override;
   void react(Forward_Flag const &flag) override;
   void react(Update_Flag const &flag) override;
+  void exit() override;
 };
 
 class PickupRight : public StateMachine {
@@ -70,6 +75,7 @@ class PickupRight : public StateMachine {
   void entry(void) override;
   void react(Forward_Flag const &flag) override;
   void react(Update_Flag const &flag) override;
+  void exit() override;
 };
 
 class PreShot : public StateMachine {

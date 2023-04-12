@@ -6,12 +6,16 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # find dependencies
-find_package(ament_cmake_auto REQUIRED)
+find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
-
-ament_auto_find_build_dependencies()
+find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(sensor_lib REQUIRED)
+find_package(pure_pursuit_interface REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
@@ -36,12 +40,19 @@ add_executable(er_state_ctrl
   src/preshot.cpp
   src/robot_state_ctrl.cpp
   src/state_ctrl.cpp
+  src/pickupCourse.cpp
 )
 
 ament_target_dependencies(er_state_ctrl
   rclcpp
-  std_msgs
   geometry_msgs
+  std_msgs
+  sensor_msgs
+  sensor_lib
+  pure_pursuit_interface
+  tf2_ros
+  tf2_geometry_msgs
+  tf2
 )
 
 # ament_target_dependencies(md_lib rclcpp std_msgs rogilink2_interfaces)
@@ -79,5 +90,3 @@ install(TARGETS
   er_state_ctrl
   DESTINATION lib/${PROJECT_NAME}
 )
-
-ament_auto_package()
