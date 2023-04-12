@@ -20,8 +20,8 @@ void startSensing() {
 }
 
 void stopSensing() {
-  robot_state_ctrl->sideSensor.reset();
-  robot_state_ctrl->behindSensor.reset();
+  robot_state_ctrl->sideSensor->stop();
+  robot_state_ctrl->behindSensor->stop();
 }
 
 bool pickupVelGenerator(bool isLeft) {

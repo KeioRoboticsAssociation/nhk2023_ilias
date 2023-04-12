@@ -9,6 +9,8 @@ void PreShot::entry() {
   msg.data = "AUTO";
   robot_state_ctrl->mode_pub_->publish(msg);
 
+  RCLCPP_INFO(robot_state_ctrl->get_logger(), "Enter PRE_SHOT");
+
   auto cmdVel = geometry_msgs::msg::Twist();
   robot_state_ctrl->cmd_vel_pub_->publish(cmdVel);
   // 射出位置へ移動
