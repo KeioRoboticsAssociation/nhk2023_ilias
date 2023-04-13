@@ -1,22 +1,11 @@
-#include <std_msgs/msg/int16.h>
-#include <tf2/LinearMath/Quaternion.h>
-#include <tf2/convert.h>
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_broadcaster.h>
-#include <tf2_ros/transform_listener.h>
 
 #include <chrono>
 #include <geometry_msgs/msg/twist.hpp>
-#include <pure_pursuit_interface/msg/frame.hpp>
 #include <rclcpp/rclcpp.hpp>
-#include <sensor_msgs/msg/joy.hpp>
 #include <std_msgs/msg/empty.hpp>
 #include <std_msgs/msg/string.hpp>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
-#include "aim.cpp"
 #include "joy_commander.cpp"
-#include "pick_up.cpp"
 
 using namespace std::chrono_literals;
 
@@ -33,17 +22,8 @@ class robot_ctrl : public rclcpp::Node {
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
   // publish state_ctrl topic
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_ctrl_pub_;
-  // publish pure_pursuit topic
-  rclcpp::Publisher<pure_pursuit_interface::msg::Frame>::SharedPtr
-      pure_pursuit_pub_;
-  // subscribe pursuit_end topic
-  rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr pursuit_end_sub_;
   // timer ptr
   rclcpp::TimerBase::SharedPtr timer_;
-  // tf buffer
-  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
-  // tf listener
-  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
  private:
   enum class Mode {
@@ -57,7 +37,6 @@ class robot_ctrl : public rclcpp::Node {
   };
 
   JoyCommander joy_commander;
-  Pick_Up pick_up;
 
   Mode mode_, prev_mode_ = Mode::MANUAL;  // 初期モードはMANUAL
   void timer_callback();
@@ -65,8 +44,7 @@ class robot_ctrl : public rclcpp::Node {
   void pursuit_end_callback(const std_msgs::msg::Empty::SharedPtr msg);
 };
 
-robot_ctrl::robot_ctrl()
-    : Node("er_robot_ctrl"), joy_commander(this), pick_up(this) {
+robot_ctrl::robot_ctrl() : Node("er_robot_ctrl"), joy_commander(this) {
   RCLCPP_INFO(this->get_logger(), "robot_ctrl node is started");
 
   // set parameters
@@ -104,43 +82,13 @@ robot_ctrl::robot_ctrl()
       this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
   // publish mode as topic
   mode_pub_ = this->create_publisher<std_msgs::msg::String>("cmd_vel_mode", 10);
-  // publish state_ctrl topic
-  state_ctrl_pub_ =
-      this->create_publisher<std_msgs::msg::String>("state_toggle", 10);
-  // publish pure_pursuit topic
-  pure_pursuit_pub_ =
-      this->create_publisher<pure_pursuit_interface::msg::Frame>("pp_cmd", 10);
-  // subscribe pursuit_end topic
-  pursuit_end_sub_ = this->create_subscription<std_msgs::msg::Empty>(
-      "pp_end", 10,
-      std::bind(&robot_ctrl::pursuit_end_callback, this,
-                std::placeholders::_1));
-  // tf buffer
-  tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
-  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
-}
-
-void robot_ctrl::pursuit_end_callback(const std_msgs::msg::Empty::SharedPtr) {
-  RCLCPP_INFO(this->get_logger(), "pursuit_end_callback");
-
-  auto disableCmd = pure_pursuit_interface::msg::Frame();
-  disableCmd.is_allowed_to_pub = false;
-  pure_pursuit_pub_->publish(disableCmd);
-
-  auto stateForwardMsg = std_msgs::msg::String();
-  stateForwardMsg.data = "FORWARD";
-  state_ctrl_pub_->publish(stateForwardMsg);
 }
 
 void robot_ctrl::timer_callback() {
   // publish mode as topic
   auto msg = std_msgs::msg::String();
   // RCLCPP_INFO(this->get_logger(), "timer callback");
-  bool isPickupFinished = false;
   // state_ctrlにFORWARDを送信するためのmsg
-  auto stateForwardMsg = std_msgs::msg::String();
-  stateForwardMsg.data = "FORWARD";
-  auto aimVel = aim(this, tf_buffer_);
 
   switch (mode_) {
     case Mode::MANUAL:
@@ -154,40 +102,6 @@ void robot_ctrl::timer_callback() {
     case Mode::AUTO:
       msg.data = "AUTO";
       RCLCPP_INFO(this->get_logger(), "current mode auto");
-      break;
-
-    case Mode::PICKUP_LEFT:
-      msg.data = "PICKUP_LEFT";
-      isPickupFinished = pick_up.pick_up_vel_generator(1);
-      cmd_vel_pub_->publish(pick_up.pick_up_cmd_vel);
-      if (isPickupFinished) {
-        state_ctrl_pub_->publish(stateForwardMsg);
-      }
-      RCLCPP_INFO(this->get_logger(), "current mode pickup");
-      break;
-
-    case Mode::PICKUP_RIGHT:
-      msg.data = "PICKUP_RIGHT";
-      isPickupFinished = pick_up.pick_up_vel_generator(0);
-      cmd_vel_pub_->publish(pick_up.pick_up_cmd_vel);
-      if (isPickupFinished) {
-        state_ctrl_pub_->publish(stateForwardMsg);
-      }
-      RCLCPP_INFO(this->get_logger(), "current mode pickup");
-      break;
-
-    case Mode::PRE_SHOT:
-      msg.data = "PRE_SHOT";
-      RCLCPP_INFO(this->get_logger(), "current mode pre_shot");
-      break;
-
-    case Mode::SHOT:
-      msg.data = "SHOT";
-      // cmd_vel_pub_->publish(cmdVel);
-      if (aimVel != std::nullopt) {
-        cmd_vel_pub_->publish(aimVel.value());
-      }
-      RCLCPP_INFO(this->get_logger(), "current mode shot");
       break;
 
     case Mode::IDLE:
@@ -217,25 +131,6 @@ void robot_ctrl::mode_callback(const std_msgs::msg::String::SharedPtr msg) {
     mode_ = Mode::MANUAL;
   } else if (msg->data == "AUTO") {
     mode_ = Mode::AUTO;
-  } else if (msg->data == "PICKUP_LEFT") {
-    mode_ = Mode::PICKUP_LEFT;
-    pick_up.startSensing();
-  } else if (msg->data == "PICKUP_RIGHT") {
-    mode_ = Mode::PICKUP_RIGHT;
-    pick_up.startSensing();
-  } else if (msg->data == "SHOT") {
-    mode_ = Mode::SHOT;
-  } else if (msg->data == "PRE_SHOT") {
-    mode_ = Mode::PRE_SHOT;
-    pick_up.stopSensing();
-    auto cmdVel = geometry_msgs::msg::Twist();
-    cmd_vel_pub_->publish(cmdVel);
-    // 射出位置へ移動
-    auto cmd = pure_pursuit_interface::msg::Frame();
-    cmd.forward_flag = true;
-    cmd.is_allowed_to_pub = true;
-    cmd.path_num = 1;
-    pure_pursuit_pub_->publish(cmd);
   } else if (msg->data == "IDLE") {
     mode_ = Mode::IDLE;
   } else {

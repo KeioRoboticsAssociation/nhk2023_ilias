@@ -15,9 +15,9 @@
 void Shot::entry() {
   auto msg = std_msgs::msg::String();
   msg.data = "SHOT";
-  robot_state_ctrl->mode_pub_->publish(msg);
-  msg.data = "AUTO";
   robot_state_ctrl->state_pub_->publish(msg);
+  msg.data = "AUTO";
+  robot_state_ctrl->mode_pub_->publish(msg);
 
   RCLCPP_INFO(robot_state_ctrl->get_logger(), "Enter SHOT");
 }
