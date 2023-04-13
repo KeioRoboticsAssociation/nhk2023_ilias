@@ -115,8 +115,8 @@ def generate_launch_description():
         static_tf_broadcaster_node,
         # wheelctrl_ros,
         robot_ctrl,
-        # rogi_link_2,
+        rogi_link_2,
         joy,
-        # simple_gui,
+        simple_gui,
         er_state_ctrl
     ])

@@ -8,15 +8,13 @@ const int SIDE_LEFT_TH0 = 3;   // 左サイドセンサーの１段階目
 const int SIDE_LEFT_TH1 = 2;   // 左サイドセンサーの２段階目
 
 const int SENSOR_MAX = 65535;
-const int TARGET_DISTANCE = 20000;
-const float MAX_Y_VEL = 0.5;
-const float SLOW_Y_VEL = 0.1;
+const int TARGET_DISTANCE = 13500;
+const float MAX_Y_VEL = 1;
+const float SLOW_Y_VEL = 0.3;
 
 void startSensing() {
-  robot_state_ctrl->sideSensor =
-      std::make_unique<Sensor>(robot_state_ctrl.get(), "side_sensor");
-  robot_state_ctrl->behindSensor =
-      std::make_unique<Sensor>(robot_state_ctrl.get(), "behind_sensor");
+  robot_state_ctrl->behindSensor->start();
+  robot_state_ctrl->sideSensor->start();
 }
 
 void stopSensing() {
@@ -36,8 +34,8 @@ bool pickupVelGenerator(bool isLeft) {
     return false;
   }
 
-  int behindL = 0.1 * behindVal[BEHIND_LEFT_SENSOR] + 0.9 * prevBehindL;
-  int behindR = 0.1 * behindVal[BEHIND_RIGHT_SENSOR] + 0.9 * prevBehindR;
+  int behindL = 0.05 * behindVal[BEHIND_LEFT_SENSOR] + 0.95 * prevBehindL;
+  int behindR = 0.05 * behindVal[BEHIND_RIGHT_SENSOR] + 0.95 * prevBehindR;
 
   prevBehindL = behindL;
   prevBehindR = behindR;
@@ -51,13 +49,14 @@ bool pickupVelGenerator(bool isLeft) {
   // calc robot angular velocity from 2 sideSensor
   // migh be like p controller?
   pick_up_cmd_vel.angular.z =
-      std::clamp(-(double)(behindR - behindL) / SENSOR_MAX * 10, -1.27, 1.27);
+      std::clamp(-(double)(behindR - behindL) / SENSOR_MAX * 8, -1.27, 1.27);
 
   // just give constant velocity to y axis
   float y_vel = MAX_Y_VEL;
   if (isLeft) {
-    if (sideVal[SIDE_LEFT_TH0] > 10000)  // 閾値0を超えたら減速
+    if (sideVal[SIDE_LEFT_TH0] > 10000) {  // 閾値0を超えたら減速
       y_vel = SLOW_Y_VEL;
+    }
     if (sideVal[SIDE_LEFT_TH1] > 10000)  // 閾値1を超えたら停止
       y_vel = 0;
   } else {
@@ -67,10 +66,10 @@ bool pickupVelGenerator(bool isLeft) {
 
   pick_up_cmd_vel.linear.y = (isLeft) ? y_vel : -y_vel;
 
-  // calc robot x velocity from 2 sideSensor
+  // calc robot x 1e0oci1y0from 2 sideSensor
   // migh be like p controller?
   pick_up_cmd_vel.linear.x =
-      std::clamp(-(float)((behindR + behindL) / 2 - TARGET_DISTANCE) * 0.0005f,
+      std::clamp(-(float)((behindR + behindL) / 2 - TARGET_DISTANCE) * 0.0002f,
                  -1.0f, 1.0f);
 
   // RCLCPP_INFO(ptr->get_logger(), "x: %f, yaw: %f",
@@ -78,6 +77,8 @@ bool pickupVelGenerator(bool isLeft) {
   //             pick_up_cmd_vel.angular.z);
   robot_state_ctrl->cmd_vel_pub_->publish(pick_up_cmd_vel);
 
-  if (y_vel == 0) return 1;
+  if (y_vel == 0) {
+    return 1;
+  }
   return 0;
 }
