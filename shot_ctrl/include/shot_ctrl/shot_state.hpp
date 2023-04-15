@@ -4,19 +4,19 @@
 #include "tinyfsm.hpp"
 
 struct Context {
-  int leftRemain;
-  int rightRemain;
+  bool hasShuttleRing = false;
+  int leftRemain = 0;
+  int rightRemain = 0;
   enum {
     LEFT,
     RIGHT,
     NONE,
-  } usingMagazin;
+  } usingMagazin = NONE;
 };
 
 extern Context context;
 
 struct MainShotEvent : tinyfsm::Event {};
-struct SubShotEvent : tinyfsm::Event {};
 struct MagazinLoadedEvent : tinyfsm::Event {
   bool isLeft;
 };
@@ -35,19 +35,14 @@ class ShotState : public tinyfsm::Fsm<ShotState> {
   virtual void exit(void) {}
 };
 
-class Start : public ShotState {
- public:
-  void entry(void) override;
-  void react(MagazinLoadedEvent const &) override;
-};
-
-class Loading : public ShotState {
+class Init : public ShotState {
  public:
   void entry(void) override;
   void react(UpdateEvent const &) override;
+  void react(MagazinLoadedEvent const &) override;
 };
 
-class MainShot : public ShotState {
+class LoadMagazine : public ShotState {
  public:
   void entry(void) override;
   void react(UpdateEvent const &) override;
@@ -57,24 +52,32 @@ class Ready : public ShotState {
  public:
   void entry(void) override;
   void react(MainShotEvent const &) override;
-  // void react(SubShotEvent const &) override;
+  // void react(SubShotEvableShotent const &) override;
 };
 
-// 水平ローダーで押す
-class ReloadStep1 : public ShotState {
+////  水平ローダーで押す
+class LoadLoader : public ShotState {
+ public:
+  void entry(void) override;
+  void react(UpdateEvent const &) override;
+  void react(MainShotEvent const &) override;
+};
+
+class DownLoader : public ShotState {
  public:
   void entry(void) override;
   void react(UpdateEvent const &) override;
 };
 
-class ReloadStep2 : public ShotState {
+class LoadShuttle : public ShotState {
  public:
   void entry(void) override;
   void react(UpdateEvent const &) override;
 };
 
-class AfterShot : public ShotState {
+class UpLoader : public ShotState {
  public:
   void entry(void) override;
   void react(UpdateEvent const &) override;
+  void react(MainShotEvent const &) override;
 };

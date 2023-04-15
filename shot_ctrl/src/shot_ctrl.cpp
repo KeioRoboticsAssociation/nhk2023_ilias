@@ -5,7 +5,7 @@
 
 using namespace std::chrono_literals;
 
-FSM_INITIAL_STATE(ShotState, Start)
+FSM_INITIAL_STATE(ShotState, Init)
 Context context;
 
 int main(int argc, char **argv) {
