@@ -48,8 +48,6 @@ bool pickupVelGenerator(bool isLeft) {
   // sideVal[1], sideVal[2], sideVal[3]);
   // calc robot angular velocity from 2 sideSensor
   // migh be like p controller?
-  pick_up_cmd_vel.angular.z =
-      std::clamp(-(double)(behindR - behindL) / SENSOR_MAX * 8, -1.27, 1.27);
 
   // just give constant velocity to y axis
   float y_vel = MAX_Y_VEL;
@@ -71,6 +69,9 @@ bool pickupVelGenerator(bool isLeft) {
   pick_up_cmd_vel.linear.x =
       std::clamp(-(float)((behindR + behindL) / 2 - TARGET_DISTANCE) * 0.0002f,
                  -1.0f, 1.0f);
+  float yawGain = (y_vel == 0) ? 15 : 8;
+  pick_up_cmd_vel.angular.z = std::clamp(
+      -(double)(behindR - behindL) / SENSOR_MAX * yawGain, -1.27, 1.27);
 
   // RCLCPP_INFO(ptr->get_logger(), "x: %f, yaw: %f",
   // pick_up_cmd_vel.linear.x,

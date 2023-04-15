@@ -17,5 +17,5 @@ void PickupLeft::react(Forward_Flag const &) { transit<PreShot>(); }
 
 void PickupLeft::react(Update_Flag const &) {
   bool finished = pickupVelGenerator(true);
-  if (finished) transit<PreShot>();
+  // if (finished) transit<PreShot>();
 }

@@ -16,5 +16,5 @@ void PickupRight::exit() { stopSensing(); }
 
 void PickupRight::react(Update_Flag const&) {
   bool finished = pickupVelGenerator(true);
-  if (finished) transit<PreShot>();
+  // if (finished) transit<PreShot>();
 }
