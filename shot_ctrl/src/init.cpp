@@ -44,17 +44,6 @@ void Init::entry() {
     elevation->setMode(MD2022::Voltage);
     elevation->setVelocity(0.1);
   }
-  if (!limitSensor->getPinState(SHOOTER_LIMIT)) {
-    limitSensor->addCallback(SHOOTER_LIMIT, [&]() {
-      shooter->setVelocity(0);
-      shooter->resetEncoder(0);
-      shooter->setMode(ODrive::Position,
-                       ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
-      shooter->setPosition(0);
-    });
-    shooter->setMode(ODrive::Velocity);
-    shooter->setVelocity(0.1);
-  }
 }
 
 void Init::react(UpdateEvent const &) {}

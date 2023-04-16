@@ -2,6 +2,7 @@
 
 rclcpp::Node::SharedPtr node;
 rclcpp::Publisher<rogilink2_interfaces::msg::Frame>::SharedPtr rogilink;
+std::shared_ptr<LimitSwitch> limitSensor;
 std::shared_ptr<MD2022> magazin;
 std::shared_ptr<MD2022> pusher;
 std::shared_ptr<MD2022> loader;
@@ -25,5 +26,10 @@ void init() {
   pusher->init();
   loader->init();
   elevation->init();
-  shooter->init();
+  // shooter->init();
 }
+float calcMagazinePos(int magazineNum) { return magazineNum * 1 + 0; }
+
+float calcElevationPos(float angle) { return angle; }
+
+float calcLoaderPos(float elevAngle) { return 0.5 * elevAngle; }

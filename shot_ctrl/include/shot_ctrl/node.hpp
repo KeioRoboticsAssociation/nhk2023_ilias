@@ -38,3 +38,9 @@ template <typename... Args>
 void logError(std::string msg, Args... args) {
   RCLCPP_ERROR(node->get_logger(), msg.c_str(), args...);
 }
+
+float calcMagazinePos(int magazineNum);
+
+float calcElevationPos(float angle);
+
+float calcLoaderPos(float elevAngle);

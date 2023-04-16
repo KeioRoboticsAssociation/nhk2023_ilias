@@ -11,14 +11,15 @@ ament_auto_find_build_dependencies()
 
 ament_auto_add_executable(shot_ctrl
   src/shot_ctrl.cpp
-  src/afterShot.cpp
-  src/loading.cpp
-  src/mainShot.cpp
   src/node.cpp
   src/ready.cpp
-  src/reloadStep1.cpp
-  src/reloadStep2.cpp
-  src/start.cpp
+  src/downLoader.cpp
+  src/init.cpp
+  src/loadLoader.cpp
+  src/loadMagazine.cpp
+  src/loadShuttle.cpp
+  src/shooterState.cpp
+  src/upLoader.cpp
 )
 
 if(BUILD_TESTING)
