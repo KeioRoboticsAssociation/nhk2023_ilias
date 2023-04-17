@@ -44,6 +44,9 @@ RobotStateCtrl::RobotStateCtrl() : Node("er_state_ctrl") {
         state_machine::dispatch(Forward_Flag());
       });
 
+  shot_state_pub_ =
+      this->create_publisher<std_msgs::msg::String>("shot_state", 10);
+
   tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
   // RCLCPP_INFO(this->get_logger(), "RobotStateCtrl constructor end");

@@ -10,7 +10,12 @@ void PickupRight::entry() {
   robot_state_ctrl->mode_pub_->publish(msg);
 }
 
-void PickupRight::react(Forward_Flag const& flag) { transit<PreShot>(); }
+void PickupRight::react(Forward_Flag const& flag) {
+  auto magazineMsg = std_msgs::msg::String();
+  magazineMsg.data = "MAGAZINE_LOADED_RIGHT";
+  robot_state_ctrl->shot_state_pub_->publish(magazineMsg);
+  transit<PreShot>();
+}
 
 void PickupRight::exit() { stopSensing(); }
 

@@ -13,7 +13,12 @@ void PickupLeft::entry() {
 
 void PickupLeft::exit() { stopSensing(); }
 
-void PickupLeft::react(Forward_Flag const &) { transit<PreShot>(); }
+void PickupLeft::react(Forward_Flag const &) {
+  auto magazineMsg = std_msgs::msg::String();
+  magazineMsg.data = "MAGAZINE_LOADED_LEFT";
+  robot_state_ctrl->shot_state_pub_->publish(magazineMsg);
+  transit<PreShot>();
+}
 
 void PickupLeft::react(Update_Flag const &) {
   bool finished = pickupVelGenerator(true);

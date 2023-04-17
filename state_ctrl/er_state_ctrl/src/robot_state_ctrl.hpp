@@ -43,6 +43,8 @@ class RobotStateCtrl : public rclcpp::Node {
   // subscribe pursuit_end topic
   rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr pursuit_end_sub_;
 
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr shot_state_pub_;
+
   void state_toggle_callback(const std_msgs::msg::String::SharedPtr msg);
 };
 
