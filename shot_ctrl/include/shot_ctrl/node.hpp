@@ -45,6 +45,6 @@ void logError(std::string msg, Args... args) {
 
 float calcMagazinePos(int magazineNum);
 
-float calcElevationPos(float angle);
+float calcAngle2ElevPos(float angle);
 
 float calcLoaderPos(float elevAngle);

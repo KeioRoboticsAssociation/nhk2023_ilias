@@ -4,10 +4,7 @@
 
 namespace Shooter {
 
-void Init::entry() {
-  // TODO: odriveのhomingを使った初期化に変更する
-  logInfo("[Shooter] Enter Init");
-}
+void Init::entry() { logInfo("[Shooter] Enter Init"); }
 
 void Init::react(ShooterUpdateEvent const &) {
   if (shooter->getAxisState() ==

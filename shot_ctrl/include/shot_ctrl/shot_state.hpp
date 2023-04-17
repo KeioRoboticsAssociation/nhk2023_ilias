@@ -33,13 +33,14 @@ class ShotState : public tinyfsm::Fsm<ShotState> {
 
   virtual void react(MainShotEvent const &) { logError("Unable to Shot"); }
   virtual void react(MagazinLoadedEvent const &) {}
-  virtual void react(ChangeElevationRequestEvent const &e) {}
+  // virtual void react(ChangeElevationRequestEvent const &e) {}
   virtual void react(UpdateEvent const &) {}
 
   virtual void entry(void) {}
   virtual void exit(void) {}
 
   virtual bool canShot() { return false; }
+  virtual bool canChangeElevation() { return false; }
 };
 
 // 装填系の初期化
@@ -73,6 +74,7 @@ class Ready : public ShotState {
   void react(MainShotEvent const &) override;
   bool canShot() override { return true; }
   void react(MagazinLoadedEvent const &) override;
+  bool canChangeElevation() override { return true; }
   // void react(SubShotEvableShotent const &) override;
 };
 
@@ -86,6 +88,7 @@ class LoadLoader : public ShotState {
   void react(UpdateEvent const &) override;
   void react(MainShotEvent const &) override;
   bool canShot() override { return context.hasShuttleRing; }
+  bool canChangeElevation() override { return true; }
   void exit() override;
 
  private:

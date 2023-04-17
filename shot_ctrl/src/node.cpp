@@ -36,6 +36,6 @@ void init() {
 }
 float calcMagazinePos(int magazineNum) { return magazineNum * 1 + 0; }
 
-float calcElevationPos(float angle) { return angle; }
+float calcAngle2ElevPos(float angle) { return angle; }
 
 float calcLoaderPos(float elevAngle) { return 0.5 * elevAngle; }

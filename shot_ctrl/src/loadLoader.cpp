@@ -56,7 +56,6 @@ void LoadLoader::react(UpdateEvent const &) {
     }
   };
 
-  bool isFinished;
   if (context.usingMagazine == Context::LEFT) {
     if (leftPusher->getPosition() < pusherLoadPosition - 0.1) return;
     leftPusher->setPosition(0);
