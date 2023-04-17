@@ -29,6 +29,7 @@ namespace Shooter {
 class Init : public ShooterState {
  public:
   void entry(void) override;
+  void react(ShooterUpdateEvent const &) override;
 };
 
 // 原点(射出位置)の状態

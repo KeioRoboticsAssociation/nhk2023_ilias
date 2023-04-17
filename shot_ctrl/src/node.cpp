@@ -3,8 +3,10 @@
 rclcpp::Node::SharedPtr node;
 rclcpp::Publisher<rogilink2_interfaces::msg::Frame>::SharedPtr rogilink;
 std::shared_ptr<LimitSwitch> limitSensor;
-std::shared_ptr<MD2022> magazin;
-std::shared_ptr<MD2022> pusher;
+std::shared_ptr<MD2022> leftMagazine;
+std::shared_ptr<MD2022> rightMagazine;
+std::shared_ptr<MD2022> leftPusher;
+std::shared_ptr<MD2022> rightPusher;
 std::shared_ptr<MD2022> loader;
 std::shared_ptr<MD2022> elevation;
 std::shared_ptr<ODrive> shooter;
@@ -14,16 +16,20 @@ void init() {
   rogilink = node->create_publisher<rogilink2_interfaces::msg::Frame>(
       "rogilink2/send", 10);
 
-  magazin = std::make_shared<MD2022>(node.get(), "magazin");
-  pusher = std::make_shared<MD2022>(node.get(), "pusher");
+  leftMagazine = std::make_shared<MD2022>(node.get(), "magazineL");
+  rightMagazine = std::make_shared<MD2022>(node.get(), "magazineR");
+  leftPusher = std::make_shared<MD2022>(node.get(), "pusherL");
+  rightPusher = std::make_shared<MD2022>(node.get(), "pusherR");
   loader = std::make_shared<MD2022>(node.get(), "loader");
   elevation = std::make_shared<MD2022>(node.get(), "elevation");
   shooter = std::make_shared<ODrive>(node.get(), "shooter");
 
   limitSensor = std::make_shared<LimitSwitch>(node.get(), "limit_sensor");
 
-  magazin->init();
-  pusher->init();
+  leftMagazine->init();
+  rightMagazine->init();
+  leftPusher->init();
+  rightPusher->init();
   loader->init();
   elevation->init();
   // shooter->init();

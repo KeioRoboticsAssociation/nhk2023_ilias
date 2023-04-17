@@ -7,20 +7,12 @@ namespace Shooter {
 void Init::entry() {
   // TODO: odriveのhomingを使った初期化に変更する
   logInfo("[Shooter] Enter Init");
-  auto onLimit = [&]() {
-    shooter->setMode(ODrive::Idle);
-    shooter->resetEncoder(0);
-    shooter->setMode(ODrive::Position,
-                     ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
-    shooter->setPosition(0);
+}
+
+void Init::react(ShooterUpdateEvent const &) {
+  if (shooter->getAxisState() ==
+      ODriveEnum::AxisState::AXIS_STATE_CLOSED_LOOP_CONTROL) {
     transit<Origin>();
-  };
-  if (!limitSensor->getPinState(SHOOTER_LIMIT)) {
-    limitSensor->addCallback(SHOOTER_LIMIT, onLimit);
-    shooter->setMode(ODrive::Velocity);
-    shooter->setVelocity(1);
-  } else {
-    onLimit();
   }
 }
 

@@ -9,3 +9,11 @@ void Ready::react(MainShotEvent const &) {
   context.hasShuttleRing = false;
   transit<LoadLoader>();
 }
+
+void Ready::react(MagazinLoadedEvent const &e) {
+  if (e.isLeft) {
+    transit<LoadLeftMagazine>();
+  } else {
+    transit<LoadRightMagazine>();
+  }
+}

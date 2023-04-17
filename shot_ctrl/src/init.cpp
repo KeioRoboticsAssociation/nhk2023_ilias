@@ -4,25 +4,45 @@
 void Init::entry() {
   logInfo("Enter Init");
 
-  if (!limitSensor->getPinState(MAGAZIN_LIMIT)) {
-    limitSensor->addCallback(MAGAZIN_LIMIT, [&]() {
-      magazin->setVoltage(0);
-      magazin->resetEncoder(0);
-      magazin->setMode(MD2022::Position);
-      magazin->setPosition(0);
+  if (!limitSensor->getPinState(LEFT_MAGAZIN_LIMIT)) {
+    limitSensor->addCallback(LEFT_MAGAZIN_LIMIT, [&]() {
+      leftMagazine->setVoltage(0);
+      leftMagazine->resetEncoder(0);
+      leftMagazine->setMode(MD2022::Position);
+      leftMagazine->setPosition(0);
     });
-    magazin->setMode(MD2022::Voltage);
-    magazin->setVelocity(0.1);
+    leftMagazine->setMode(MD2022::Voltage);
+    leftMagazine->setVelocity(0.1);
   }
-  if (!limitSensor->getPinState(PUSHER_LIMIT)) {
-    limitSensor->addCallback(PUSHER_LIMIT, [&]() {
-      pusher->setVoltage(0);
-      pusher->resetEncoder(0);
-      pusher->setMode(MD2022::Position);
-      pusher->setPosition(0);
+  if (!limitSensor->getPinState(RIGHT_MAGAZIN_LIMIT)) {
+    limitSensor->addCallback(RIGHT_MAGAZIN_LIMIT, [&]() {
+      rightMagazine->setVoltage(0);
+      rightMagazine->resetEncoder(0);
+      rightMagazine->setMode(MD2022::Position);
+      rightMagazine->setPosition(0);
     });
-    pusher->setMode(MD2022::Voltage);
-    pusher->setVelocity(0.1);
+    rightMagazine->setMode(MD2022::Voltage);
+    rightMagazine->setVelocity(0.1);
+  }
+  if (!limitSensor->getPinState(LEFT_PUSHER_LIMIT)) {
+    limitSensor->addCallback(LEFT_PUSHER_LIMIT, [&]() {
+      leftPusher->setVoltage(0);
+      leftPusher->resetEncoder(0);
+      leftPusher->setMode(MD2022::Position);
+      leftPusher->setPosition(0);
+    });
+    leftPusher->setMode(MD2022::Voltage);
+    leftPusher->setVelocity(0.1);
+  }
+  if (!limitSensor->getPinState(RIGHT_PUSHER_LIMIT)) {
+    limitSensor->addCallback(RIGHT_PUSHER_LIMIT, [&]() {
+      rightPusher->setVoltage(0);
+      rightPusher->resetEncoder(0);
+      rightPusher->setMode(MD2022::Position);
+      rightPusher->setPosition(0);
+    });
+    rightPusher->setMode(MD2022::Voltage);
+    rightPusher->setVelocity(0.1);
   }
   if (!limitSensor->getPinState(LOADER_LIMIT)) {
     limitSensor->addCallback(LOADER_LIMIT, [&]() {
@@ -51,8 +71,9 @@ void Init::react(UpdateEvent const &) {}
 void Init::react(MagazinLoadedEvent const &e) {
   if (e.isLeft == Context::LEFT) {
     context.leftRemain = 10;
+    transit<LoadLeftMagazine>();
   } else {
     context.rightRemain = 10;
+    transit<LoadRightMagazine>();
   }
-  transit<LoadMagazine>();
 }

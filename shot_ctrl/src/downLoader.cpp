@@ -5,7 +5,8 @@ void DownLoader::entry() {
   isInitialized = false;
   if (ShooterState::is_in_state<Shooter::Origin>()) {
     loader->setPosition(calcLoaderPos(context.elevAngle));
-    pusher->setPosition(0);
+    leftPusher->setPosition(0);
+    rightPusher->setPosition(0);
     isInitialized = true;
   }
   logInfo("Enter DownLoader");

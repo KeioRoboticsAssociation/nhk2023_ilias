@@ -5,7 +5,8 @@ void LoadShuttle::entry() {
   isInitialized = false;
   if (ShooterState::is_in_state<Shooter::Origin>()) {
     ShooterState::dispatch(ReloadRequestEvent());
-    magazin->setPosition(calcMagazinePos(context.leftRemain));
+    leftMagazine->setPosition(calcMagazinePos(context.leftRemain));
+    rightMagazine->setPosition(calcMagazinePos(context.rightRemain));
     isInitialized = true;
   }
 

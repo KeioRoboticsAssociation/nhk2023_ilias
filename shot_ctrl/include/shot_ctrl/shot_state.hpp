@@ -11,7 +11,7 @@ struct Context {
     LEFT,
     RIGHT,
     NONE,
-  } usingMagazin = NONE;
+  } usingMagazine = NONE;
   float elevAngle = 45;
 };
 
@@ -53,7 +53,13 @@ class Init : public ShotState {
 
 // マガジンを10本装填位置に移動
 // 移動完了後、LoadLoaderに遷移
-class LoadMagazine : public ShotState {
+class LoadLeftMagazine : public ShotState {
+ public:
+  void entry(void) override;
+  void react(UpdateEvent const &) override;
+};
+
+class LoadRightMagazine : public ShotState {
  public:
   void entry(void) override;
   void react(UpdateEvent const &) override;
@@ -66,6 +72,7 @@ class Ready : public ShotState {
   void entry(void) override;
   void react(MainShotEvent const &) override;
   bool canShot() override { return true; }
+  void react(MagazinLoadedEvent const &) override;
   // void react(SubShotEvableShotent const &) override;
 };
 

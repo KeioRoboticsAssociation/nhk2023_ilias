@@ -15,17 +15,21 @@ extern rclcpp::Publisher<rogilink2_interfaces::msg::Frame>::SharedPtr rogilink;
 
 extern std::shared_ptr<LimitSwitch> limitSensor;
 
-extern std::shared_ptr<MD2022> magazin;
-extern std::shared_ptr<MD2022> pusher;
+extern std::shared_ptr<MD2022> leftMagazine;
+extern std::shared_ptr<MD2022> rightMagazine;
+extern std::shared_ptr<MD2022> leftPusher;
+extern std::shared_ptr<MD2022> rightPusher;
 extern std::shared_ptr<MD2022> loader;
 extern std::shared_ptr<MD2022> elevation;
 extern std::shared_ptr<ODrive> shooter;
 
-const int MAGAZIN_LIMIT = 0;
-const int PUSHER_LIMIT = 1;
-const int LOADER_LIMIT = 2;
-const int ELEVATION_LIMIT = 3;
-const int SHOOTER_LIMIT = 4;
+const int LEFT_MAGAZIN_LIMIT = 0;
+const int RIGHT_MAGAZIN_LIMIT = 1;
+const int LEFT_PUSHER_LIMIT = 2;
+const int RIGHT_PUSHER_LIMIT = 3;
+const int LOADER_LIMIT = 4;
+const int ELEVATION_LIMIT = 5;
+// const int SHOOTER_LIMIT = 6;
 
 void init();
 
