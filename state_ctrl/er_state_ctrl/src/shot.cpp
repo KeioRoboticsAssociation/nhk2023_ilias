@@ -28,7 +28,7 @@ void Shot::react(Update_Flag const& flag) {
   geometry_msgs::msg::TransformStamped robo2pole;
   try {
     robo2pole = robot_state_ctrl->tf_buffer_->lookupTransform(
-        "base_link", "type3_pole", tf2::TimePointZero);
+        "er/base_link", "type3_pole", rclcpp::Time(0));
   } catch (tf2::TransformException& ex) {
     RCLCPP_WARN(robot_state_ctrl->get_logger(), "%s", ex.what());
   }
@@ -39,6 +39,6 @@ void Shot::react(Update_Flag const& flag) {
   // RCLCPP_INFO(node->get_logger(), "x: %f, y: %f, yaw: %f", x, y, yaw);
 
   geometry_msgs::msg::Twist cmd_vel;
-  cmd_vel.angular.z = yaw * 1;
+  cmd_vel.angular.z = yaw * 0.5;
   robot_state_ctrl->cmd_vel_pub_->publish(cmd_vel);
 }
