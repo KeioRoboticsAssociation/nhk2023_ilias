@@ -34,7 +34,14 @@ void init() {
   elevation->init();
   // shooter->init();
 }
-float calcMagazinePos(int magazineNum) { return magazineNum * 1 + 0; }
+
+// 回転数6で約40cm動く
+// 輪の直径は1.4cm
+float calcMagazinePos(int magazineNum) {
+  if (magazineNum > 10) magazineNum = 10;
+  if (magazineNum <= 0) magazineNum = 1;
+  return -magazineNum * 6.0f * 40.0f / 1.4f + 0.05f;
+}
 
 float calcAngle2ElevPos(float angle) { return angle; }
 

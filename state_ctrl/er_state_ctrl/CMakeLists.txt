@@ -90,3 +90,4 @@ install(TARGETS
   er_state_ctrl
   DESTINATION lib/${PROJECT_NAME}
 )
+ament_package()

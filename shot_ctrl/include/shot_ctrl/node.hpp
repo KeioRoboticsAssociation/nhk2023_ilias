@@ -43,6 +43,7 @@ void logError(std::string msg, Args... args) {
   RCLCPP_ERROR(node->get_logger(), msg.c_str(), args...);
 }
 
+const float magazineMin = -6.0f;
 float calcMagazinePos(int magazineNum);
 
 float calcAngle2ElevPos(float angle);

@@ -20,6 +20,7 @@ ament_auto_add_executable(shot_ctrl
   src/loadShuttle.cpp
   src/shooterState.cpp
   src/upLoader.cpp
+  src/magazineDown.cpp
 )
 
 if(BUILD_TESTING)

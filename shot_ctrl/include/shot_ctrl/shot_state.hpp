@@ -18,9 +18,10 @@ struct Context {
 extern Context context;
 
 struct MainShotEvent : tinyfsm::Event {};
-struct MagazinLoadedEvent : tinyfsm::Event {
+struct MagazineDownEvent : tinyfsm::Event {
   bool isLeft;
 };
+struct MagazineLoadedEvent : tinyfsm::Event {};
 struct ChangeElevationRequestEvent : tinyfsm::Event {
   float angle;
 };
@@ -32,7 +33,8 @@ class ShotState : public tinyfsm::Fsm<ShotState> {
   void react(tinyfsm::Event const &) {}
 
   virtual void react(MainShotEvent const &) { logError("Unable to Shot"); }
-  virtual void react(MagazinLoadedEvent const &) {}
+  virtual void react(MagazineDownEvent const &) {}
+  virtual void react(MagazineLoadedEvent const &) {}
   // virtual void react(ChangeElevationRequestEvent const &e) {}
   virtual void react(UpdateEvent const &) {}
 
@@ -49,7 +51,23 @@ class Init : public ShotState {
  public:
   void entry(void) override;
   void react(UpdateEvent const &) override;
-  void react(MagazinLoadedEvent const &) override;
+  void react(MagazineDownEvent const &) override;
+};
+
+// 左マガジンを装填位置に下げる
+class LeftMagazineDown : public ShotState {
+ public:
+  void entry(void) override;
+  void react(UpdateEvent const &) override;
+  void react(MagazineLoadedEvent const &) override;
+};
+
+// 右マガジンを装填位置に下げる
+class RightMagazineDown : public ShotState {
+ public:
+  void entry(void) override;
+  void react(UpdateEvent const &) override;
+  void react(MagazineLoadedEvent const &) override;
 };
 
 // マガジンを10本装填位置に移動
@@ -73,7 +91,7 @@ class Ready : public ShotState {
   void entry(void) override;
   void react(MainShotEvent const &) override;
   bool canShot() override { return true; }
-  void react(MagazinLoadedEvent const &) override;
+  void react(MagazineDownEvent const &) override;
   bool canChangeElevation() override { return true; }
   // void react(SubShotEvableShotent const &) override;
 };

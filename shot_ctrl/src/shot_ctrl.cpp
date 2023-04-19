@@ -40,10 +40,15 @@ int main(int argc, char **argv) {
 
   auto eventSub = node->create_subscription<std_msgs::msg::String>(
       "shot_ctrl/event", 10, [&](const std_msgs::msg::String::SharedPtr msg) {
-        if (msg->data == "MAGAZIN_LOADED_LEFT") {
-          ShotState::dispatch(MagazinLoadedEvent{{}, true});
+        logInfo("[ShotCtrl]: Event: %s", msg->data.c_str());
+        if (msg->data == "MAGAZINE_DOWN_LEFT") {
+          ShotState::dispatch(MagazineDownEvent{{}, true});
+        } else if (msg->data == "MAGAZINE_DOWN_RIGHT") {
+          ShotState::dispatch(MagazineDownEvent{{}, false});
+        } else if (msg->data == "MAGAZIN_LOADED_LEFT") {
+          ShotState::dispatch(MagazineLoadedEvent{});
         } else if (msg->data == "MAGAZIN_LOADED_RIGHT") {
-          ShotState::dispatch(MagazinLoadedEvent{{}, false});
+          ShotState::dispatch(MagazineLoadedEvent{});
         } else if (msg->data == "MAIN_SHOT") {
           if (!ShooterState::is_in_state<Shooter::Origin>() ||
               !ShotState::current_state_ptr->canShot()) {

@@ -10,10 +10,10 @@ void Ready::react(MainShotEvent const &) {
   transit<LoadLoader>();
 }
 
-void Ready::react(MagazinLoadedEvent const &e) {
+void Ready::react(MagazineDownEvent const &e) {
   if (e.isLeft) {
-    transit<LoadLeftMagazine>();
+    transit<LeftMagazineDown>();
   } else {
-    transit<LoadRightMagazine>();
+    transit<RightMagazineDown>();
   }
 }

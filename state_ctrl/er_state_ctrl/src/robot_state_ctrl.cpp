@@ -45,7 +45,7 @@ RobotStateCtrl::RobotStateCtrl() : Node("er_state_ctrl") {
       });
 
   shot_state_pub_ =
-      this->create_publisher<std_msgs::msg::String>("shot_state", 10);
+      this->create_publisher<std_msgs::msg::String>("shot_ctrl/event", 10);
 
   tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);

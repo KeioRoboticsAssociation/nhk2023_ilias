@@ -8,6 +8,9 @@ void PickupLeft::entry() {
   robot_state_ctrl->state_pub_->publish(msg);
   msg.data = "AUTO";
   robot_state_ctrl->mode_pub_->publish(msg);
+  auto magazineMsg = std_msgs::msg::String();
+  magazineMsg.data = "MAGAZINE_DOWN_LEFT";
+  robot_state_ctrl->shot_state_pub_->publish(magazineMsg);
   startSensing();
 }
 
