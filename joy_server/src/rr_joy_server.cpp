@@ -4,6 +4,7 @@
 #include <rogilink2_interfaces/msg/frame.hpp>
 #include <sensor_msgs/msg/joy.hpp>
 
+#include "actuator_lib/solenoid.hpp"
 #include "md_lib/md2022.hpp"
 #include "md_lib/odrive.hpp"
 
@@ -18,7 +19,9 @@ class JoyServer : public rclcpp::Node {
         hammer(this, "hammer"),
         shooter(this, "shooter"),
         frontRift(this, "front_rift"),
-        backRift(this, "back_rift") {
+        backRift(this, "back_rift"),
+        rightSolenoid(this, "right_solenoid"),
+        leftSolenoid(this, "left_solenoid") {
     RCLCPP_INFO(this->get_logger(), "joy_server is started");
     joy_sub = this->create_subscription<sensor_msgs::msg::Joy>(
         "joy", 10,
@@ -60,6 +63,9 @@ class JoyServer : public rclcpp::Node {
 
     backRift.init();
     backRift.setMode(ODrive::Idle);
+
+    rightSolenoid.init();
+    leftSolenoid.init();
   }
 
  private:
@@ -74,6 +80,8 @@ class JoyServer : public rclcpp::Node {
   ODrive shooter;
   ODrive frontRift;
   ODrive backRift;
+  Solenoid rightSolenoid;
+  Solenoid leftSolenoid;
 
   double current_magazine_position = 0.0;
   double ring_thickness = 0.26;
@@ -95,11 +103,21 @@ class JoyServer : public rclcpp::Node {
     return static_cast<RiftState>((static_cast<int>(state) + 1) % 3);
   }
 
-  float riftPos[3] = {
-      [ORIGIN] = 0,
-      [DOWN] = 0.5,
-      [UP] = 1,
-  };
+  float riftPos[3] = {0, 0.5, 1};
+
+  void frontSolenoidDrive(bool state) {
+    rightSolenoid.drive(0, state);
+    rightSolenoid.drive(1, state);
+    leftSolenoid.drive(0, state);
+    leftSolenoid.drive(1, state);
+  }
+
+  void backSolenoidDrive(bool state) {
+    rightSolenoid.drive(2, state);
+    rightSolenoid.drive(3, state);
+    leftSolenoid.drive(2, state);
+    leftSolenoid.drive(3, state);
+  }
 
   // logicool
   enum class button {
@@ -170,11 +188,13 @@ class JoyServer : public rclcpp::Node {
       } else if (msg->axes[static_cast<int>(axis::TX)] < -0.5) {
         frontRiftTarget = backRiftTarget = backRiftState(backRiftTarget);
       }
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
       frontRift.setMode(ODrive::Position,
                         ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
       backRift.setMode(ODrive::Position,
                        ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
+      frontSolenoidDrive(1);
+      backSolenoidDrive(1);
+      std::this_thread::sleep_for(100ms);
       frontRift.setPosition(riftPos[frontRiftTarget]);
       backRift.setPosition(riftPos[backRiftTarget]);
     }
@@ -182,18 +202,19 @@ class JoyServer : public rclcpp::Node {
     // Rift個別で上限まで上げ
     if (msg->axes[static_cast<int>(axis::TY)] !=
         prev_joy.axes[static_cast<int>(axis::TY)]) {
-      // solenoidを開ける
       if (msg->axes[static_cast<int>(axis::TY)] > 0.5) {
         backRiftTarget = ORIGIN;
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         backRift.setMode(ODrive::Position,
                          ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
+        backSolenoidDrive(1);
+        std::this_thread::sleep_for(100ms);
         backRift.setPosition(riftPos[backRiftTarget]);
       } else if (msg->axes[static_cast<int>(axis::TY)] < -0.5) {
         frontRiftTarget = ORIGIN;
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         frontRift.setMode(ODrive::Position,
                           ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
+        frontSolenoidDrive(1);
+        std::this_thread::sleep_for(100ms);
         frontRift.setPosition(riftPos[frontRiftTarget]);
       }
     }
@@ -274,10 +295,13 @@ class JoyServer : public rclcpp::Node {
   void timer_callback() {
     if (abs(frontRift.getPosition() - riftPos[frontRiftTarget]) < 0.05) {
       // solenoidを出す
+      frontSolenoidDrive(0);
+      std::this_thread::sleep_for(100ms);
       frontRift.setMode(ODrive::Idle);
     }
     if (abs(backRift.getPosition() - riftPos[backRiftTarget]) < 0.05) {
-      // solenoidを出す
+      backSolenoidDrive(0);
+      std::this_thread::sleep_for(100ms);
       backRift.setMode(ODrive::Idle);
     }
   }
