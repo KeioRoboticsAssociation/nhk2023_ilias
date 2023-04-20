@@ -110,6 +110,14 @@ def generate_launch_description():
         namespace='er',
     )
 
+    path_planner = Node(
+        package='bezier_pkg',
+        executable='path_planner',
+        name='path_planner',
+        output='screen',
+        namespace='er',
+    )
+
     return LaunchDescription([
         joint_state_publisher_node,
         robot_state_publisher_node,
@@ -118,5 +126,6 @@ def generate_launch_description():
         rogi_link_2,
         joy,
         simple_gui,
+        path_planner,
         er_state_ctrl
     ])

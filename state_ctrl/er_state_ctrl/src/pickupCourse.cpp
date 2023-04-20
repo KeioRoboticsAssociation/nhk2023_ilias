@@ -1,6 +1,6 @@
 #include "pickupCourse.hpp"
 
-const int BEHIND_RIGHT_SENSOR = 3;
+const int BEHIND_RIGHT_SENSOR = 1;
 const int BEHIND_LEFT_SENSOR = 2;
 const int SIDE_RIGHT_TH0 = 1;  // 右サイドセンサーの１段階目
 const int SIDE_RIGHT_TH1 = 0;  // 右サイドセンサーの２段階目

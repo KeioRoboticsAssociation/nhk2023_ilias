@@ -17,7 +17,7 @@ void PreShot::entry() {
   auto cmd = pure_pursuit_interface::msg::Frame();
   cmd.forward_flag = true;
   cmd.is_allowed_to_pub = true;
-  cmd.path_num = 1;
+  cmd.path_num = 2;
   robot_state_ctrl->pure_pursuit_pub_->publish(cmd);
 }
 

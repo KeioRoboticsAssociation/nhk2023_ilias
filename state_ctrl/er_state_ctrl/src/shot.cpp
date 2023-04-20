@@ -39,6 +39,6 @@ void Shot::react(Update_Flag const& flag) {
   // RCLCPP_INFO(node->get_logger(), "x: %f, y: %f, yaw: %f", x, y, yaw);
 
   geometry_msgs::msg::Twist cmd_vel;
-  cmd_vel.angular.z = yaw * 0.5;
+  cmd_vel.angular.z = yaw * 2;
   robot_state_ctrl->cmd_vel_pub_->publish(cmd_vel);
 }
