@@ -16,19 +16,26 @@ class JoyServer : public rclcpp::Node {
         magazine(this, "magazine"),
         chamber(this, "chamber"),
         hammer(this, "hammer"),
-        shooter(this, "shooter") {
+        shooter(this, "shooter"),
+        frontRift(this, "front_rift"),
+        backRift(this, "back_rift") {
     RCLCPP_INFO(this->get_logger(), "joy_server is started");
     joy_sub = this->create_subscription<sensor_msgs::msg::Joy>(
         "joy", 10,
         std::bind(&JoyServer::joy_callback, this, std::placeholders::_1));
     rogilink2_pub = this->create_publisher<rogilink2_interfaces::msg::Frame>(
         "rogilink/send", 10);
+
+    timer = this->create_wall_timer(
+        100ms, std::bind(&JoyServer::timer_callback, this));
   }
 
   // subscriber
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub;
   // publisher rogilink2
   rclcpp::Publisher<rogilink2_interfaces::msg::Frame>::SharedPtr rogilink2_pub;
+  // timer
+  rclcpp::TimerBase::SharedPtr timer;
 
   void init() {
     magazine.init();
@@ -47,6 +54,12 @@ class JoyServer : public rclcpp::Node {
     shooter.setMode(Md::Mode::Velocity,
                     ODriveEnum::InputMode::INPUT_MODE_VEL_RAMP);
     shooter.setVelocity(0.0);
+
+    frontRift.init();
+    frontRift.setMode(ODrive::Idle);
+
+    backRift.init();
+    backRift.setMode(ODrive::Idle);
   }
 
  private:
@@ -59,9 +72,34 @@ class JoyServer : public rclcpp::Node {
   MD2022 chamber;
   MD2022 hammer;
   ODrive shooter;
+  ODrive frontRift;
+  ODrive backRift;
 
   double current_magazine_position = 0.0;
   double ring_thickness = 0.26;
+
+  enum RiftState {
+    ORIGIN = 0,
+    DOWN = 1,
+    UP = 2,
+  } frontRiftTarget,
+      backRiftTarget;
+
+  RiftState nextRiftState(RiftState state) {
+    if (state == RiftState::UP) return RiftState::UP;
+    return static_cast<RiftState>((static_cast<int>(state) + 1) % 3);
+  }
+
+  RiftState backRiftState(RiftState state) {
+    if (state == RiftState::ORIGIN) return RiftState::ORIGIN;
+    return static_cast<RiftState>((static_cast<int>(state) + 1) % 3);
+  }
+
+  float riftPos[3] = {
+      [ORIGIN] = 0,
+      [DOWN] = 0.5,
+      [UP] = 1,
+  };
 
   // logicool
   enum class button {
@@ -119,6 +157,45 @@ class JoyServer : public rclcpp::Node {
       prev_joy = *msg;
       is_initialized = true;
       return;
+    }
+
+    // Rift全体昇降
+    if (msg->axes[static_cast<int>(axis::TX)] !=
+        prev_joy.axes[static_cast<int>(axis::TX)]) {
+      if (frontRiftTarget != backRiftTarget) return;
+      // solenoidを開ける
+      if (msg->axes[static_cast<int>(axis::TX)] > 0.5) {
+        frontRiftTarget = backRiftTarget = nextRiftState(frontRiftTarget);
+
+      } else if (msg->axes[static_cast<int>(axis::TX)] < -0.5) {
+        frontRiftTarget = backRiftTarget = backRiftState(backRiftTarget);
+      }
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      frontRift.setMode(ODrive::Position,
+                        ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
+      backRift.setMode(ODrive::Position,
+                       ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
+      frontRift.setPosition(riftPos[frontRiftTarget]);
+      backRift.setPosition(riftPos[backRiftTarget]);
+    }
+
+    // Rift個別で上限まで上げ
+    if (msg->axes[static_cast<int>(axis::TY)] !=
+        prev_joy.axes[static_cast<int>(axis::TY)]) {
+      // solenoidを開ける
+      if (msg->axes[static_cast<int>(axis::TY)] > 0.5) {
+        backRiftTarget = ORIGIN;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        backRift.setMode(ODrive::Position,
+                         ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
+        backRift.setPosition(riftPos[backRiftTarget]);
+      } else if (msg->axes[static_cast<int>(axis::TY)] < -0.5) {
+        frontRiftTarget = ORIGIN;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        frontRift.setMode(ODrive::Position,
+                          ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
+        frontRift.setPosition(riftPos[frontRiftTarget]);
+      }
     }
 
     if (msg->buttons != prev_joy.buttons) {
@@ -192,6 +269,16 @@ class JoyServer : public rclcpp::Node {
       }
 
       prev_joy = *msg;
+    }
+  }
+  void timer_callback() {
+    if (abs(frontRift.getPosition() - riftPos[frontRiftTarget]) < 0.05) {
+      // solenoidを出す
+      frontRift.setMode(ODrive::Idle);
+    }
+    if (abs(backRift.getPosition() - riftPos[backRiftTarget]) < 0.05) {
+      // solenoidを出す
+      backRift.setMode(ODrive::Idle);
     }
   }
 };
