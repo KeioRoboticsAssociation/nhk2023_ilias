@@ -27,7 +27,8 @@ def generate_launch_description():
                                       }, {
                                           'rate': 100
                                       }],
-                                      arguments=[urdf])
+                                      arguments=[urdf],
+                                      namespace='rr')
 
     robot_state_publisher_node = Node(package='robot_state_publisher',
                                       executable='robot_state_publisher',
@@ -78,19 +79,6 @@ def generate_launch_description():
 
     # )
 
-    rogi_link_2 = Node(package='rogilink2',
-                       executable='rogilink2',
-                       name='rogilink2',
-                       output='screen',
-                       emulate_tty=True,
-                       namespace='rr',
-                       parameters=[{
-                           'config_path':
-                           os.path.join(
-                               get_package_share_directory('rogilink2'),
-                               'config', 'rr.yaml')
-                       }])
-
     robot_ctrl = Node(
         package='robot_ctrl',
         executable='rr_robot_ctrl',
@@ -99,13 +87,14 @@ def generate_launch_description():
         output='screen',
     )
 
-    joy = Node(
-        package='joy_linux',
-        executable='joy_linux_node',
-        name='joy_linux_node',
-        namespace='rr',
-        output='screen',
-    )
+    joy = Node(package='joy_linux',
+               executable='joy_linux_node',
+               name='joy_linux_node',
+               namespace='rr',
+               output='screen',
+               parameters=[{
+                   'deadzone': 0.02,
+               }])
 
     simple_gui = Node(
         package='simple_gui',
