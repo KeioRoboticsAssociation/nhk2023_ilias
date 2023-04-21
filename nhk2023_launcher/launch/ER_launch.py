@@ -110,13 +110,16 @@ def generate_launch_description():
         namespace='er',
     )
 
-    path_planner = Node(
-        package='bezier_pkg',
-        executable='path_planner',
-        name='path_planner',
-        output='screen',
-        namespace='er',
-    )
+    path_planner = Node(package='bezier_pkg',
+                        executable='path_planner',
+                        name='path_planner',
+                        output='screen',
+                        namespace='er',
+                        parameters=[{
+                            os.path.join(
+                                get_package_share_directory('bezier_pkg'),
+                                "config", "er.yaml")
+                        }])
 
     return LaunchDescription([
         joint_state_publisher_node,
