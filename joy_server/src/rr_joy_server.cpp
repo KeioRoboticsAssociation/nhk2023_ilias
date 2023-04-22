@@ -15,13 +15,12 @@ class JoyServer : public rclcpp::Node {
   JoyServer()
       : Node("rr_joy_server"),
         magazine(this, "magazine"),
-        chamber(this, "chamber"),
-        hammer(this, "hammer"),
+        loader(this, "loader"),
         shooter(this, "shooter"),
         frontRift(this, "front_rift"),
         backRift(this, "back_rift"),
-        rightSolenoid(this, "right_solenoid"),
-        leftSolenoid(this, "left_solenoid") {
+        frontSolenoid(this, "front_solenoid"),
+        backSolenoid(this, "back_solenoid") {
     RCLCPP_INFO(this->get_logger(), "joy_server is started");
     joy_sub = this->create_subscription<sensor_msgs::msg::Joy>(
         "joy", 10,
@@ -45,13 +44,9 @@ class JoyServer : public rclcpp::Node {
     magazine.setMode(Md::Mode::Position);
     magazine.setPosition(0.0);
 
-    chamber.init();
-    chamber.setMode(Md::Mode::Voltage);
-    chamber.setVoltage(0.0);
-
-    hammer.init();
-    hammer.setMode(Md::Mode::Voltage);
-    hammer.setVoltage(0.0);
+    loader.init();
+    loader.setMode(Md::Mode::Voltage);
+    loader.setVoltage(0.0);
 
     shooter.init();
     shooter.setMode(Md::Mode::Velocity,
@@ -64,8 +59,8 @@ class JoyServer : public rclcpp::Node {
     backRift.init();
     backRift.setMode(ODrive::Idle);
 
-    rightSolenoid.init();
-    leftSolenoid.init();
+    frontSolenoid.init();
+    backSolenoid.init();
   }
 
  private:
@@ -75,13 +70,12 @@ class JoyServer : public rclcpp::Node {
 
   // motors
   MD2022 magazine;
-  MD2022 chamber;
-  MD2022 hammer;
+  MD2022 loader;
   ODrive shooter;
   ODrive frontRift;
   ODrive backRift;
-  Solenoid rightSolenoid;
-  Solenoid leftSolenoid;
+  Solenoid frontSolenoid;
+  Solenoid backSolenoid;
 
   double current_magazine_position = 0.0;
   double ring_thickness = 0.26;
@@ -106,17 +100,15 @@ class JoyServer : public rclcpp::Node {
   float riftPos[3] = {0, 0.5, 1};
 
   void frontSolenoidDrive(bool state) {
-    rightSolenoid.drive(0, state);
-    rightSolenoid.drive(1, state);
-    leftSolenoid.drive(0, state);
-    leftSolenoid.drive(1, state);
+    for (int i = 0; i < 4; i++) {
+      frontSolenoid.drive(i, state);
+    }
   }
 
   void backSolenoidDrive(bool state) {
-    rightSolenoid.drive(2, state);
-    rightSolenoid.drive(3, state);
-    leftSolenoid.drive(2, state);
-    leftSolenoid.drive(3, state);
+    for (int i = 0; i < 4; i++) {
+      backSolenoid.drive(i, state);
+    }
   }
 
   // logicool
@@ -219,43 +211,41 @@ class JoyServer : public rclcpp::Node {
       }
     }
 
+    ////////////////////////////////////////////////
+    // ------------------flip flop------------------
+    ////////////////////////////////////////////////
     if (msg->buttons != prev_joy.buttons) {
       // rogilink2は直接いじる必要ない限りいらない（MDlibを使用）
       // rogilink2_interfaces::msg::Frame frame;
 
-      // detect button state change
+      // loader
       if (msg->buttons[static_cast<int>(button::A)] !=
           prev_joy.buttons[static_cast<int>(button::A)]) {
         if (msg->buttons[static_cast<int>(button::A)] == 1) {
           // button A is pressed
           RCLCPP_INFO(this->get_logger(), "A is pressed");
-          hammer.setVoltage(-1.0);
+          loader.setVoltage(-1.0);
         } else {
           // button A is released
           RCLCPP_INFO(this->get_logger(), "A is released");
-          hammer.setVoltage(0.0);
+          loader.setVoltage(0.0);
           std::this_thread::sleep_for(std::chrono::milliseconds(1));
-          hammer.setVoltage(0.0);
+          loader.setVoltage(0.0);
           std::this_thread::sleep_for(std::chrono::milliseconds(1));
-          hammer.setVoltage(0.0);
+          loader.setVoltage(0.0);
         }
-      } else if (msg->buttons[static_cast<int>(button::X)] !=
-                 prev_joy.buttons[static_cast<int>(button::X)]) {
-        if (msg->buttons[static_cast<int>(button::X)] == 1) {
-          // button X is pressed
-          RCLCPP_INFO(this->get_logger(), "X is pressed");
-          chamber.setVoltage(-0.5);
-        } else {
-          // button X is released
-          RCLCPP_INFO(this->get_logger(), "X is released");
-          chamber.setVoltage(0.0);
-          std::this_thread::sleep_for(std::chrono::milliseconds(1));
-          chamber.setVoltage(0.0);
-          std::this_thread::sleep_for(std::chrono::milliseconds(1));
-          chamber.setVoltage(0.0);
-        }
-      } else if (msg->buttons[static_cast<int>(button::RT)] !=
-                 prev_joy.buttons[static_cast<int>(button::RT)]) {
+
+      }
+
+      // empty
+      else if (msg->buttons[static_cast<int>(button::X)] !=
+               prev_joy.buttons[static_cast<int>(button::X)]) {
+        // empty
+      }
+
+      // shooter
+      else if (msg->buttons[static_cast<int>(button::RT)] !=
+               prev_joy.buttons[static_cast<int>(button::RT)]) {
         if (msg->buttons[static_cast<int>(button::RT)] == 1) {
           // button RT is pressed
           RCLCPP_INFO(this->get_logger(), "RT is pressed");
@@ -270,7 +260,8 @@ class JoyServer : public rclcpp::Node {
           shooter.setVelocity(0.0);
         }
       }
-      // use Y
+
+      // magazine up
       else if (msg->buttons[static_cast<int>(button::Y)] !=
                prev_joy.buttons[static_cast<int>(button::Y)]) {
         if (msg->buttons[static_cast<int>(button::Y)] == 1) {
@@ -279,8 +270,11 @@ class JoyServer : public rclcpp::Node {
           current_magazine_position += ring_thickness;
           magazine.setPosition(current_magazine_position);
         }
-      } else if (msg->buttons[static_cast<int>(button::B)] !=
-                 prev_joy.buttons[static_cast<int>(button::B)]) {
+      }
+
+      // magazin down
+      else if (msg->buttons[static_cast<int>(button::B)] !=
+               prev_joy.buttons[static_cast<int>(button::B)]) {
         if (msg->buttons[static_cast<int>(button::B)] == 1) {
           // button B is pressed
           RCLCPP_INFO(this->get_logger(), "B is pressed");
