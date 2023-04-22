@@ -85,24 +85,24 @@ class JoyServer : public rclcpp::Node {
   double current_magazine_position = 0.0;
   double ring_thickness = 0.26;
 
-  enum RiftState {
+  enum LiftState {
     ORIGIN = 0,
     DOWN = 1,
     UP = 2,
-  } frontRiftTarget,
-      backRiftTarget;
+  } frontLiftTarget,
+      backLiftTarget;
 
-  RiftState nextRiftState(RiftState state) {
-    if (state == RiftState::UP) return RiftState::UP;
-    return static_cast<RiftState>((static_cast<int>(state) + 1) % 3);
+  LiftState nextLiftState(LiftState state) {
+    if (state == LiftState::UP) return LiftState::UP;
+    return static_cast<LiftState>((static_cast<int>(state) + 1) % 3);
   }
 
-  RiftState backRiftState(RiftState state) {
-    if (state == RiftState::ORIGIN) return RiftState::ORIGIN;
-    return static_cast<RiftState>((static_cast<int>(state) + 1) % 3);
+  LiftState backLiftState(LiftState state) {
+    if (state == LiftState::ORIGIN) return LiftState::ORIGIN;
+    return static_cast<LiftState>((static_cast<int>(state) + 1) % 3);
   }
 
-  float riftPos[3] = {0, 0.5, 1};
+  float LiftPos[3] = {0, -0.4, -3.7};  // harasuri, low , high
 
   void frontSolenoidDrive(bool state) {
     for (int i = 0; i < 4; i++) {
@@ -174,16 +174,16 @@ class JoyServer : public rclcpp::Node {
       return;
     }
 
-    // Rift全体昇降
+    // Lift全体昇降
     if (msg->axes[static_cast<int>(axis::TX)] !=
         prev_joy.axes[static_cast<int>(axis::TX)]) {
-      if (frontRiftTarget != backRiftTarget) return;
+      if (frontLiftTarget != backLiftTarget) return;
       // solenoidを開ける
       if (msg->axes[static_cast<int>(axis::TX)] > 0.5) {
-        frontRiftTarget = backRiftTarget = nextRiftState(frontRiftTarget);
+        frontLiftTarget = backLiftTarget = nextLiftState(frontLiftTarget);
 
       } else if (msg->axes[static_cast<int>(axis::TX)] < -0.5) {
-        frontRiftTarget = backRiftTarget = backRiftState(backRiftTarget);
+        frontLiftTarget = backLiftTarget = backLiftState(backLiftTarget);
       }
       frontLift.setMode(ODrive::Position,
                         ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
@@ -192,27 +192,27 @@ class JoyServer : public rclcpp::Node {
       frontSolenoidDrive(1);
       backSolenoidDrive(1);
       std::this_thread::sleep_for(100ms);
-      frontLift.setPosition(riftPos[frontRiftTarget]);
-      backLift.setPosition(riftPos[backRiftTarget]);
+      frontLift.setPosition(LiftPos[frontLiftTarget]);
+      backLift.setPosition(LiftPos[backLiftTarget]);
     }
 
-    // Rift個別で上限まで上げ
+    // Lift個別で上限まで上げ
     if (msg->axes[static_cast<int>(axis::TY)] !=
         prev_joy.axes[static_cast<int>(axis::TY)]) {
       if (msg->axes[static_cast<int>(axis::TY)] > 0.5) {
-        backRiftTarget = ORIGIN;
+        backLiftTarget = ORIGIN;
         backLift.setMode(ODrive::Position,
                          ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
         backSolenoidDrive(1);
         std::this_thread::sleep_for(100ms);
-        backLift.setPosition(riftPos[backRiftTarget]);
+        backLift.setPosition(LiftPos[backLiftTarget]);
       } else if (msg->axes[static_cast<int>(axis::TY)] < -0.5) {
-        frontRiftTarget = ORIGIN;
+        frontLiftTarget = ORIGIN;
         frontLift.setMode(ODrive::Position,
                           ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
         frontSolenoidDrive(1);
         std::this_thread::sleep_for(100ms);
-        frontLift.setPosition(riftPos[frontRiftTarget]);
+        frontLift.setPosition(LiftPos[frontLiftTarget]);
       }
     }
 
@@ -300,21 +300,44 @@ class JoyServer : public rclcpp::Node {
         }
       }
 
+      // solenoid in
+      else if (msg->buttons[static_cast<int>(button::START)] !=
+               prev_joy.buttons[static_cast<int>(button::START)]) {
+        if (msg->buttons[static_cast<int>(button::START)] == 1) {
+          // button START is pressed
+          RCLCPP_INFO(this->get_logger(), "START is pressed");
+          frontSolenoidDrive(1);
+          backSolenoidDrive(1);
+        }
+      }
+
+      // solenoid out
+      else if (msg->buttons[static_cast<int>(button::BACK)] !=
+               prev_joy.buttons[static_cast<int>(button::BACK)]) {
+        if (msg->buttons[static_cast<int>(button::BACK)] == 1) {
+          // button BACK is pressed
+          RCLCPP_INFO(this->get_logger(), "BACK is pressed");
+          frontSolenoidDrive(0);
+          backSolenoidDrive(0);
+        }
+      }
+
       prev_joy = *msg;
     }
   }
+
   void timer_callback() {
-    if (abs(frontLift.getPosition() - riftPos[frontRiftTarget]) < 0.05) {
-      // solenoidを出す
-      frontSolenoidDrive(0);
-      std::this_thread::sleep_for(100ms);
-      frontLift.setMode(ODrive::Idle);
-    }
-    if (abs(backLift.getPosition() - riftPos[backRiftTarget]) < 0.05) {
-      backSolenoidDrive(0);
-      std::this_thread::sleep_for(100ms);
-      backLift.setMode(ODrive::Idle);
-    }
+    // if (abs(frontLift.getPosition() - LiftPos[frontLiftTarget]) < 0.05) {
+    //   // solenoidを出す
+    //   frontSolenoidDrive(0);
+    //   std::this_thread::sleep_for(100ms);
+    //   frontLift.setMode(ODrive::Idle);
+    // }
+    // if (abs(backLift.getPosition() - LiftPos[backLiftTarget]) < 0.05) {
+    //   backSolenoidDrive(0);
+    //   std::this_thread::sleep_for(100ms);
+    //   backLift.setMode(ODrive::Idle);
+    // }
   }
 };
 

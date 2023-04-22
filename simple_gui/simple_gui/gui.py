@@ -4,8 +4,10 @@ from rogilink2_interfaces.msg import Ping
 from rclpy.node import Node
 
 img_folder_path = get_package_share_directory('simple_gui') + '/img'
-rr_hard_id = (0, "FR_S", "FR", "FL_S", "FL", "RR_S", "RR", "RL_S", "RL", 0, 0,
-              0, 0, "limit_sw", "steer_sensor", "sensor", "LED")
+rr_hard_id = (0, "FR_S", "FR", "FL_S", "FL", "RR_S", "RR", "RL_S", "RL",
+              "front_lift", "back_lift", "servo", "loader", "magazine",
+              "front_solenoid", "back_solenoid", "steer_sensor", "sensor",
+              "LED", 0, 0)
 discon = ('White', 'Black')
 connected = ('Black', 'White')
 
@@ -188,23 +190,29 @@ class GUI:
         ],
         [
             sg.Column([[
-                sg.Text('PATH', size=(4, 1), font='Helcetica 10'),
-                sg.InputCombo(
-                    ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'),
-                    key='rr_path',
-                    size=(3, 1),
-                    font='Helcetica 10'),
-                sg.Button('Forward',
-                          key='rr_path_forward',
-                          font='Helvetica 10',
-                          size=(7, 2)),
-                sg.Button('Backward',
-                          key='rr_path_backward',
-                          font='Helvetica 10',
-                          size=(7, 2))
+                create_menu_frame_button(f'{rr_hard_id[0x11]}', 'rr_11'),
+                create_menu_frame_button(f'{rr_hard_id[0x12]}', 'rr_12'),
+                create_menu_frame_button(f'{rr_hard_id[0x13]}', 'rr_13'),
+                create_menu_frame_button(f'{rr_hard_id[0x14]}', 'rr_14')
             ]],
                       justification='center')
         ],
+        [sg.Column([[
+            sg.Text('PATH', size=(4, 1), font='Helcetica 10'),
+            sg.InputCombo(('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'),
+                          key='rr_path',
+                          size=(3, 1),
+                          font='Helcetica 10'),
+            sg.Button('Forward',
+                      key='rr_path_forward',
+                      font='Helvetica 10',
+                      size=(7, 2)),
+            sg.Button('Backward',
+                      key='rr_path_backward',
+                      font='Helvetica 10',
+                      size=(7, 2))
+        ]],
+                    justification='center')],
     ],
                              size=(500, 800))
 
@@ -267,9 +275,9 @@ class GUI:
     def ping_gui(self, msg: Ping):
         for i in msg.devices:
 
-            if (not hasattr(self.window,
-                            f'rr_{format(i.hard_id,"02x").upper()}')):
-                continue
+            # if (not hasattr(self.window,
+            #                 f'rr_{format(i.hard_id,"02x").upper()}')):
+            #     continue
 
             if i.is_active is True:
                 self.window[f'rr_{format(i.hard_id,"02x").upper()}'].update(
