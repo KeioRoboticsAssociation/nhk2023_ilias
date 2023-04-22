@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-
-  <name>robot_ctrl</name>
+  <name>shot_ctrl</name>
   <version>0.0.0</version>
-  <description>The robot_ctrl package</description>
-  <maintainer email="curious.ks.jp@gmail.com">curious</maintainer>
-  <license>GPLv3</license>
+  <description>TODO: Package description</description>
+  <maintainer email="oc.yaki122@gmail.com">oyaki</maintainer>
+  <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
@@ -18,12 +18,13 @@
   <depend>tf2</depend>
   <depend>tf2_ros</depend>
   <depend>tf2_geometry_msgs</depend>
+  <depend>rogilink2_interfaces</depend>
+  <depend>md_lib</depend>
 
-
-  <exec_depend>ros2launch</exec_depend>
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
   </export>
-
 </package>

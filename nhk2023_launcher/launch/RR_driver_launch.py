@@ -10,6 +10,7 @@ def generate_launch_description():
                          name='wheelctrl_ros2',
                          output='screen',
                          emulate_tty=True,
+                         namespace='rr',
                          parameters=[
                              os.path.join(
                                  get_package_share_directory('wheelctrl_ros2'),
@@ -17,31 +18,30 @@ def generate_launch_description():
                          ])
 
     rogi_link_2 = Node(package='rogilink2',
-                    executable='rogilink2',
-                    name='rogilink2',
-                    output='screen',
-                    emulate_tty=True,
-                    parameters=[{
-                        'config_path':
-                        os.path.join(
-                            get_package_share_directory('rogilink2'),
-                            'config', 'rr.yaml')
-                    }])
+                       executable='rogilink2',
+                       name='rogilink2',
+                       output='screen',
+                       emulate_tty=True,
+                       namespace='rr',
+                       parameters=[{
+                           'config_path':
+                           os.path.join(
+                               get_package_share_directory('rogilink2'),
+                               'config', 'rr.yaml')
+                       }])
 
-
-    bno055 = Node(
-        package='rogibno055',
-        executable='rogibno055',
-        name='rogibno055',
-        output='screen',
-        emulate_tty=True,
-        parameters=[{
-            'pose_frame_id': "imu_link",
-            'publish_tf': False,
-            'port': "/dev/BNO",
-            'mode': "imu",
-        }]
-    )
+    bno055 = Node(package='rogibno055',
+                  executable='rogibno055',
+                  name='rogibno055',
+                  output='screen',
+                  emulate_tty=True,
+                  namespace='rr',
+                  parameters=[{
+                      'pose_frame_id': "imu_link",
+                      'publish_tf': False,
+                      'port': "/dev/BNO",
+                      'mode': "imu",
+                  }])
 
     ekf = Node(
         package='robot_localization',
@@ -49,15 +49,16 @@ def generate_launch_description():
         name='ekf_filter_node',
         output='screen',
         emulate_tty=True,
+        namespace='rr',
         # read parameters from file
-        parameters=[os.path.join(
-            get_package_share_directory('nhk2023_launcher'),
-             'ekf.yaml')],
+        parameters=[
+            os.path.join(get_package_share_directory('nhk2023_launcher'),
+                         'ekf.yaml')
+        ],
     )
     # print(os.path.join(
     #         get_package_share_directory('nhk2023_launcher'),
     #          'ekf.yaml'))
-
 
     return LaunchDescription([
         rogi_link_2,

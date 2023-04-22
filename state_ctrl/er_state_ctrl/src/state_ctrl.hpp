@@ -9,11 +9,15 @@
 struct Manual_Flag : tinyfsm::Event {};
 struct Idle_Flag : tinyfsm::Event {};
 struct Forward_Flag : tinyfsm::Event {};
+struct Start_Flag : tinyfsm::Event {};
 struct GOD_Flag : tinyfsm::Event {};
 
+struct Update_Flag : tinyfsm::Event {};
+struct Shot_Flag : tinyfsm::Event {};
+
+class Start;
 class Idle;
 class Manual;
-class Start;
 
 class StateMachine : public tinyfsm::Fsm<StateMachine> {
  public:
@@ -22,6 +26,7 @@ class StateMachine : public tinyfsm::Fsm<StateMachine> {
 
   void react(Manual_Flag const &) { transit<Manual>(); };
   void react(Idle_Flag const &) { transit<Idle>(); };
+  void react(Start_Flag const &) { transit<Start>(); };
   void react(GOD_Flag const &, std::string destination) {
     if (destination == "start") {
       transit<Start>();
@@ -32,7 +37,10 @@ class StateMachine : public tinyfsm::Fsm<StateMachine> {
     }
   };
 
+  virtual void react(Update_Flag const &){};
+
   virtual void react(Forward_Flag const &){};
+  virtual void react(Shot_Flag const &){};
 
   virtual void entry(void){};
   virtual void exit(void){};
@@ -51,6 +59,37 @@ class Manual : public StateMachine {
 class Start : public StateMachine {
  public:
   void entry(void) override;
+  void react(Forward_Flag const &flag) override;
+};
+
+class PickupLeft : public StateMachine {
+ public:
+  void entry(void) override;
+  void react(Forward_Flag const &flag) override;
+  void react(Update_Flag const &flag) override;
+  void exit() override;
+};
+
+class PickupRight : public StateMachine {
+ public:
+  void entry(void) override;
+  void react(Forward_Flag const &flag) override;
+  void react(Update_Flag const &flag) override;
+  void exit() override;
+};
+
+class PreShot : public StateMachine {
+ public:
+  void entry(void) override;
+  void react(Forward_Flag const &flag) override;
+  void react(Update_Flag const &flag) override;
+};
+
+class Shot : public StateMachine {
+ public:
+  void entry(void) override;
+  void react(Forward_Flag const &flag) override;
+  void react(Update_Flag const &flag) override;
 };
 
 using state_machine = StateMachine;

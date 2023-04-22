@@ -15,7 +15,10 @@ find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(sensor_lib REQUIRED)
-
+find_package(pure_pursuit_interface REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)
 
 add_executable(rr_robot_ctrl src/rr/robot_ctrl.cpp)
 ament_target_dependencies(rr_robot_ctrl
@@ -24,6 +27,10 @@ ament_target_dependencies(rr_robot_ctrl
   std_msgs
   sensor_msgs
   sensor_lib
+  pure_pursuit_interface
+  tf2_ros
+  tf2_geometry_msgs
+  tf2
 )
 add_executable(er_robot_ctrl src/er/robot_ctrl.cpp)
 ament_target_dependencies(er_robot_ctrl
@@ -32,8 +39,11 @@ ament_target_dependencies(er_robot_ctrl
   std_msgs
   sensor_msgs
   sensor_lib
+  pure_pursuit_interface
+  tf2_ros
+  tf2_geometry_msgs
+  tf2
 )
-
 
 install(TARGETS
   rr_robot_ctrl

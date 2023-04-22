@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 from ament_index_python.packages import get_package_share_directory
 from rogilink2_interfaces.msg import Ping
+from rclpy.node import Node
 
 img_folder_path = get_package_share_directory('simple_gui') + '/img'
 rr_hard_id = (0, "FR_S", "FR", "FL_S", "FL", "RR_S", "RR", "RL_S", "RL", 0, 0,
@@ -49,22 +50,45 @@ class GUI:
         [
             # text box to choose state
             [
-                sg.Text('State', size=(10, 1)),
-                sg.InputCombo(('Start', 'Restart', 'Hill_bottom', 'Hill_top',
-                               'Angkor', 'Angkor_Center', 'Type2_attack',
-                               'Pole_block', 'Last_attack', 'END'),
-                              key='state',
-                              size=(20, 1)),
-                sg.Button('Set', key='set_state', size=(10, 1))
+                sg.Column([[
+                    sg.Text('Current State', size=(15, 1),
+                            font='Helcetica 20'),
+                    sg.Text(
+                        '', key='er_state', size=(5, 1), font='Helcetica 20')
+                ]])
             ],
             [
-                sg.Button('Start', key='start', size=(10, 1)),
-                sg.Button('Restart', key='restart', size=(10, 1))
+                sg.Text('State', size=(5, 1), font='Helcetica 20'),
+                sg.InputCombo(('Start', 'Restart', 'PickupLeft', 'PickupRight',
+                               'PreShot', 'Shot', 'End'),
+                              key='er_state_select',
+                              size=(15, 1),
+                              font='Helcetica 20'),
+                sg.Button('Set',
+                          key='er_set_state',
+                          size=(5, 1),
+                          font='Helcetica 20')
             ],
             [
-                sg.Button('Idele', key='idele', size=(10, 1)),
-                sg.Button('Manual', key='manual', size=(10, 1))
+                sg.Column([[
+                    create_state_frame_button('Start', 'er_start'),
+                    create_state_frame_button('Restart', 'er_restart')
+                ]],
+                          justification='center'),
             ],
+            [
+                sg.Column([[
+                    create_state_frame_button('Idle', 'er_idle'),
+                    create_state_frame_button('Manual', 'er_manual')
+                ]],
+                          justification='center')
+            ],
+            [
+                sg.Column([[
+                    create_state_frame_button('Forward', 'er_forward'),
+                ]],
+                          justification='center')
+            ]
         ],
         size=(500, 800))
     er_menu_frame = sg.Frame('Menu', [[]], size=(500, 800))
@@ -210,6 +234,9 @@ class GUI:
     current_layout = 1
     event, values = None, None
 
+    def __init__(self, node):
+        self.node: Node = node
+
     # function
     def gui_check(self):
         self.event, self.values = self.window.read(timeout=10)
@@ -239,6 +266,11 @@ class GUI:
 
     def ping_gui(self, msg: Ping):
         for i in msg.devices:
+
+            if (not hasattr(self.window,
+                            f'rr_{format(i.hard_id,"02x").upper()}')):
+                continue
+
             if i.is_active is True:
                 self.window[f'rr_{format(i.hard_id,"02x").upper()}'].update(
                     button_color=(connected))

@@ -1,13 +1,11 @@
-#include <std_msgs/msg/int16.h>
 
 #include <chrono>
 #include <geometry_msgs/msg/twist.hpp>
 #include <rclcpp/rclcpp.hpp>
-#include <sensor_msgs/msg/joy.hpp>
+#include <std_msgs/msg/empty.hpp>
 #include <std_msgs/msg/string.hpp>
 
 #include "joy_commander.cpp"
-#include "precision.cpp"
 
 using namespace std::chrono_literals;
 
@@ -22,6 +20,8 @@ class robot_ctrl : public rclcpp::Node {
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr mode_sub_;
   // publish cmd_vel topic
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
+  // publish state_ctrl topic
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_ctrl_pub_;
   // timer ptr
   rclcpp::TimerBase::SharedPtr timer_;
 
@@ -29,21 +29,22 @@ class robot_ctrl : public rclcpp::Node {
   enum class Mode {
     MANUAL,
     AUTO,
-    CLIMB,
-    PRECISION,
     IDLE,
+    PICKUP_LEFT,
+    PICKUP_RIGHT,
+    SHOT,
+    PRE_SHOT,
   };
 
   JoyCommander joy_commander;
-  Precision precision;
 
   Mode mode_, prev_mode_ = Mode::MANUAL;  // 初期モードはMANUAL
   void timer_callback();
   void mode_callback(const std_msgs::msg::String::SharedPtr msg);
+  void pursuit_end_callback(const std_msgs::msg::Empty::SharedPtr msg);
 };
 
-robot_ctrl::robot_ctrl()
-    : Node("er_robot_ctrl"), joy_commander(this), precision(this) {
+robot_ctrl::robot_ctrl() : Node("er_robot_ctrl"), joy_commander(this) {
   RCLCPP_INFO(this->get_logger(), "robot_ctrl node is started");
 
   // set parameters
@@ -87,6 +88,7 @@ void robot_ctrl::timer_callback() {
   // publish mode as topic
   auto msg = std_msgs::msg::String();
   // RCLCPP_INFO(this->get_logger(), "timer callback");
+  // state_ctrlにFORWARDを送信するためのmsg
 
   switch (mode_) {
     case Mode::MANUAL:
@@ -100,19 +102,6 @@ void robot_ctrl::timer_callback() {
     case Mode::AUTO:
       msg.data = "AUTO";
       RCLCPP_INFO(this->get_logger(), "current mode auto");
-      break;
-
-    case Mode::CLIMB:
-      msg.data = "CLIMB";
-      RCLCPP_INFO(this->get_logger(), "current mode climb");
-      break;
-
-    case Mode::PRECISION:
-      precision.precision_vel_generator();
-      RCLCPP_INFO(this->get_logger(), "sensor: %d", precision.sensor_val[3]);
-      cmd_vel_pub_->publish(precision.prc_cmd_vel);
-      msg.data = "PRECISION";
-      RCLCPP_INFO(this->get_logger(), "current mode precision");
       break;
 
     case Mode::IDLE:
@@ -142,10 +131,6 @@ void robot_ctrl::mode_callback(const std_msgs::msg::String::SharedPtr msg) {
     mode_ = Mode::MANUAL;
   } else if (msg->data == "AUTO") {
     mode_ = Mode::AUTO;
-  } else if (msg->data == "CLIMB") {
-    mode_ = Mode::CLIMB;
-  } else if (msg->data == "PRECISION") {
-    mode_ = Mode::PRECISION;
   } else if (msg->data == "IDLE") {
     mode_ = Mode::IDLE;
   } else {

@@ -1,15 +1,15 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
-import launch_ros.actions
+# import launch_ros.actions
 # include
-from launch.actions import IncludeLaunchDescription
+# from launch.actions import IncludeLaunchDescription
 import os
 from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
-    use_sim_time = True
-    autostart = True
+    # use_sim_time = True
+    # autostart = True
     urdf_file_name = 'simple_odom_robot.urdf'
     urdf = os.path.join(get_package_share_directory('nhk2023_launcher'),
                         urdf_file_name)
@@ -20,23 +20,27 @@ def generate_launch_description():
                                       executable='joint_state_publisher',
                                       name='joint_state_publisher',
                                       output='screen',
+                                      namespace='rr',
                                       parameters=[{
                                           'robot_description':
                                           robot_description
                                       }, {
                                           'rate': 100
                                       }],
-                                      arguments=[urdf])
+                                      arguments=[urdf],
+                                      namespace='rr')
 
     robot_state_publisher_node = Node(package='robot_state_publisher',
                                       executable='robot_state_publisher',
                                       name='robot_state_publisher',
                                       output='screen',
+                                      namespace='rr',
                                       parameters=[{
                                           'robot_description':
                                           robot_description
                                       }, {
-                                          'rate': 100
+                                          'rate': 100,
+                                          'frame_prefix': 'rr/'
                                       }])
 
     # map_server_config_path = os.path.join(
@@ -63,11 +67,6 @@ def generate_launch_description():
     #                 {'autostart': autostart},
     #                 {'node_names': lifecycle_nodes}])
 
-    static_tf_broadcaster_node = Node(package='nhk2023_launcher',
-                                      executable='static_tf_broadcaster',
-                                      name='static_tf_broadcaster',
-                                      output='screen')
-
     # wheelctrl_ros = Node(
     #     package='wheelctrl_ros2',
     #     executable = 'wheelctrl_ros2',
@@ -80,37 +79,29 @@ def generate_launch_description():
 
     # )
 
-    rogi_link_2 = Node(package='rogilink2',
-                       executable='rogilink2',
-                       name='rogilink2',
-                       output='screen',
-                       emulate_tty=True,
-                       parameters=[{
-                           'config_path':
-                           os.path.join(
-                               get_package_share_directory('rogilink2'),
-                               'config', 'rr.yaml')
-                       }])
-
     robot_ctrl = Node(
         package='robot_ctrl',
         executable='rr_robot_ctrl',
         name='rr_robot_ctrl',
+        namespace='rr',
         output='screen',
     )
 
-    joy = Node(
-        package='joy_linux',
-        executable='joy_linux_node',
-        name='joy_linux_node',
-        output='screen',
-    )
+    joy = Node(package='joy_linux',
+               executable='joy_linux_node',
+               name='joy_linux_node',
+               namespace='rr',
+               output='screen',
+               parameters=[{
+                   'deadzone': 0.02,
+               }])
 
     simple_gui = Node(
         package='simple_gui',
         executable='simple_gui',
         name='simple_gui',
         output='screen',
+        namespace='rr',
     )
 
     rr_state_ctrl = Node(
@@ -118,6 +109,7 @@ def generate_launch_description():
         executable='rr_state_ctrl',
         name='rr_state_ctrl',
         output='screen',
+        namespace='rr',
     )
 
     return LaunchDescription([
@@ -125,7 +117,6 @@ def generate_launch_description():
         robot_state_publisher_node,
         # map_server_node,
         # start_lifecycle_manager_cmd,
-        static_tf_broadcaster_node,
         # wheelctrl_ros,
         robot_ctrl,
         # rogi_link_2,

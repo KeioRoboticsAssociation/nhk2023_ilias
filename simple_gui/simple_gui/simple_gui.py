@@ -14,7 +14,7 @@ class SimpleGUI(Node):
 
     def __init__(self):
         super().__init__('simple_gui')
-        self.gui = GUI()
+        self.gui = GUI(self)
         self.rogimsg_pub_ = self.create_publisher(Frame, 'rogilink2/send', 10)
         self.state_subscriber = self.create_subscription(
             String, 'state', self.state_callback, 10)
@@ -95,10 +95,36 @@ class SimpleGUI(Node):
             msg.is_allowed_to_pub = True
             self.rr_path_pub_.publish(msg)
             self.get_logger().info('********RR PATH BACKWARD*********')
+        elif self.gui.event == 'er_start':
+            msg = String()
+            msg.data = 'START'
+            self.state_toggle_pub_.publish(msg)
+            self.get_logger().info('********ER_START*********')
+        elif self.gui.event == 'er_restart':
+            msg = String()
+            msg.data = 'RESTART'
+            self.state_toggle_pub_.publish(msg)
+            self.get_logger().info('********ER_RESTART*********')
+        elif self.gui.event == 'er_idle':
+            msg = String()
+            msg.data = 'IDLE'
+            self.state_toggle_pub_.publish(msg)
+            self.get_logger().info('********ER_IDLE*********')
+        elif self.gui.event == 'er_manual':
+            msg = String()
+            msg.data = 'MANUAL'
+            self.state_toggle_pub_.publish(msg)
+            self.get_logger().info('********ER_MANUAL*********')
+        elif self.gui.event == 'er_forward':
+            msg = String()
+            msg.data = 'FORWARD'
+            self.state_toggle_pub_.publish(msg)
+            self.get_logger().info('********ER_FORWARD*********')
 
     def state_callback(self, msg):
         self.get_logger().info('State callback')
         # changing the state image
+        # self.gui.window['er_state'].update(text=msg.data)
         if msg.data == 'START':
             self.gui.rr_img_change('start')
         elif msg.data == 'RESTART':
