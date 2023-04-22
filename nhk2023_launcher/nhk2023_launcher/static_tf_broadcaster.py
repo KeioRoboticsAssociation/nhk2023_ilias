@@ -2,6 +2,62 @@ import rclpy
 from rclpy.node import Node
 from tf2_ros import TransformStamped
 from tf2_ros.static_transform_broadcaster import StaticTransformBroadcaster
+from typing import TypedDict
+
+
+class PoleType(TypedDict):
+    name: str
+    place: tuple[float, float]
+    radius: float
+
+
+pole_pos: list[PoleType]
+
+pole_pos = [{
+    'name': 'type1_1',
+    'place': (3.2, 0.0),
+    'radius': 0.0508
+}, {
+    'name': 'type1_2',
+    'place': (3.2, 3.2),
+    'radius': 0.0508
+}, {
+    'name': 'type1_3',
+    'place': (-3.2, 3.2),
+    'radius': 0.0508
+}, {
+    'name': 'type1_4',
+    'place': (-3.2, 0.0),
+    'radius': 0.0508
+}, {
+    'name': 'type1_5',
+    'place': (-3.2, -3.2),
+    'radius': 0.0508
+}, {
+    'name': 'type1_6',
+    'place': (3.2, -3.2),
+    'radius': 0.0508
+}, {
+    'name': 'type2_1',
+    'place': (1.3, 1.3),
+    'radius': 0.0508
+}, {
+    'name': 'type2_2',
+    'place': (-1.3, 1.3),
+    'radius': 0.0508
+}, {
+    'name': 'type2_3',
+    'place': (-1.3, -1.3),
+    'radius': 0.0508
+}, {
+    'name': 'type2_4',
+    'place': (1.3, -1.3),
+    'radius': 0.0508
+}, {
+    'name': 'type3',
+    'place': (0.0, 0.0),
+    'radius': 0.0699
+}]
 
 
 class static_tf_broadcaster(Node):
@@ -16,7 +72,7 @@ class static_tf_broadcaster(Node):
         self.gen_odom_rr_base_link_transform()
         self.tf_static_broadcaster.sendTransform([
             self.er_odom_map_transform, self.rr_odom_map_transform,
-            self.map_pole_transform, self.odom_er_base_link_transform,
+            *self.map_pole_transform, self.odom_er_base_link_transform,
             self.odom_rr_base_link_transform
         ])
 
@@ -50,17 +106,20 @@ class static_tf_broadcaster(Node):
 
     def gen_map_pole_transform(self):
         # Create the transform
-        self.map_pole_transform = TransformStamped()
-        self.map_pole_transform.header.stamp = self.get_clock().now().to_msg()
-        self.map_pole_transform.header.frame_id = 'map'
-        self.map_pole_transform.child_frame_id = 'type3_pole'
-        self.map_pole_transform.transform.translation.x = 0.0
-        self.map_pole_transform.transform.translation.y = 0.0
-        self.map_pole_transform.transform.translation.z = 0.4
-        self.map_pole_transform.transform.rotation.x = 0.0
-        self.map_pole_transform.transform.rotation.y = 0.0
-        self.map_pole_transform.transform.rotation.z = 0.0
-        self.map_pole_transform.transform.rotation.w = 1.0
+        self.map_pole_transform: list[TransformStamped] = []
+        for e in pole_pos:
+            pole = TransformStamped()
+            pole.header.stamp = self.get_clock().now().to_msg()
+            pole.header.frame_id = 'map'
+            pole.child_frame_id = e['name']
+            pole.transform.translation.x = e['place'][0]
+            pole.transform.translation.y = e['place'][1]
+            pole.transform.translation.z = 0.0
+            pole.transform.rotation.x = 0.0
+            pole.transform.rotation.y = 0.0
+            pole.transform.rotation.z = 0.0
+            pole.transform.rotation.w = 1.0
+            self.map_pole_transform.append(pole)
 
     def gen_odom_er_base_link_transform(self):
         # Create the transform
