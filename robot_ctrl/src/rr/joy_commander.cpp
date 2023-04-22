@@ -31,6 +31,9 @@ class JoyCommander {
   double max_linear_acc = 1;
   double max_angular_acc = 1;
 
+  double small_linear_vel = 0.1;
+  double small_angular_vel = 0.1;
+
   double prv_norm = 0;
   double current_norm = 0;
   double current_args = 0;
@@ -162,6 +165,17 @@ class JoyCommander {
     // // update
     // prv_norm =
     //     sqrt(pow(joy_cmd_vel.linear.x, 2) + pow(joy_cmd_vel.linear.y, 2));
+    prev_cmd_vel = joy_cmd_vel;
+  }
+
+  void gen_small_cmd_vel() {
+    // gen cmd_vel from current_joy
+    joy_cmd_vel.linear.x =
+        current_joy.axes[static_cast<int>(axis::LY)] * small_linear_vel;
+    joy_cmd_vel.linear.y =
+        current_joy.axes[static_cast<int>(axis::LX)] * small_linear_vel;
+    joy_cmd_vel.angular.z =
+        current_joy.axes[static_cast<int>(axis::RX)] * small_angular_vel;
     prev_cmd_vel = joy_cmd_vel;
   }
 };

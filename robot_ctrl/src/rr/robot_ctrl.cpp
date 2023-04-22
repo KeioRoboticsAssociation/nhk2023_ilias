@@ -7,9 +7,10 @@
 #include <std_msgs/msg/string.hpp>
 
 #include "joy_commander.cpp"
-#include "precision.cpp"
+#include "pick_up.cpp"
 
 using namespace std::chrono_literals;
+int shrink_rate = 5;
 
 class robot_ctrl : public rclcpp::Node {
  public:
@@ -32,10 +33,11 @@ class robot_ctrl : public rclcpp::Node {
     CLIMB,
     PRECISION,
     IDLE,
+    PICK_UP
   };
 
   JoyCommander joy_commander;
-  Precision precision;
+  PickUp pick_up;
 
   Mode mode_, prev_mode_ = Mode::MANUAL;  // 初期モードはMANUAL
   void timer_callback();
@@ -43,7 +45,7 @@ class robot_ctrl : public rclcpp::Node {
 };
 
 robot_ctrl::robot_ctrl()
-    : Node("rr_robot_ctrl"), joy_commander(this), precision(this) {
+    : Node("rr_robot_ctrl"), joy_commander(this), pick_up(this) {
   RCLCPP_INFO(this->get_logger(), "robot_ctrl node is started");
 
   // set parameters
@@ -108,9 +110,8 @@ void robot_ctrl::timer_callback() {
       break;
 
     case Mode::PRECISION:
-      precision.precision_vel_generator();
-      RCLCPP_INFO(this->get_logger(), "sensor: %d", precision.sensor_val[3]);
-      cmd_vel_pub_->publish(precision.prc_cmd_vel);
+      joy_commander.gen_small_cmd_vel();
+      cmd_vel_pub_->publish(joy_commander.joy_cmd_vel);
       msg.data = "PRECISION";
       RCLCPP_INFO(this->get_logger(), "current mode precision");
       break;
@@ -118,6 +119,12 @@ void robot_ctrl::timer_callback() {
     case Mode::IDLE:
       msg.data = "IDLE";
       RCLCPP_INFO(this->get_logger(), "current mode idle");
+      break;
+
+    case Mode::PICK_UP:
+      pick_up.gen_pick_up_cmd_vel();
+      msg.data = "PICK_UP";
+      RCLCPP_INFO(this->get_logger(), "current mode pick_up");
       break;
 
     default:
