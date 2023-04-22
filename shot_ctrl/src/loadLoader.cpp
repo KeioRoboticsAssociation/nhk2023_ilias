@@ -13,6 +13,8 @@ void LoadLoader::entry() {
   loader->setPosition(0);
   leftMagazine->setPosition(leftMagazinePos);
   rightMagazine->setPosition(rightMagazinePos);
+  servo->setPosition(LEFT_FLAP_NUM, LEFT_FLAP_UP);
+  servo->setPosition(RIGHT_FLAP_NUM, RIGHT_FLAP_UP);
 
   if (loader->getPosition() > 0.1 ||
       abs(leftMagazine->getPosition() - leftMagazinePos > 0.1) ||

@@ -87,6 +87,8 @@ void Init::entry() {
   } else {
     elevationCallback();
   }
+
+  servo->init();
 }
 
 void Init::react(UpdateEvent const &) {}

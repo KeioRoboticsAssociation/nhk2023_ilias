@@ -52,9 +52,9 @@ class GUI:
             [
                 sg.Column([[
                     sg.Text('Current State', size=(15, 1),
-                            font='Helcetica 20'),
+                            font='Helcetica 15'),
                     sg.Text(
-                        '', key='er_state', size=(5, 1), font='Helcetica 20')
+                        '', key='er_state', size=(15, 1), font='Helcetica 15')
                 ]])
             ],
             [

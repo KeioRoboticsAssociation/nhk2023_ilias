@@ -124,7 +124,7 @@ class SimpleGUI(Node):
     def state_callback(self, msg):
         self.get_logger().info('State callback')
         # changing the state image
-        # self.gui.window['er_state'].update(text=msg.data)
+        self.gui.window['er_state'].update(msg.data)
         if msg.data == 'START':
             self.gui.rr_img_change('start')
         elif msg.data == 'RESTART':

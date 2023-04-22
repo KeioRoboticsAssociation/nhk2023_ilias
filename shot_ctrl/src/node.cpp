@@ -10,6 +10,7 @@ std::shared_ptr<MD2022> rightPusher;
 std::shared_ptr<MD2022> loader;
 std::shared_ptr<MD2022> elevation;
 std::shared_ptr<ODrive> shooter;
+std::shared_ptr<Servo> servo;
 
 void init() {
   node = rclcpp::Node::make_shared("shot_ctrl");
@@ -24,6 +25,7 @@ void init() {
   elevation = std::make_shared<MD2022>(node.get(), "elevation");
   shooter = std::make_shared<ODrive>(node.get(), "shooter");
 
+  servo = std::make_shared<Servo>(node.get(), "servo");
   limitSensor = std::make_shared<LimitSwitch>(node.get(), "limit_sensor");
 
   leftMagazine->init();

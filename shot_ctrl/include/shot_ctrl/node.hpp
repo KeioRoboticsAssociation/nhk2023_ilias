@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include "actuator_lib/servo.hpp"
 #include "limitSwitch.hpp"
 #include "md_lib/md2022.hpp"
 #include "md_lib/odrive.hpp"
@@ -22,6 +23,7 @@ extern std::shared_ptr<MD2022> rightPusher;
 extern std::shared_ptr<MD2022> loader;
 extern std::shared_ptr<MD2022> elevation;
 extern std::shared_ptr<ODrive> shooter;
+extern std::shared_ptr<Servo> servo;
 
 const int LEFT_MAGAZIN_LIMIT = 0;
 const int RIGHT_MAGAZIN_LIMIT = 1;
@@ -30,6 +32,14 @@ const int RIGHT_PUSHER_LIMIT = 3;
 const int LOADER_LIMIT = 4;
 const int ELEVATION_LIMIT = 5;
 // const int SHOOTER_LIMIT = 6;
+
+const int LEFT_FLAP_NUM = 0;
+const int RIGHT_FLAP_NUM = 1;
+
+const float LEFT_FLAP_UP = 0.0f;
+const float LEFT_FLAP_DOWN = 90;
+const float RIGHT_FLAP_UP = 0.0f;
+const float RIGHT_FLAP_DOWN = 90;
 
 void init();
 
