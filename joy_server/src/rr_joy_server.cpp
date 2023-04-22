@@ -4,6 +4,7 @@
 #include <rogilink2_interfaces/msg/frame.hpp>
 #include <sensor_msgs/msg/joy.hpp>
 
+#include "actuator_lib/servo.hpp"
 #include "actuator_lib/solenoid.hpp"
 #include "md_lib/md2022.hpp"
 #include "md_lib/odrive.hpp"
@@ -17,10 +18,11 @@ class JoyServer : public rclcpp::Node {
         magazine(this, "magazine"),
         loader(this, "loader"),
         shooter(this, "shooter"),
-        frontRift(this, "front_rift"),
-        backRift(this, "back_rift"),
+        frontLift(this, "front_lift"),
+        backLift(this, "back_lift"),
         frontSolenoid(this, "front_solenoid"),
-        backSolenoid(this, "back_solenoid") {
+        backSolenoid(this, "back_solenoid"),
+        block_servo(this, "servo") {
     RCLCPP_INFO(this->get_logger(), "joy_server is started");
     joy_sub = this->create_subscription<sensor_msgs::msg::Joy>(
         "joy", 10,
@@ -53,14 +55,16 @@ class JoyServer : public rclcpp::Node {
                     ODriveEnum::InputMode::INPUT_MODE_VEL_RAMP);
     shooter.setVelocity(0.0);
 
-    frontRift.init();
-    frontRift.setMode(ODrive::Idle);
+    frontLift.init();
+    frontLift.setMode(ODrive::Idle);
 
-    backRift.init();
-    backRift.setMode(ODrive::Idle);
+    backLift.init();
+    backLift.setMode(ODrive::Idle);
 
     frontSolenoid.init();
     backSolenoid.init();
+
+    block_servo.init();
   }
 
  private:
@@ -72,10 +76,11 @@ class JoyServer : public rclcpp::Node {
   MD2022 magazine;
   MD2022 loader;
   ODrive shooter;
-  ODrive frontRift;
-  ODrive backRift;
+  ODrive frontLift;
+  ODrive backLift;
   Solenoid frontSolenoid;
   Solenoid backSolenoid;
+  Servo block_servo;
 
   double current_magazine_position = 0.0;
   double ring_thickness = 0.26;
@@ -180,15 +185,15 @@ class JoyServer : public rclcpp::Node {
       } else if (msg->axes[static_cast<int>(axis::TX)] < -0.5) {
         frontRiftTarget = backRiftTarget = backRiftState(backRiftTarget);
       }
-      frontRift.setMode(ODrive::Position,
+      frontLift.setMode(ODrive::Position,
                         ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
-      backRift.setMode(ODrive::Position,
+      backLift.setMode(ODrive::Position,
                        ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
       frontSolenoidDrive(1);
       backSolenoidDrive(1);
       std::this_thread::sleep_for(100ms);
-      frontRift.setPosition(riftPos[frontRiftTarget]);
-      backRift.setPosition(riftPos[backRiftTarget]);
+      frontLift.setPosition(riftPos[frontRiftTarget]);
+      backLift.setPosition(riftPos[backRiftTarget]);
     }
 
     // Rift個別で上限まで上げ
@@ -196,18 +201,18 @@ class JoyServer : public rclcpp::Node {
         prev_joy.axes[static_cast<int>(axis::TY)]) {
       if (msg->axes[static_cast<int>(axis::TY)] > 0.5) {
         backRiftTarget = ORIGIN;
-        backRift.setMode(ODrive::Position,
+        backLift.setMode(ODrive::Position,
                          ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
         backSolenoidDrive(1);
         std::this_thread::sleep_for(100ms);
-        backRift.setPosition(riftPos[backRiftTarget]);
+        backLift.setPosition(riftPos[backRiftTarget]);
       } else if (msg->axes[static_cast<int>(axis::TY)] < -0.5) {
         frontRiftTarget = ORIGIN;
-        frontRift.setMode(ODrive::Position,
+        frontLift.setMode(ODrive::Position,
                           ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
         frontSolenoidDrive(1);
         std::this_thread::sleep_for(100ms);
-        frontRift.setPosition(riftPos[frontRiftTarget]);
+        frontLift.setPosition(riftPos[frontRiftTarget]);
       }
     }
 
@@ -237,10 +242,22 @@ class JoyServer : public rclcpp::Node {
 
       }
 
-      // empty
+      // blocking servo
       else if (msg->buttons[static_cast<int>(button::X)] !=
                prev_joy.buttons[static_cast<int>(button::X)]) {
-        // empty
+        if (msg->buttons[static_cast<int>(button::X)] == 1) {
+          // button X is pressed
+          RCLCPP_INFO(this->get_logger(), "X is pressed");
+          block_servo.setPosition(0, 0.0);
+        } else {
+          // button X is released
+          RCLCPP_INFO(this->get_logger(), "X is released");
+          block_servo.setPosition(0, 90.0);
+          std::this_thread::sleep_for(std::chrono::milliseconds(1));
+          block_servo.setPosition(0, 90.0);
+          std::this_thread::sleep_for(std::chrono::milliseconds(1));
+          block_servo.setPosition(0, 90.0);
+        }
       }
 
       // shooter
@@ -287,16 +304,16 @@ class JoyServer : public rclcpp::Node {
     }
   }
   void timer_callback() {
-    if (abs(frontRift.getPosition() - riftPos[frontRiftTarget]) < 0.05) {
+    if (abs(frontLift.getPosition() - riftPos[frontRiftTarget]) < 0.05) {
       // solenoidを出す
       frontSolenoidDrive(0);
       std::this_thread::sleep_for(100ms);
-      frontRift.setMode(ODrive::Idle);
+      frontLift.setMode(ODrive::Idle);
     }
-    if (abs(backRift.getPosition() - riftPos[backRiftTarget]) < 0.05) {
+    if (abs(backLift.getPosition() - riftPos[backRiftTarget]) < 0.05) {
       backSolenoidDrive(0);
       std::this_thread::sleep_for(100ms);
-      backRift.setMode(ODrive::Idle);
+      backLift.setMode(ODrive::Idle);
     }
   }
 };
