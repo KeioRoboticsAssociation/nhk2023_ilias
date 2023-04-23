@@ -1,7 +1,7 @@
 #include "../include/shot_ctrl/shooterState.hpp"
 #include "../include/shot_ctrl/shot_state.hpp"
 
-const float pusherLoadPosition = 5;
+const float pusherLoadPosition = 4.2;
 
 void LoadLoader::entry() {
   logInfo("Enter LoadLoader");
@@ -10,13 +10,13 @@ void LoadLoader::entry() {
   float leftMagazinePos = calcMagazinePos(context.leftRemain);
   float rightMagazinePos = calcMagazinePos(context.rightRemain);
 
-  loader->setPosition(0);
+  loader->setPosition(0.72);
   leftMagazine->setPosition(leftMagazinePos);
   rightMagazine->setPosition(rightMagazinePos);
   servo->setPosition(LEFT_FLAP_NUM, LEFT_FLAP_UP);
   servo->setPosition(RIGHT_FLAP_NUM, RIGHT_FLAP_UP);
 
-  if (loader->getPosition() > 0.1 ||
+  if (loader->getPosition() > 0.7 ||
       abs(leftMagazine->getPosition() - leftMagazinePos > 0.1) ||
       abs(rightMagazine->getPosition() - rightMagazinePos > 0.1))
     return;

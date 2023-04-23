@@ -22,7 +22,7 @@ void init() {
   leftPusher = std::make_shared<MD2022>(node.get(), "pusherL");
   rightPusher = std::make_shared<MD2022>(node.get(), "pusherR");
   loader = std::make_shared<MD2022>(node.get(), "loader");
-  elevation = std::make_shared<MD2022>(node.get(), "elevation");
+  elevation = std::make_shared<MD2022>(node.get(), "angle");
   shooter = std::make_shared<ODrive>(node.get(), "shooter");
 
   servo = std::make_shared<Servo>(node.get(), "servo");
@@ -47,4 +47,4 @@ float calcMagazinePos(int magazineNum) {
 
 float calcAngle2ElevPos(float angle) { return angle; }
 
-float calcLoaderPos(float elevAngle) { return 0.5 * elevAngle; }
+float calcLoaderPos(float elevAngle) { return 3.6; }

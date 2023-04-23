@@ -7,8 +7,8 @@ void DownLoader::entry() {
     servo->setPosition(LEFT_FLAP_NUM, LEFT_FLAP_DOWN);
     servo->setPosition(RIGHT_FLAP_NUM, RIGHT_FLAP_DOWN);
     loader->setPosition(calcLoaderPos(context.elevAngle));
-    leftPusher->setPosition(0);
-    rightPusher->setPosition(0);
+    leftPusher->setPosition(-1.8);
+    rightPusher->setPosition(-1.8);
     isInitialized = true;
   }
   logInfo("Enter DownLoader");

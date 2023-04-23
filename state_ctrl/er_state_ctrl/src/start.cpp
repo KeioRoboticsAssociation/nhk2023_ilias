@@ -8,7 +8,7 @@ void Start::entry(void) {
   msg.data = "AUTO";
   robot_state_ctrl->mode_pub_->publish(msg);
   robot_state_ctrl->state_pub_->publish(msg);
-  transit<PickupLeft>();
+  transit<PickupRight>();
 }
 
-void Start::react(Forward_Flag const& flag) { transit<PickupLeft>(); }
+void Start::react(Forward_Flag const& flag) { transit<PickupRight>(); }
