@@ -18,8 +18,8 @@ class JoyServer : public rclcpp::Node {
         magazine(this, "magazine"),
         loader(this, "loader"),
         shooter(this, "shooter"),
-        frontLift(this, "front_lift"),
-        backLift(this, "back_lift"),
+        frontLift(this, "front_lift", 10, 5),
+        backLift(this, "back_lift", 10, 5),
         frontSolenoid(this, "front_solenoid"),
         backSolenoid(this, "back_solenoid"),
         block_servo(this, "servo") {
@@ -50,7 +50,7 @@ class JoyServer : public rclcpp::Node {
     loader.setMode(Md::Mode::Voltage);
     loader.setVoltage(0.0);
 
-    shooter.init();
+    // shooter.init();
     shooter.setMode(Md::Mode::Velocity,
                     ODriveEnum::InputMode::INPUT_MODE_VEL_RAMP);
     shooter.setVelocity(0.0);
@@ -72,6 +72,9 @@ class JoyServer : public rclcpp::Node {
 
   bool is_initialized = false;
 
+  bool is_front_lift_moving = false;
+  bool is_back_lift_moving = false;
+
   // motors
   MD2022 magazine;
   MD2022 loader;
@@ -89,8 +92,8 @@ class JoyServer : public rclcpp::Node {
     ORIGIN = 0,
     DOWN = 1,
     UP = 2,
-  } frontLiftTarget,
-      backLiftTarget;
+  } frontLiftTarget = ORIGIN,
+    backLiftTarget = ORIGIN;
 
   LiftState nextLiftState(LiftState state) {
     if (state == LiftState::UP) return LiftState::UP;
@@ -102,17 +105,19 @@ class JoyServer : public rclcpp::Node {
     return static_cast<LiftState>((static_cast<int>(state) + 1) % 3);
   }
 
-  float LiftPos[3] = {0, -0.4, -3.7};  // harasuri, low , high
+  float LiftPos[3] = {0.1, -1.2, -4.2};  // harasuri, low , high
 
   void frontSolenoidDrive(bool state) {
     for (int i = 0; i < 4; i++) {
       frontSolenoid.drive(i, state);
+      std::this_thread::sleep_for(1ms);
     }
   }
 
   void backSolenoidDrive(bool state) {
     for (int i = 0; i < 4; i++) {
       backSolenoid.drive(i, state);
+      std::this_thread::sleep_for(1ms);
     }
   }
 
@@ -167,7 +172,8 @@ class JoyServer : public rclcpp::Node {
   // };
 
   void joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg) {
-    RCLCPP_INFO(this->get_logger(), "joy_callback is called");
+    // RCLCPP_INFO(this->get_logger(), "joy_callback is called");
+
     if (!is_initialized) {
       prev_joy = *msg;
       is_initialized = true;
@@ -177,42 +183,76 @@ class JoyServer : public rclcpp::Node {
     // Lift全体昇降
     if (msg->axes[static_cast<int>(axis::TX)] !=
         prev_joy.axes[static_cast<int>(axis::TX)]) {
+      RCLCPP_INFO(this->get_logger(), "TX is changed");
       if (frontLiftTarget != backLiftTarget) return;
-      // solenoidを開ける
-      if (msg->axes[static_cast<int>(axis::TX)] > 0.5) {
-        frontLiftTarget = backLiftTarget = nextLiftState(frontLiftTarget);
+      if (is_front_lift_moving || is_back_lift_moving) return;
 
-      } else if (msg->axes[static_cast<int>(axis::TX)] < -0.5) {
-        frontLiftTarget = backLiftTarget = backLiftState(backLiftTarget);
+      for (int i = 0; i < 5; i++) {
+        frontLift.setAxisState(
+            ODriveEnum::AxisState::AXIS_STATE_CLOSED_LOOP_CONTROL);
+        backLift.setAxisState(
+            ODriveEnum::AxisState::AXIS_STATE_CLOSED_LOOP_CONTROL);
+        std::this_thread::sleep_for(10ms);
       }
-      frontLift.setMode(ODrive::Position,
-                        ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
-      backLift.setMode(ODrive::Position,
-                       ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
-      frontSolenoidDrive(1);
-      backSolenoidDrive(1);
-      std::this_thread::sleep_for(100ms);
+      std::this_thread::sleep_for(1s);
       frontLift.setPosition(LiftPos[frontLiftTarget]);
       backLift.setPosition(LiftPos[backLiftTarget]);
+      if (msg->axes[static_cast<int>(axis::TX)] > 0) {
+        frontLiftTarget = backLiftTarget = nextLiftState(frontLiftTarget);
+
+        // frontSolenoidDrive(1);
+        // backSolenoidDrive(1);
+      } else if (msg->axes[static_cast<int>(axis::TX)] < 0) {
+        frontLiftTarget = backLiftTarget = backLiftState(backLiftTarget);
+        // frontSolenoidDrive(0);
+        // backSolenoidDrive(0);
+      }
+      RCLCPP_INFO(this->get_logger(), "frontLiftTarget: %f",
+                  LiftPos[frontLiftTarget]);
+      RCLCPP_INFO(this->get_logger(), "backLiftTarget: %f",
+                  LiftPos[backLiftTarget]);
+
+      std::this_thread::sleep_for(1s);
+      frontSolenoidDrive(1);
+      backSolenoidDrive(1);
+      std::this_thread::sleep_for(1s);
+      frontLift.setPosition(LiftPos[frontLiftTarget]);
+      backLift.setPosition(LiftPos[backLiftTarget]);
+      is_front_lift_moving = true;
+      is_back_lift_moving = true;
     }
 
     // Lift個別で上限まで上げ
     if (msg->axes[static_cast<int>(axis::TY)] !=
         prev_joy.axes[static_cast<int>(axis::TY)]) {
+      // solenoidを開ける
+      RCLCPP_INFO(this->get_logger(), "TY is changed");
+      if (is_front_lift_moving || is_back_lift_moving) return;
+
       if (msg->axes[static_cast<int>(axis::TY)] > 0.5) {
-        backLiftTarget = ORIGIN;
+        backLift.init();
         backLift.setMode(ODrive::Position,
                          ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
-        backSolenoidDrive(1);
-        std::this_thread::sleep_for(100ms);
+        std::this_thread::sleep_for(1s);
         backLift.setPosition(LiftPos[backLiftTarget]);
+        std::this_thread::sleep_for(1s);
+        backSolenoidDrive(1);
+        backLiftTarget = ORIGIN;
+        std::this_thread::sleep_for(1s);
+        backLift.setPosition(LiftPos[backLiftTarget]);
+        is_back_lift_moving = true;
       } else if (msg->axes[static_cast<int>(axis::TY)] < -0.5) {
-        frontLiftTarget = ORIGIN;
+        frontLift.init();
         frontLift.setMode(ODrive::Position,
                           ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
-        frontSolenoidDrive(1);
-        std::this_thread::sleep_for(100ms);
+        std::this_thread::sleep_for(1s);
         frontLift.setPosition(LiftPos[frontLiftTarget]);
+        std::this_thread::sleep_for(1s);
+        frontSolenoidDrive(1);
+        frontLiftTarget = ORIGIN;
+        std::this_thread::sleep_for(1s);
+        frontLift.setPosition(LiftPos[frontLiftTarget]);
+        is_front_lift_moving = true;
       }
     }
 
@@ -327,20 +367,43 @@ class JoyServer : public rclcpp::Node {
   }
 
   void timer_callback() {
-    // if (abs(frontLift.getPosition() - LiftPos[frontLiftTarget]) < 0.05) {
-    //   // solenoidを出す
-    //   frontSolenoidDrive(0);
-    //   std::this_thread::sleep_for(100ms);
-    //   frontLift.setMode(ODrive::Idle);
-    // }
-    // if (abs(backLift.getPosition() - LiftPos[backLiftTarget]) < 0.05) {
-    //   backSolenoidDrive(0);
-    //   std::this_thread::sleep_for(100ms);
-    //   backLift.setMode(ODrive::Idle);
-    // }
+    RCLCPP_INFO(this->get_logger(), "front: %f, back: %f",
+                frontLift.getPosition(), backLift.getPosition());
+
+    if (abs(frontLift.getPosition() - LiftPos[frontLiftTarget]) < 0.05 &&
+        is_front_lift_moving) {
+      // solenoidを出す
+      RCLCPP_INFO(this->get_logger(), "front lift is arrived");
+      frontSolenoidDrive(0);
+      std::this_thread::sleep_for(10ms);
+      frontSolenoidDrive(0);
+      std::this_thread::sleep_for(10ms);
+      frontSolenoidDrive(0);
+      std::this_thread::sleep_for(2s);
+
+      for (int i = 0; i < 5; i++) {
+        frontLift.setMode(ODrive::Idle);
+        std::this_thread::sleep_for(10ms);
+      }
+      is_front_lift_moving = false;
+    }
+    if (abs(backLift.getPosition() - LiftPos[backLiftTarget]) < 0.05 &&
+        is_back_lift_moving) {
+      RCLCPP_INFO(this->get_logger(), "back lift is arrived");
+      backSolenoidDrive(0);
+      std::this_thread::sleep_for(10ms);
+      backSolenoidDrive(0);
+      std::this_thread::sleep_for(10ms);
+      backSolenoidDrive(0);
+      std::this_thread::sleep_for(2s);
+      for (int i = 0; i < 5; i++) {
+        backLift.setMode(ODrive::Idle);
+        std::this_thread::sleep_for(10ms);
+      }
+      is_back_lift_moving = false;
+    }
   }
 };
-
 int main(int argc, char *argv[]) {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<JoyServer>();

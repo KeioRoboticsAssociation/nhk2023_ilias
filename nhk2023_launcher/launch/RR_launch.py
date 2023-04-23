@@ -16,20 +16,19 @@ def generate_launch_description():
     with open(urdf, 'r') as infp:
         robot_description = infp.read()
 
-    joint_state_publisher_node = Node(package='joint_state_publisher',
-                                      executable='joint_state_publisher',
-                                      name='joint_state_publisher',
-                                      output='screen',
-                                      namespace='rr',
-                                      parameters=[{
-                                          'robot_description':
-                                          robot_description
-                                      }, {
-                                          'rate': 100
-                                      }],
-                                      arguments=[urdf],
-                                      namespace='rr')
-
+    joint_state_publisher_node = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
+        output='screen',
+        namespace='rr',
+        parameters=[{
+            'robot_description': robot_description
+        }, {
+            'rate': 100
+        }],
+        arguments=[urdf],
+    )
     robot_state_publisher_node = Node(package='robot_state_publisher',
                                       executable='robot_state_publisher',
                                       name='robot_state_publisher',
@@ -112,6 +111,14 @@ def generate_launch_description():
         namespace='rr',
     )
 
+    joy_server = Node(
+        package='joy_server',
+        executable='rr_joy_server',
+        name='rr_joy_server',
+        output='screen',
+        namespace='rr',
+    )
+
     return LaunchDescription([
         joint_state_publisher_node,
         robot_state_publisher_node,
@@ -123,4 +130,5 @@ def generate_launch_description():
         joy,
         simple_gui,
         rr_state_ctrl,
+        # joy_server
     ])
