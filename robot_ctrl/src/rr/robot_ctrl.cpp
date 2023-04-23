@@ -27,14 +27,7 @@ class robot_ctrl : public rclcpp::Node {
   rclcpp::TimerBase::SharedPtr timer_;
 
  private:
-  enum class Mode {
-    MANUAL,
-    AUTO,
-    CLIMB,
-    PRECISION,
-    IDLE,
-    PICK_UP
-  };
+  enum class Mode { MANUAL, AUTO, CLIMB, PRECISION, IDLE, PICK_UP };
 
   JoyCommander joy_commander;
   PickUp pick_up;
@@ -122,7 +115,7 @@ void robot_ctrl::timer_callback() {
       break;
 
     case Mode::PICK_UP:
-      pick_up.gen_pick_up_cmd_vel();
+      pick_up.gen_pick_vel();
       msg.data = "PICK_UP";
       RCLCPP_INFO(this->get_logger(), "current mode pick_up");
       break;
