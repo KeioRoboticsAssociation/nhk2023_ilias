@@ -17,18 +17,17 @@ class JoyServer : public rclcpp::Node {
       : Node("rr_joy_server"),
         magazine(this, "magazine"),
         loader(this, "loader"),
-        shooter(this, "shooter"),
         frontLift(this, "front_lift", 10, 5),
         backLift(this, "back_lift", 10, 5),
         frontSolenoid(this, "front_solenoid"),
         backSolenoid(this, "back_solenoid"),
-        block_servo(this, "servo") {
+        servo(this, "servo") {
     RCLCPP_INFO(this->get_logger(), "joy_server is started");
     joy_sub = this->create_subscription<sensor_msgs::msg::Joy>(
         "joy", 10,
         std::bind(&JoyServer::joy_callback, this, std::placeholders::_1));
     rogilink2_pub = this->create_publisher<rogilink2_interfaces::msg::Frame>(
-        "rogilink/send", 10);
+        "rogilink2/send", 10);
 
     timer = this->create_wall_timer(
         100ms, std::bind(&JoyServer::timer_callback, this));
@@ -51,9 +50,10 @@ class JoyServer : public rclcpp::Node {
     loader.setVoltage(0.0);
 
     // shooter.init();
-    shooter.setMode(Md::Mode::Velocity,
-                    ODriveEnum::InputMode::INPUT_MODE_VEL_RAMP);
-    shooter.setVelocity(0.0);
+    // shooter.setMode(Md::Mode::Velocity,
+    //                 ODriveEnum::InputMode::INPUT_MODE_VEL_RAMP);
+    // shooter.setVelocity(0.0);
+    // shooterESC化のためコメントアウト
 
     frontLift.init();
     frontLift.setMode(ODrive::Idle);
@@ -64,7 +64,7 @@ class JoyServer : public rclcpp::Node {
     frontSolenoid.init();
     backSolenoid.init();
 
-    block_servo.init();
+    servo.init();
   }
 
  private:
@@ -74,16 +74,17 @@ class JoyServer : public rclcpp::Node {
 
   bool is_front_lift_moving = false;
   bool is_back_lift_moving = false;
+  bool servo_flip = false;
 
   // motors
   MD2022 magazine;
   MD2022 loader;
-  ODrive shooter;
+  // ODrive shooter;
   ODrive frontLift;
   ODrive backLift;
   Solenoid frontSolenoid;
   Solenoid backSolenoid;
-  Servo block_servo;
+  Servo servo;
 
   double current_magazine_position = 0.0;
   double ring_thickness = 0.26;
@@ -288,15 +289,12 @@ class JoyServer : public rclcpp::Node {
         if (msg->buttons[static_cast<int>(button::X)] == 1) {
           // button X is pressed
           RCLCPP_INFO(this->get_logger(), "X is pressed");
-          block_servo.setPosition(0, 0.0);
-        } else {
-          // button X is released
-          RCLCPP_INFO(this->get_logger(), "X is released");
-          block_servo.setPosition(0, 90.0);
-          std::this_thread::sleep_for(std::chrono::milliseconds(1));
-          block_servo.setPosition(0, 90.0);
-          std::this_thread::sleep_for(std::chrono::milliseconds(1));
-          block_servo.setPosition(0, 90.0);
+          if (servo_flip) {
+            servo.setPosition(0, 0.0);
+          } else {
+            servo.setPosition(0, 60);
+          }
+          servo_flip = !servo_flip;
         }
       }
 
@@ -306,15 +304,11 @@ class JoyServer : public rclcpp::Node {
         if (msg->buttons[static_cast<int>(button::RT)] == 1) {
           // button RT is pressed
           RCLCPP_INFO(this->get_logger(), "RT is pressed");
-          shooter.setVelocity(-55.0);
+          servo.setPosition(1, 90);
         } else {
           // button RT is released
           RCLCPP_INFO(this->get_logger(), "RT is released");
-          shooter.setVelocity(0.0);
-          std::this_thread::sleep_for(std::chrono::milliseconds(1));
-          shooter.setVelocity(0.0);
-          std::this_thread::sleep_for(std::chrono::milliseconds(1));
-          shooter.setVelocity(0.0);
+          servo.setPosition(1, 0);
         }
       }
 

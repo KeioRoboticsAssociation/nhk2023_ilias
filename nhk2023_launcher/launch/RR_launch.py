@@ -130,5 +130,5 @@ def generate_launch_description():
         joy,
         simple_gui,
         rr_state_ctrl,
-        # joy_server
+        joy_server
     ])
