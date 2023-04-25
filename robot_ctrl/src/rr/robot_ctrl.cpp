@@ -42,9 +42,9 @@ robot_ctrl::robot_ctrl()
   RCLCPP_INFO(this->get_logger(), "robot_ctrl node is started");
 
   // set parameters
-  this->declare_parameter("max_linear_vel", 5.0);
+  this->declare_parameter("max_linear_vel", 2.5);
   this->declare_parameter("max_angular_vel", 2.0);
-  this->declare_parameter("max_linear_acc", 3.0);
+  this->declare_parameter("max_linear_acc", 2.0);
   this->declare_parameter("max_angular_acc", 3.0);
 
   // assign parameters
