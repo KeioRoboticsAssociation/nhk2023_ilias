@@ -11,18 +11,19 @@ void PickupRight::entry() {
   auto magazineMsg = std_msgs::msg::String();
   magazineMsg.data = "MAGAZINE_DOWN_RIGHT";
   robot_state_ctrl->shot_state_pub_->publish(magazineMsg);
+  startSensing();
 }
 
-void PickupRight::react(Forward_Flag const& flag) {
+void PickupRight::exit() { stopSensing(); }
+
+void PickupRight::react(Forward_Flag const&) {
   auto magazineMsg = std_msgs::msg::String();
   magazineMsg.data = "MAGAZINE_LOADED_RIGHT";
   robot_state_ctrl->shot_state_pub_->publish(magazineMsg);
   transit<PreShot>();
 }
 
-void PickupRight::exit() { stopSensing(); }
-
 void PickupRight::react(Update_Flag const&) {
-  bool finished = pickupVelGenerator(true);
+  bool finished = pickupVelGenerator(false);
   // if (finished) transit<PreShot>();
 }

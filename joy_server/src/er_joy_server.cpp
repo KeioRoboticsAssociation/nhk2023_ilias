@@ -89,8 +89,7 @@ class JoyServer : public rclcpp::Node {
   bool servo_flip = true;
   bool R_pushed = true;
   bool L_pushed = true;
-
-  bool shooter_flip = false;
+  float shooter_pos = 0;
 
   // logicool
   enum class button {
@@ -163,68 +162,30 @@ class JoyServer : public rclcpp::Node {
           if (servo_flip) {
             servo.setPosition(0, 80);
 
-            servo.setPosition(1, 90);
+            servo.setPosition(1, 95);
           } else {
             servo.setPosition(0, 0);
             servo.setPosition(1, 180);
           }
           servo_flip = !servo_flip;
         }
-      } else if (msg->buttons[static_cast<int>(button::Y)] !=
-                 prev_joy.buttons[static_cast<int>(button::Y)]) {
-        if (msg->buttons[static_cast<int>(button::Y)] == 1) {
-          // button Y is pressed
-          RCLCPP_INFO(this->get_logger(), "Y is pressed");
-          shooter.setMode(Md::Mode::Velocity,
-                          ODriveEnum::InputMode::INPUT_MODE_PASSTHROUGH);
-          shooter.setVelocity(0.5);
-        } else {
-          // button Y is released
-          RCLCPP_INFO(this->get_logger(), "Y is released");
-          // shooter.setVelocity(0.0);
-          // std::this_thread::sleep_for(0.1s);
-          // shooter.setVelocity(0.0);
-          // std::this_thread::sleep_for(0.1s);
-          // shooter.setVelocity(0.0);
-          shooter.setMode(Md::Mode::Position,
-                          ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
-          std::this_thread::sleep_for(0.1s);
-          shooter.setMode(Md::Mode::Position,
-                          ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
-          std::this_thread::sleep_for(0.1s);
-          shooter.setMode(Md::Mode::Position,
-                          ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
-          std::this_thread::sleep_for(0.1s);
-          shooter.setPosition(0.0);
-          std::this_thread::sleep_for(0.1s);
-          shooter.setPosition(0.0);
-          std::this_thread::sleep_for(0.1s);
-          shooter.setPosition(0.0);
-        }
       } else if (msg->buttons[static_cast<int>(button::B)] !=
                  prev_joy.buttons[static_cast<int>(button::B)]) {
         if (msg->buttons[static_cast<int>(button::B)] == 1) {
-          // button Y is pressed
+          // button LB is pressed
           RCLCPP_INFO(this->get_logger(), "B is pressed");
-          shooter.setMode(Md::Mode::Velocity);
-          shooter.setVelocity(-0.5);
-        } else {
-          // button Y is released
-          RCLCPP_INFO(this->get_logger(), "B is released");
-          shooter.setMode(Md::Mode::Position,
-                          ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
-          std::this_thread::sleep_for(0.1s);
-          shooter.setMode(Md::Mode::Position,
-                          ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
-          std::this_thread::sleep_for(0.1s);
-          shooter.setMode(Md::Mode::Position,
-                          ODriveEnum::InputMode::INPUT_MODE_TRAP_TRAJ);
-          std::this_thread::sleep_for(0.1s);
-          shooter.setPosition(0.0);
-          std::this_thread::sleep_for(0.1s);
-          shooter.setPosition(0.0);
-          std::this_thread::sleep_for(0.1s);
-          shooter.setPosition(0.0);
+          shooter_pos = shooter_pos + 0.1;
+          shooter.setPosition(shooter_pos);
+          // RCLCPP_WARN(this->get_logger(), "shooter_pos: %d", shooter_pos);
+        }
+      } else if (msg->buttons[static_cast<int>(button::Y)] !=
+                 prev_joy.buttons[static_cast<int>(button::Y)]) {
+        if (msg->buttons[static_cast<int>(button::Y)] == 1) {
+          // button B is pressed
+          RCLCPP_WARN(this->get_logger(), "Y is pressed");
+          shooter_pos = shooter_pos + 0.5;
+          shooter.setPosition(shooter_pos);
+          // RCLCPP_WARN(this->get_logger(), "shooter_pos: %d", shooter_pos);
         }
       }
 
@@ -320,13 +281,15 @@ class JoyServer : public rclcpp::Node {
           // button LB is pressed
           RCLCPP_INFO(this->get_logger(), "R3 is pressed");
           shooter.setPosition(0.0);
+          shooter_pos = 0.0;
         }
       } else if (msg->buttons[static_cast<int>(button::L3)] !=
                  prev_joy.buttons[static_cast<int>(button::L3)]) {
         if (msg->buttons[static_cast<int>(button::L3)] == 1) {
           // button LB is pressed
           RCLCPP_INFO(this->get_logger(), "L3 is pressed");
-          shooter.setPosition(6.0);
+          shooter.setPosition(5.0);
+          shooter_pos = 5.0;
         }
       }
     }
@@ -334,19 +297,19 @@ class JoyServer : public rclcpp::Node {
     if (msg->axes[static_cast<int>(axis::TY)] > 0.5) {
       // TY up is pressed
       RCLCPP_INFO(this->get_logger(), "TY up is pressed");
-      loader.setPosition(-0.5);
+      loader.setPosition(0.6);
       std::this_thread::sleep_for(0.1s);
-      loader.setPosition(-0.5);
+      loader.setPosition(0.6);
       std::this_thread::sleep_for(0.1s);
-      loader.setPosition(-0.5);
+      loader.setPosition(0.6);
     } else if (msg->axes[static_cast<int>(axis::TY)] < -0.5) {
       // TY down is pressed
       RCLCPP_INFO(this->get_logger(), "TY down is pressed");
-      loader.setPosition(-3.8);
+      loader.setPosition(3.5);
       std::this_thread::sleep_for(0.1s);
-      loader.setPosition(-3.8);
+      loader.setPosition(3.5);
       std::this_thread::sleep_for(0.1s);
-      loader.setPosition(-3.8);
+      loader.setPosition(3.5);
     }
 
     prev_joy = *msg;

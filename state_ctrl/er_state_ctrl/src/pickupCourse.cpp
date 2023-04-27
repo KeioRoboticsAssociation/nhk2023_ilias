@@ -9,7 +9,7 @@ const int SIDE_LEFT_TH1 = 2;   // 左サイドセンサーの２段階目
 
 const int SENSOR_MAX = 65535;
 const int TARGET_DISTANCE = 13500;
-const float MAX_Y_VEL = 1;
+const float MAX_Y_VEL = 1.3;
 const float SLOW_Y_VEL = 0.3;
 
 void startSensing() {
